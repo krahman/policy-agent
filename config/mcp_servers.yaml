@@ -1,0 +1,15 @@
+# Allow-list of MCP servers the client may start (PRD §10.2). Anything not listed here is refused, and a listed server
+# is only loaded if it reports the expected name, a supported protocol version, and exactly the expected tools.
+# "{python}" is replaced by the current interpreter. The server gets only the variables listed under env (plus the
+# minimal defaults the MCP SDK passes); in particular it never receives API keys.
+local_tool_names: [search_corpus, calculator, format_report]   # an MCP tool may not reuse these names (shadowing)
+servers:
+  stats:
+    command: "{python}"
+    args: ["-m", "policy_agent.mcp_server"]
+    env: {}
+    expected_server_name: policy-stats
+    protocol_versions: ["2025-11-25", "2025-06-18", "2025-03-26"]
+    expected_tools: [query_statistic, compute_change]
+    expected_resources: ["stats://schema", "stats://sources"]
+    timeout_s: 10

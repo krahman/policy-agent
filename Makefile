@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent pricing
 
 sync:
 	uv sync --frozen
@@ -65,6 +65,19 @@ calibration-sheet:
 	uv run python scripts/make_calibration_sheet.py E5
 calibrate:
 	uv run python scripts/calibrate_judge.py
+
+# Step 7: MCP server protocol demo (raw JSON-RPC lifecycle + negative cases) and the discovery notebook
+mcp-demo:
+	uv run python scripts/mcp_protocol_demo.py
+mcp-notebook:
+	uv run python scripts/make_mcp_notebook.py
+
+# Step 8: the 10 demo scenarios against the live agent; E7 (agent) on dev, then the H3 analysis
+agent-demo:
+	LANGSMITH_TRACING=false uv run python scripts/demo_scenarios.py
+agent:
+	uv run python scripts/run_experiment.py E7 $(UPLOAD)
+	uv run python scripts/analyse_agent.py --write
 
 # Refresh config/pricing.yaml from OpenRouter (records the date)
 pricing:

@@ -59,3 +59,11 @@ def test_reranker_orders_by_score_and_caches(tmp_path, monkeypatch):
     rr.rerank("q", [hit("a", 1), hit("b", 2)])
     assert len(calls) == 1 and rr.usage.searches == 1 and rr.usage.cache_hits == 1
     assert len(Reranker().cache) == 1  # persisted to disk
+
+
+def test_period_groups_one_group_per_named_period():
+    from policy_agent.retrieval.hybrid import period_groups
+
+    assert period_groups("from 2Q 2022 to 2Q 2026") == [{"2022-Q2"}, {"2026-Q2"}]
+    assert period_groups("annual average for 2024") == [{"2024", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4"}]
+    assert period_groups("in September 2025") == [{"2025-Q3"}] and period_groups("the latest quarter") == []

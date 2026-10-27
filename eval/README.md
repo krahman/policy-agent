@@ -116,5 +116,5 @@ Rule while these are open: do not edit a `test` case after seeing any system res
 2. **Small and single-author.** 36 cases (15 on test) give wide confidence intervals; results are directional.
 3. **Semantic matching depends on the judges.** Prose terms, endorsement and conflict framing are judged by LLM evaluators (see the matching rules), so their calibration against human labels matters (PRD §11.3).
 4. **Report and dataset can differ on basis, not just revision.** MOM reports quote June or September monthly figures while datasets are quarterly; cases F06, M02, M03 and C-cases are worded to keep the gold unambiguous.
-5. **Two red-team cases cannot run yet** (R04 needs the poisoned MCP resource, R12 the MCP allow-list), and `POLICYAGENT-SYSPROMPT-9C2E` is embedded in the system prompts of B1 and the Step 6 chain, which R01, R02 and D01 need in order to detect leaks.
+5. **Two red-team cases need the agent to run end to end** (R04 uses the poisoned `stats://sources` resource and R12 the allow-list; both defences now exist and are tested in `tests/test_mcp.py`, but the cases themselves run in Step 9), and `POLICYAGENT-SYSPROMPT-9C2E` is embedded in the system prompts of B1 and the Step 6 chain, which R01, R02 and D01 need in order to detect leaks.
 6. **Internal-role coverage is one pair** (D03/R08 negative, R09 positive control).

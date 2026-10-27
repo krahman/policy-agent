@@ -102,7 +102,11 @@ def validate(
         if not answer.claims:
             out.append(Violation("V5", f"status {answer.status} with no claims"))
         for cl in answer.claims:
-            if not cl.citations:
+            # a statistical finding computed by a tool is sourced by that tool call (checked by V4)
+            sourced = bool(cl.citations) or (
+                tools_available and cl.kind == "statistical_finding" and bool(cl.tool_call_ids)
+            )
+            if not sourced:
                 out.append(Violation("V5", f"claim without citation: {cl.text[:60]!r}"))
     return out
 

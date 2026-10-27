@@ -74,6 +74,18 @@ def build_target(cfg: dict):
             "structured_output": p.get("structured_output", "json_schema"),
             "prompt": f"{prompt['name']}@{prompt['version']}", "prompt_sha256_12": prompt["sha256_12"],
         }  # fmt: skip
+    if t == "agent":
+        import atexit
+
+        from policy_agent.graph.runtime import AgentRuntime
+
+        rt = AgentRuntime(model=p["model"], embedding=p["embedding"], faults=set(p.get("faults", []))).start()
+        atexit.register(rt.close)
+        return (lambda inputs: rt.ask(inputs["question"], inputs.get("user_role", "analyst_public"))), {
+            "retriever": "r5 via search_corpus tool", "chunker": "C2", "model": p["model"], "embedding": p["embedding"],  # noqa: E501
+            "temperature": 0, "agent": "langgraph bounded agent", "prompt": "agent_v1@1.0.0", "faults": sorted(p.get("faults", [])),  # noqa: E501
+            "mcp_available": rt.mcp_ok,
+        }  # fmt: skip
     if t == "b2":
         from policy_agent.baselines import b2
 
@@ -140,7 +152,7 @@ def keep_output(outputs: dict) -> dict | None:
     """Store the structured answer with the scores so judges can be calibrated and errors analysed offline."""
     if not outputs.get("answer"):
         return None
-    return {k: outputs.get(k) for k in ("status", "answer", "citations", "validation", "retrieved")}
+    return {k: outputs.get(k) for k in ("status", "answer", "citations", "validation", "retrieved", "agent")}
 
 
 def score_row(example: dict, outputs: dict, evaluators: list) -> dict:

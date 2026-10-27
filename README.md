@@ -15,7 +15,8 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 4 | Baselines: BM25 (B0/E0), single-pass RAG (B1), table lookup (B2), deterministic evaluators, experiment runner | Done; results in `docs/EVAL_REPORT.md` |
 | 5 | Retrieval experiments E1-E4d: BM25, dense (2 embeddings), hybrid RRF, + re-rank, + period filter, with bootstrap CIs | Done; `docs/EVAL_REPORT.md` section 3 (LangSmith traces missing: monthly limit) |
 | 6 | Generation: validated chain (V1-V6, one repair), LLM judges, E5 (sonnet) vs E6 (haiku) | Done; `docs/EVAL_REPORT.md` section 4. Judge calibration needs your labels (`eval/CALIBRATION.md`) |
-| 7 to 11 | MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
+| 7 | MCP server (2 tools, 2 resources, 1 prompt, read-only), validating client with allow-list, protocol demo with negative cases | Done; `make mcp-demo`, `docs/CONCEPTS.md` |
+| 8 to 11 | LangGraph agent, red-teaming, final evaluation, demo | Not started |
 
 There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 
@@ -97,6 +98,7 @@ tests/                        # pytest suite
 | `make hello` | one traced LLM call |
 | `make fetch`, `make ingest`, `make eda` | data pipeline, see above |
 | `make evalset`, `make check-eval`, `make sync-datasets` | build, validate and upload the evaluation set (see [`eval/README.md`](eval/README.md)) |
+| `make mcp-demo`, `make mcp-notebook` | print the MCP lifecycle and 8 negative cases; rebuild the discovery notebook |
 | `make generation`, `make calibration-sheet`, `make calibrate` | run E6/E5 (haiku/sonnet) with LLM judges; build the blind judge-labelling sheet; compare judge with your ticks |
 | `make retrieval` | run E1-E4d on the dev split and refresh the bootstrap-CI tables in `docs/EVAL_REPORT.md` |
 | `make baselines`, `make pricing` | run E0/B0/B2/B1 on the dev split (LangSmith + `eval/results/`); refresh model prices from OpenRouter |

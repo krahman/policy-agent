@@ -111,3 +111,14 @@ def test_fewshot_examples_pass_the_validator(sid):
     by_id = {c["chunk_id"]: c for c in load_chunks()}
     r = {x["id"]: x for x in map(json.loads, FEWSHOT_FILE.read_text().splitlines())}[sid]
     assert not validate(example_answer(r, [by_id[i] for i in r["chunk_ids"]]))
+
+
+def test_v5_accepts_a_tool_backed_statistical_claim_only_when_tools_exist():
+    a = answer(claims=[Claim(text="x", kind="statistical_finding", citations=[], tool_call_ids=["t1"])])
+    assert "V5" in rules(a)  # without tools a bare statistical claim is unsourced
+    assert "V5" not in rules(a, tools_available=True, tool_outputs={"t1": "42"})
+    assert "V5" in rules(
+        answer(claims=[Claim(text="x", kind="source_fact", citations=[], tool_call_ids=["t1"])]),
+        tools_available=True,
+        tool_outputs={"t1": "42"},
+    )  # noqa: E501

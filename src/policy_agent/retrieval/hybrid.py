@@ -64,6 +64,25 @@ def periods_in(question: str) -> set[str]:
     return out
 
 
+def period_groups(question: str) -> list[set[str]]:
+    """One group per period the question names; a group is satisfied by any member. A quarter is its own group; a bare
+    year is satisfied by the year or any of its quarters."""
+    groups: list[set[str]] = []
+    spans = []
+    for m in _Q.finditer(question):
+        q, y = (m.group(1), m.group(2)) if m.group(1) else (m.group(3), m.group(4))
+        groups.append({f"{y}-Q{q}"})
+        spans.append(m.span())
+    for m in _MONTH.finditer(question):
+        groups.append({f"{m.group(2)}-Q{_MONTHS.index(m.group(1).lower()) // 3 + 1}"})
+        spans.append(m.span())
+    for m in _YEAR.finditer(question):
+        if not any(a <= m.start() < b for a, b in spans):
+            y = m.group(1)
+            groups.append({y, *(f"{y}-Q{i}" for i in range(1, 5))})
+    return groups
+
+
 def allowed_by_period(chunk: dict, periods: set[str]) -> bool:
     """Chunks with no reference period (explainers, replies, memos) are never filtered out."""
     rp = chunk.get("reference_period")
