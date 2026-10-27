@@ -331,11 +331,13 @@ class Citation(BaseModel):
     chunk_id: str
     quote: str = Field(max_length=300)  # verbatim span that must exist in the chunk
 
+
 class Claim(BaseModel):
     text: str
     kind: Literal["source_fact", "statistical_finding", "model_inference"]
     citations: list[Citation]
-    tool_call_ids: list[str] = []      # required when kind == "statistical_finding"
+    tool_call_ids: list[str] = []  # required when kind == "statistical_finding"
+
 
 class Answer(BaseModel):
     status: Literal["answered", "abstained", "needs_clarification", "conflict_reported", "refused"]
@@ -388,10 +390,10 @@ class AgentState(TypedDict):
     route: Literal["answerable", "ambiguous", "out_of_scope", "unsafe"] | None
     plan: list[str]
     messages: Annotated[list[AnyMessage], add_messages]
-    evidence: list[EvidenceItem]        # chunk_id, text, score, source metadata
-    tool_results: list[ToolResult]      # id, tool, args, output, status, latency_ms
+    evidence: list[EvidenceItem]  # chunk_id, text, score, source metadata
+    tool_results: list[ToolResult]  # id, tool, args, output, status, latency_ms
     step: int
-    retries: dict[str, int]             # per tool
+    retries: dict[str, int]  # per tool
     errors: list[str]
     answer: Answer | None
 ```

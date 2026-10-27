@@ -1,0 +1,323 @@
+{
+  "_comment": "Source of truth for data/raw. scripts/fetch_raw.py downloads these and rewrites data/raw/manifest.json. Scope window is frozen at Step 1.",
+  "scope_window": {
+    "from": "2021-Q3",
+    "to": "2026-Q2"
+  },
+  "licences": {
+    "sg_odl": "Singapore Open Data Licence v1.0 (https://data.gov.sg/open-data-licence)",
+    "mom_terms": "MOM website terms of use (https://www.mom.gov.sg/terms-of-use); fetched by script, not redistributed in the repo"
+  },
+  "datagov": [
+    {
+      "key": "unemp_rate_overall_q",
+      "dataset_id": "d_ca32584c91ee07d091a4ce75fa868414",
+      "indicator": "unemployment_rate",
+      "period_type": "quarter"
+    },
+    {
+      "key": "unemp_rate_resident_q",
+      "dataset_id": "d_d1d755e060dd6b01a8024ba60b21b831",
+      "indicator": "unemployment_rate",
+      "period_type": "quarter"
+    },
+    {
+      "key": "unemp_rate_citizen_q",
+      "dataset_id": "d_1353f9be1a020ba1469852c49ee62db3",
+      "indicator": "unemployment_rate",
+      "period_type": "quarter"
+    },
+    {
+      "key": "unemp_rate_overall_a",
+      "dataset_id": "d_80effd26c9ca5755a7ff0598fe2e0be6",
+      "indicator": "unemployment_rate",
+      "period_type": "year"
+    },
+    {
+      "key": "unemp_rate_resident_a",
+      "dataset_id": "d_b0fb18418204a0a11930ce44edc34775",
+      "indicator": "unemployment_rate",
+      "period_type": "year"
+    },
+    {
+      "key": "unemp_rate_citizen_a",
+      "dataset_id": "d_dab839a10e83a6a8746e1836f3dd5629",
+      "indicator": "unemployment_rate",
+      "period_type": "year"
+    },
+    {
+      "key": "singstat_unemp_rate_sa_q",
+      "dataset_id": "d_b816a930bca0eb19fdf20fcbfcdd4c39",
+      "indicator": "unemployment_rate",
+      "period_type": "quarter",
+      "note": "Seasonally adjusted series (SingStat); the only SA source"
+    },
+    {
+      "key": "unemployed_overall_q",
+      "dataset_id": "d_3fb7b082cd455ec9493ef5e994ef0db7",
+      "indicator": "unemployed_persons",
+      "period_type": "quarter"
+    },
+    {
+      "key": "unemployed_resident_q",
+      "dataset_id": "d_50f76f080c7e80c3b6acd4dfc9f29174",
+      "indicator": "unemployed_persons",
+      "period_type": "quarter"
+    },
+    {
+      "key": "unemployed_citizen_q",
+      "dataset_id": "d_8a02327def3434883960d1dce5567ab5",
+      "indicator": "unemployed_persons",
+      "period_type": "quarter"
+    },
+    {
+      "key": "ltu_rate_resident_a",
+      "dataset_id": "d_edc7e225d4e7c8f3532e6c329ba2bf79",
+      "indicator": "long_term_unemployment_rate",
+      "period_type": "year"
+    },
+    {
+      "key": "ltu_number_resident_a",
+      "dataset_id": "d_8872e15c61a2ee8dde0e5f7e6f48d718",
+      "indicator": "long_term_unemployment_rate",
+      "period_type": "year",
+      "note": "Level companion to the rate"
+    },
+    {
+      "key": "unemp_rate_resident_by_age_hqa_sex_a",
+      "dataset_id": "d_79699e0bd51d2d8cee7fb3f6d29dc7c4",
+      "indicator": "unemployment_rate",
+      "period_type": "year",
+      "note": "age_group breakdown"
+    },
+    {
+      "key": "retrenched_q",
+      "dataset_id": "d_000d49cda016c13522d7d5be6a050f59",
+      "indicator": "retrenchments",
+      "period_type": "quarter"
+    },
+    {
+      "key": "vacancy_unemployed_ratio_q",
+      "dataset_id": "d_80c0cf251ee9a26d240808297f52c820",
+      "indicator": "vacancy_to_unemployed_ratio",
+      "period_type": "quarter"
+    },
+    {
+      "key": "job_vacancy_q",
+      "dataset_id": "d_59a34aef12e0ecf666de5746e50586e8",
+      "indicator": "job_vacancies",
+      "period_type": "quarter",
+      "status": "added"
+    },
+    {
+      "key": "job_vacancy_a",
+      "dataset_id": "d_89c02a8fe06893fa97b47a6bdf3626be",
+      "indicator": "job_vacancies",
+      "period_type": "year",
+      "status": "added"
+    },
+    {
+      "key": "job_vacancy_by_industry_q",
+      "dataset_id": "d_3f17bbf67d31d4d402caa8755eb74afc",
+      "indicator": "job_vacancies",
+      "period_type": "quarter",
+      "status": "added",
+      "note": "industry breakdown"
+    },
+    {
+      "key": "retrenched_a",
+      "dataset_id": "d_6338fec229179b809cb970b9af302393",
+      "indicator": "retrenchments",
+      "period_type": "year",
+      "status": "added"
+    },
+    {
+      "key": "retrenched_by_industry_q",
+      "dataset_id": "d_61d92d31ca400be135190614277da825",
+      "indicator": "retrenchments",
+      "period_type": "quarter",
+      "status": "added",
+      "note": "industry breakdown"
+    },
+    {
+      "key": "vacancy_unemployed_ratio_a",
+      "dataset_id": "d_ab4c160672a92120c3bc801325fa55f2",
+      "indicator": "vacancy_to_unemployed_ratio",
+      "period_type": "year",
+      "status": "added"
+    }
+  ],
+  "mom_pages": {
+    "_comment": "Existing items reused from the first manifest. Slug = key; URL as fetched. release_type is derived from the title (Advance Release vs Labour Market Report).",
+    "keep": [
+      "mom-2023-0428-labour-market-advance-release-first-quarter-2023",
+      "mom-2023-0615-labour-market-report-first-quarter-2023",
+      "mom-2023-0727-labour-market-advance-release-second-quarter-2023",
+      "mom-2023-0914-labour-market-report-second-quarter-2023",
+      "mom-2023-1026-labour-market-advance-release-third-quarter-2023",
+      "mom-2023-1214-labour-market-report-third-quarter-2023",
+      "mom-2024-3101-labour-market-advance-release-fourth-quarter-2023",
+      "mom-2024-0314-labour-market-report-in-4q-2023",
+      "mom-2024-0430-labour-market-advance-release-first-quarter-2024",
+      "mom-2024-0620-labour-market-report-1q-2024",
+      "mom-2024-0731-labour-market-advance-release-2q-2024",
+      "mom-2024-0917-labour-market-in-2q-2024",
+      "mom-2024-1029-labour-market-advance-release-3q-2024",
+      "mom-2025-0127-labour-market-advance-release-4q-2024",
+      "mom-2025-0319-labour-market-in-4q-2024",
+      "mom-2025-0428-labour-market-advance-release-1q-2025",
+      "mom-2025-0627-labour-market-report-1q-2025",
+      "mom-2025-0730-labour-market-advance-release-second-quarter-2025",
+      "mom-2025-0917-labour-market-report-2q-2025",
+      "mom-2025-3010-labour-market-advance-release-3q-2025",
+      "mom-2025-1211-labour-market-report-3q-2025",
+      "mom-2026-0129-labour-market-advance-release-fourth-quarter-2025",
+      "mom-2026-0320-labour-market-4q-2025",
+      "mom-2026-0430-labour-market-advance-release-1q-2026",
+      "mom-2026-0731-labour-market-advance-release-2q-2026",
+      "mom-2026-0921-labour-market-report-second-quarter-2026",
+      "mom-2024-0401-understanding-singapore-labour-market-statistics",
+      "mom-2023-0509-written-answer-to-pq-on-long-term-unemployment-rate",
+      "mom-2025-1106-written-answer-to-pq-on-youth-unemployment",
+      "mom-2026-0707-written-answer-to-pq-on-youth-unemployment-and-support-for-working-youths"
+    ],
+    "resolve_duplicate": {
+      "candidates": [
+        "mom-2026-0921-labour-market-report-second-quarter-2026",
+        "mom-2026-0921-labour-market-report-2q-2026"
+      ],
+      "rule": "Same publication under two slugs. Keep the one whose <title> matches the Labour Market Report for 2Q 2026 with the larger body; drop the other. Decided after download by scripts/fetch_raw.py.",
+      "decision": "keep mom-2026-0921-labour-market-report-second-quarter-2026; mom-2026-0921-labour-market-report-2q-2026 is the 1H2026 WSH report (wrong page)"
+    },
+    "remove": [
+      "mom-2020-0203-oral-answer-by-mrs-josephine-teo-minister-for-manpower-to-pq-on-citizen-unemployment-rate",
+      "mom-2020-0729-labour-market-advance-release-second-quarter-2020",
+      "mom-2020-0914-statement-on-labour-market-developments-in-1h-2020",
+      "mom-2020-1030-labour-market-advance-release-3q-2020",
+      "mom-2020-1217-labour-market-report-3q-2020",
+      "mom-2026-0921-labour-market-report-2q-2026"
+    ],
+    "add": [
+      {
+        "key": "mom-2021-1029-labour-market-advance-release-third-quarter-2021",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2021/1029-labour-market-advance-release-third-quarter-2021",
+        "reference_period": "3Q21",
+        "release_type": "advance"
+      },
+      {
+        "key": "mom-2021-1215-labour-market-report-third-quarter-2021",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2021/1215-labour-market-report-third-quarter-2021",
+        "reference_period": "3Q21",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2022-0128-labour-market-advance-release-2021",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0128-labour-market-advance-release-2021",
+        "reference_period": "4Q21",
+        "release_type": "advance"
+      },
+      {
+        "key": "mom-2022-0314-statement-on-labour-market-developments-in-2021",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0314-statement-on-labour-market-developments-in-2021",
+        "reference_period": "4Q21",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2022-0428-labour-market-advance-release-q1-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0428-labour-market-advance-release-q1-2022",
+        "reference_period": "1Q22",
+        "release_type": "advance"
+      },
+      {
+        "key": "mom-2022-0617-labour-market-report-1q-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0617-labour-market-report-1q-2022",
+        "reference_period": "1Q22",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2022-0729-labour-market-advance-release-2q-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0729-labour-market-advance-release-2q-2022",
+        "reference_period": "2Q22",
+        "release_type": "advance"
+      },
+      {
+        "key": "mom-2022-0914-statement-on-labour-market-developments-in-1h2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/0914-statement-on-labour-market-developments-in-1h2022",
+        "reference_period": "2Q22",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2022-1215-labour-market-report-third-quarter-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/1215-labour-market-report-third-quarter-2022",
+        "reference_period": "3Q22",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2023-0131-labour-market-advance-release-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2023/0131-labour-market-advance-release-2022",
+        "reference_period": "4Q22",
+        "release_type": "advance"
+      },
+      {
+        "key": "mom-2023-0315-labour-market-report-2022",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2023/0315-labour-market-report-2022",
+        "reference_period": "4Q22",
+        "release_type": "report"
+      },
+      {
+        "key": "mom-2021-1201-labour-force-in-singapore-advance-release-2021",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2021/1201-labour-force-in-singapore-advance-release-2021",
+        "reference_period": "2021",
+        "release_type": "annual"
+      },
+      {
+        "key": "mom-2022-1201-labour-force-in-singapore-advance-release",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2022/1201-labour-force-in-singapore-advance-release",
+        "reference_period": "2022",
+        "release_type": "annual"
+      },
+      {
+        "key": "mom-2023-1130-labour-force-in-singapore-advance-release-2023",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2023/1130-labour-force-in-singapore-advance-release-2023",
+        "reference_period": "2023",
+        "release_type": "annual"
+      },
+      {
+        "key": "mom-2024-1128-labour-force-in-singapore-advance-release-2024",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2024/1128-labour-force-in-singapore-advance-release-2024",
+        "reference_period": "2024",
+        "release_type": "annual"
+      },
+      {
+        "key": "mom-2025-1128-labour-force-in-singapore-advance-release-2025",
+        "url": "https://www.mom.gov.sg/newsroom/press-releases/2025/1128-labour-force-in-singapore-advance-release-2025",
+        "reference_period": "2025",
+        "release_type": "annual"
+      }
+    ],
+    "unresolved": [
+      {
+        "reference_period": "3Q22",
+        "release_type": "advance",
+        "reason": "Not listed in MOM newsroom sitemap"
+      },
+      {
+        "reference_period": "3Q24",
+        "release_type": "report",
+        "reason": "Not listed in MOM newsroom sitemap"
+      },
+      {
+        "reference_period": "1Q26",
+        "release_type": "report",
+        "reason": "Not listed in MOM newsroom sitemap"
+      }
+    ]
+  },
+  "removed_sources": {
+    "worldbank": "ILO-modelled estimates use a different definition from MOM's and are not a PRD source; dropping avoids accidental citation as MOM figures."
+  },
+  "gaps_documented": {
+    "employment_change": "Not published as a data.gov.sg dataset. Sourced from MOM report/advance-release text only; stat cards extracted in Step 2 and flagged source_type=report_text.",
+    "industry_breakdowns": "Quarterly industry breakdown available for job vacancies and retrenchments only."
+  }
+}
