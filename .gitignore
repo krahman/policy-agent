@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# Downloaded third-party data: re-fetch with `ra fetch` (see docs/datasheet.md).
+# MOM web content is "all rights reserved" (fair dealing for research only), so it is not redistributed.
+data/raw/
+data/interim/
+data/processed/
+
+# IDE
+.idea/
+.DS_Store
