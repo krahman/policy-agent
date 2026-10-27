@@ -1,0 +1,10 @@
+config_id: E0
+description: B0 baseline retrieval quality. BM25 over structure-aware chunks (C2), no LLM, retrieval dataset only.
+hypothesis: H1 floor (R1 = BM25 appears again as E1 in Step 5)
+dataset: policy-retrieval-v1
+split: dev
+target: b0
+params: {k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 4

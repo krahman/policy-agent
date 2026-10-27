@@ -1,0 +1,10 @@
+config_id: B0
+description: BM25 passages returned verbatim as the answer, no LLM and no abstention. End-to-end floor.
+hypothesis: Floor for 'is the LLM adding value?'
+dataset: policy-eval-v1
+split: dev
+target: b0
+params: {k: 10}
+evaluators: answer
+repetitions: 1
+max_concurrency: 4

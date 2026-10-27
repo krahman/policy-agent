@@ -97,6 +97,17 @@ Round 2 reopened C03 and M06 on one substantive point: the corpus tagged annual 
 
 Changed cases were unticked in `REVIEW.md` and marked "Changed after your review"; unchanged cases kept their ticks and notes (`make review-sheet` does this). The cases still needing a domain-aware second look are C01 to C04, M03, M06, A01, A02 and U02 to U04.
 
+## Open items (revisit before the final report, Step 10)
+
+| # | Item | Why it is open | Who / when |
+|---|---|---|---|
+| 1 | **Optional human second look at the definition-sensitive cases:** C01 to C04, M03, M06, A01, A02, U02 to U04 | Round 2 was an AI-assisted source review, not a person with labour-market knowledge. The PRD asks for human review and names a second reviewer as an open question (§18, question 4). The reviewer needs only the quoted evidence and MOM's explainer in the corpus. | Project owner or a colleague, before the `test` run (Step 10) |
+| 2 | Re-tick the five cases changed after round 2: C02, C03, F03, M03, M06 | Their text changed after the reviewer saw it; `REVIEW.md` marks them "Changed after your review" | Project owner, any time before Step 10 |
+| 3 | Verify how MOM computes annual averages (seasonally adjusted or not) | The corpus tags annual rates `unspecified`. An external review says MOM now uses SA inputs where available; this was not verified. If confirmed from an authoritative source, add it to the corpus, then update the tag and the F03, M06 and C03 wording. | Whoever has access to the MOM methodology pages |
+| 4 | Calibrate the LLM judges for the matching rules above | The deterministic evaluators are implemented (`src/policy_agent/eval/evaluators.py`, Step 4). Prose terms in `must_contain`, `must_not_endorse`, groundedness and conflict framing still need judges, which must be checked against human labels (PRD §11.3) | Step 6 |
+
+Rule while these are open: do not edit a `test` case after seeing any system result on it. Changes found later are recorded here and in `review_history/`, and affected experiments are re-run.
+
 ## Limitations you should know about
 
 1. **Authored with AI assistance, not yet human-reviewed.** The `author` field says so. The PRD requires manual review of synthetic cases and, if an LLM drafts them, a different model family from the one evaluated. These cases were drafted by Claude, and the planned candidates are also Claude models, so there is a familiarity risk. Before the final test run, a person should read all 36 questions and gold answers; the judge should come from another provider (PRD §8.1).

@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines pricing
 
 sync:
 	uv sync --frozen
@@ -42,3 +42,14 @@ sync-datasets:
 # Human review sheet for the evaluation cases (refuses to overwrite ticked boxes; --force to override)
 review-sheet:
 	uv run python -m policy_agent.eval.review --update
+
+# Step 4: baselines on the dev split (results go to LangSmith and eval/results/). Needs OPENROUTER and LANGSMITH keys.
+baselines:
+	uv run python scripts/run_experiment.py E0
+	uv run python scripts/run_experiment.py B0
+	uv run python scripts/run_experiment.py B2
+	uv run python scripts/run_experiment.py B1
+
+# Refresh config/pricing.yaml from OpenRouter (records the date)
+pricing:
+	uv run python scripts/fetch_pricing.py anthropic/claude-haiku-5.5 anthropic/claude-sonnet-5.5 --embeddings openai/text-embedding-3-small voyageai/voyage-4

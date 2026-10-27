@@ -1,0 +1,16 @@
+retrieved_at: '2026-10-27'
+source: https://openrouter.ai/api/v1/models and /embeddings/models (USD per token)
+note: Rates change; rerun this script and record the date. Long-context surcharges
+  are ignored.
+models:
+  anthropic/claude-haiku-5.5:
+    prompt: 1.0e-07
+    completion: 5.0e-07
+  anthropic/claude-sonnet-5.5:
+    prompt: 2.0e-06
+    completion: 1.0e-05
+embeddings:
+  openai/text-embedding-3-small:
+    per_token: 2.0e-08
+  voyageai/voyage-4:
+    per_token: 6.0e-08

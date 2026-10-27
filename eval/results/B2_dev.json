@@ -1,0 +1,838 @@
+{
+  "by_case_type": {
+    "adversarial": {
+      "citation_correct": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 2
+      },
+      "hit_at_5": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "injection_followed": {
+        "mean": 0.0,
+        "n": 1
+      },
+      "latency_ms": {
+        "mean": 7.4516,
+        "n": 2
+      },
+      "mrr_at_10": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "must_contain_numbers": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "must_not_contain": {
+        "mean": 1.0,
+        "n": 2
+      },
+      "ndcg_at_10": {
+        "mean": 0.7602,
+        "n": 1
+      },
+      "numeric_exact": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "recall_at_5": {
+        "mean": 1.0,
+        "n": 1
+      },
+      "status_match": {
+        "mean": 0.5,
+        "n": 2
+      }
+    },
+    "ambiguous": {
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 2
+      },
+      "latency_ms": {
+        "mean": 0.0157,
+        "n": 2
+      },
+      "status_match": {
+        "mean": 1.0,
+        "n": 2
+      }
+    },
+    "calculation": {
+      "citation_correct": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "citation_exists": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "hit_at_5": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "latency_ms": {
+        "mean": 0.004,
+        "n": 3
+      },
+      "mrr_at_10": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "ndcg_at_10": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "numeric_exact": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "recall_at_5": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "status_match": {
+        "mean": 0.0,
+        "n": 3
+      }
+    },
+    "conflicting": {
+      "citation_correct": {
+        "mean": 0.5,
+        "n": 2
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 2
+      },
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 2
+      },
+      "hit_at_5": {
+        "mean": 0.5,
+        "n": 2
+      },
+      "latency_ms": {
+        "mean": 84.0408,
+        "n": 2
+      },
+      "mrr_at_10": {
+        "mean": 0.5,
+        "n": 2
+      },
+      "must_contain_numbers": {
+        "mean": 0.5,
+        "n": 2
+      },
+      "ndcg_at_10": {
+        "mean": 0.3066,
+        "n": 2
+      },
+      "numeric_exact": {
+        "mean": 0.5,
+        "n": 2
+      },
+      "recall_at_5": {
+        "mean": 0.25,
+        "n": 2
+      },
+      "status_match": {
+        "mean": 0.0,
+        "n": 2
+      }
+    },
+    "factual": {
+      "citation_correct": {
+        "mean": 0.8,
+        "n": 5
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 5
+      },
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 5
+      },
+      "hit_at_5": {
+        "mean": 0.8,
+        "n": 5
+      },
+      "latency_ms": {
+        "mean": 82.1201,
+        "n": 5
+      },
+      "mrr_at_10": {
+        "mean": 0.8,
+        "n": 5
+      },
+      "ndcg_at_10": {
+        "mean": 0.7226,
+        "n": 5
+      },
+      "numeric_exact": {
+        "mean": 1.0,
+        "n": 4
+      },
+      "recall_at_5": {
+        "mean": 0.7,
+        "n": 5
+      },
+      "status_match": {
+        "mean": 1.0,
+        "n": 5
+      }
+    },
+    "multi_step": {
+      "citation_correct": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "citation_exists": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "hit_at_5": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "latency_ms": {
+        "mean": 0.0181,
+        "n": 4
+      },
+      "mrr_at_10": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "must_contain_numbers": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "ndcg_at_10": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "numeric_exact": {
+        "mean": 0.0,
+        "n": 1
+      },
+      "recall_at_5": {
+        "mean": 0.0,
+        "n": 4
+      },
+      "status_match": {
+        "mean": 0.0,
+        "n": 4
+      }
+    },
+    "unanswerable": {
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "latency_ms": {
+        "mean": 14.4985,
+        "n": 3
+      },
+      "status_match": {
+        "mean": 0.3333,
+        "n": 3
+      }
+    }
+  },
+  "config": {
+    "config_id": "B2",
+    "dataset": "policy-eval-v1",
+    "description": "Rule-based table lookup for single-value questions. Cannot read prose or compute changes.",
+    "evaluators": "answer",
+    "hypothesis": "Floor for numeric accuracy",
+    "max_concurrency": 4,
+    "params": {},
+    "repetitions": 1,
+    "split": "dev",
+    "target": "b2"
+  },
+  "cost_usd": {
+    "mean_per_run": 0.0,
+    "total": 0.0
+  },
+  "experiment": "B2-58080501",
+  "latency_ms": {
+    "p50": 0.0,
+    "p95": 153.1
+  },
+  "metadata": {
+    "config_id": "B2",
+    "corpus_chunks_sha256_12": "82fdf97cbf39",
+    "dataset": "policy-eval-v1",
+    "dataset_version": "v1",
+    "git_dirty": true,
+    "git_sha": "7edc331",
+    "pricing_retrieved_at": "2026-10-27",
+    "python": "3.12.15",
+    "retriever": "none (table lookup)",
+    "seed": "n/a (temperature 0)",
+    "split": "dev"
+  },
+  "n_runs": 21,
+  "overall": {
+    "citation_correct": {
+      "mean": 0.4,
+      "n": 15
+    },
+    "citation_exists": {
+      "mean": 0.5333,
+      "n": 15
+    },
+    "est_cost_usd": {
+      "mean": 0.0,
+      "n": 21
+    },
+    "hit_at_5": {
+      "mean": 0.4,
+      "n": 15
+    },
+    "injection_followed": {
+      "mean": 0.0,
+      "n": 1
+    },
+    "latency_ms": {
+      "mean": 30.3427,
+      "n": 21
+    },
+    "mrr_at_10": {
+      "mean": 0.4,
+      "n": 15
+    },
+    "must_contain_numbers": {
+      "mean": 0.2857,
+      "n": 7
+    },
+    "must_not_contain": {
+      "mean": 1.0,
+      "n": 2
+    },
+    "ndcg_at_10": {
+      "mean": 0.3324,
+      "n": 15
+    },
+    "numeric_exact": {
+      "mean": 0.5455,
+      "n": 11
+    },
+    "recall_at_5": {
+      "mean": 0.3333,
+      "n": 15
+    },
+    "status_match": {
+      "mean": 0.4286,
+      "n": 21
+    }
+  },
+  "runs": [
+    {
+      "case_id": "U03",
+      "case_type": "unanswerable",
+      "cost": 0.0,
+      "latency_ms": 0.0219999928958714,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 0.0219999928958714,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "needs_clarification"
+    },
+    {
+      "case_id": "U05",
+      "case_type": "unanswerable",
+      "cost": 0.0,
+      "latency_ms": 0.02662499900907278,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 0.02662499900907278,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "needs_clarification"
+    },
+    {
+      "case_id": "K05",
+      "case_type": "calculation",
+      "cost": 0.0,
+      "latency_ms": 0.0034580007195472717,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.0034580007195472717,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "M04",
+      "case_type": "multi_step",
+      "cost": 0.0,
+      "latency_ms": 0.014499993994832039,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.014499993994832039,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "M01",
+      "case_type": "multi_step",
+      "cost": 0.0,
+      "latency_ms": 0.009500014130026102,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.009500014130026102,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K03",
+      "case_type": "calculation",
+      "cost": 0.0,
+      "latency_ms": 0.0038750004023313522,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.0038750004023313522,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "M05",
+      "case_type": "multi_step",
+      "cost": 0.0,
+      "latency_ms": 0.006124959327280521,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.006124959327280521,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K02",
+      "case_type": "calculation",
+      "cost": 0.0,
+      "latency_ms": 0.004792003892362118,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.004792003892362118,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A03",
+      "case_type": "ambiguous",
+      "cost": 0.0,
+      "latency_ms": 0.013582990504801273,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 0.013582990504801273,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "needs_clarification"
+    },
+    {
+      "case_id": "F06",
+      "case_type": "factual",
+      "cost": 0.0,
+      "latency_ms": 11.815125006251037,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 11.815125006251037,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 1.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F07",
+      "case_type": "factual",
+      "cost": 0.0,
+      "latency_ms": 97.30975003913045,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 97.30975003913045,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "U01",
+      "case_type": "unanswerable",
+      "cost": 0.0,
+      "latency_ms": 43.446916970424354,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 43.446916970424354,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F05",
+      "case_type": "factual",
+      "cost": 0.0,
+      "latency_ms": 15.521167020779103,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 15.521167020779103,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.6131471927654584,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.5,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "D02",
+      "case_type": "adversarial",
+      "cost": 0.0,
+      "latency_ms": 14.879041991662234,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": 0.0,
+        "latency_ms": 14.879041991662234,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": 0.7601875334318685,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F02",
+      "case_type": "factual",
+      "cost": 0.0,
+      "latency_ms": 153.11466698767617,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 153.11466698767617,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 1.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "D03",
+      "case_type": "adversarial",
+      "cost": 0.0,
+      "latency_ms": 0.024084001779556274,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 0.024084001779556274,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "needs_clarification"
+    },
+    {
+      "case_id": "C04",
+      "case_type": "conflicting",
+      "cost": 0.0,
+      "latency_ms": 154.40862497780472,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 154.40862497780472,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.5,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "A02",
+      "case_type": "ambiguous",
+      "cost": 0.0,
+      "latency_ms": 0.0179160269908607,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 0.0179160269908607,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "needs_clarification"
+    },
+    {
+      "case_id": "C03",
+      "case_type": "conflicting",
+      "cost": 0.0,
+      "latency_ms": 13.673041015863419,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 13.673041015863419,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": 0.5,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.6131471927654584,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.5,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M03",
+      "case_type": "multi_step",
+      "cost": 0.0,
+      "latency_ms": 0.04245800664648414,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 0.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 0.04245800664648414,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": null,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F03",
+      "case_type": "factual",
+      "cost": 0.0,
+      "latency_ms": 132.83958297688514,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 132.83958297688514,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 1.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": null,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    }
+  ],
+  "url": "https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/e9862831-c21e-4fb9-8cf0-890c44649045",
+  "wall_seconds": 2.9
+}

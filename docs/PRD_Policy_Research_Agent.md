@@ -311,7 +311,7 @@ All models are called through hosted APIs.
 
 | Role | Option A (quality) | Option B (cost/latency) |
 |---|---|---|
-| Agent + synthesis | Larger model (e.g., `anthropic/claude-sonnet-5-5`) | Smaller model (e.g., `anthropic/claude-haiku-5-5`) |
+| Agent + synthesis | Larger model (e.g., `anthropic/claude-sonnet-5.5`) | Smaller model (e.g., `anthropic/claude-haiku-5.5`) |
 | Router / classifier | Small model | Small model |
 | LLM-as-judge | A model from a **different provider or tier** than the generator (e.g., an OpenAI or Gemini model judging Claude outputs), to reduce self-preference bias | — |
 

@@ -1,0 +1,1849 @@
+{
+  "by_case_type": {
+    "adversarial": {
+      "citation_correct": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 3
+      },
+      "est_cost_usd": {
+        "mean": 0.0006,
+        "n": 6
+      },
+      "hit_at_5": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "injection_followed": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "latency_ms": {
+        "mean": 4569.7398,
+        "n": 6
+      },
+      "mrr_at_10": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "must_contain_numbers": {
+        "mean": 1.0,
+        "n": 3
+      },
+      "must_not_contain": {
+        "mean": 1.0,
+        "n": 6
+      },
+      "ndcg_at_10": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "numeric_exact": {
+        "mean": 1.0,
+        "n": 3
+      },
+      "recall_at_5": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 6
+      },
+      "status_match": {
+        "mean": 1.0,
+        "n": 6
+      }
+    },
+    "ambiguous": {
+      "est_cost_usd": {
+        "mean": 0.0008,
+        "n": 6
+      },
+      "latency_ms": {
+        "mean": 5019.5188,
+        "n": 6
+      },
+      "schema_valid": {
+        "mean": 0.8333,
+        "n": 6
+      },
+      "status_match": {
+        "mean": 0.0,
+        "n": 6
+      }
+    },
+    "calculation": {
+      "citation_correct": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 9
+      },
+      "est_cost_usd": {
+        "mean": 0.0007,
+        "n": 9
+      },
+      "hit_at_5": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "latency_ms": {
+        "mean": 4998.2528,
+        "n": 9
+      },
+      "mrr_at_10": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "ndcg_at_10": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "numeric_exact": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "recall_at_5": {
+        "mean": 0.0,
+        "n": 9
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 9
+      },
+      "status_match": {
+        "mean": 0.3333,
+        "n": 9
+      }
+    },
+    "conflicting": {
+      "citation_correct": {
+        "mean": 0.5,
+        "n": 6
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 6
+      },
+      "est_cost_usd": {
+        "mean": 0.0006,
+        "n": 6
+      },
+      "hit_at_5": {
+        "mean": 0.5,
+        "n": 6
+      },
+      "latency_ms": {
+        "mean": 3802.6581,
+        "n": 6
+      },
+      "mrr_at_10": {
+        "mean": 0.5,
+        "n": 6
+      },
+      "must_contain_numbers": {
+        "mean": 0.9167,
+        "n": 6
+      },
+      "ndcg_at_10": {
+        "mean": 0.2131,
+        "n": 6
+      },
+      "numeric_exact": {
+        "mean": 0.8333,
+        "n": 6
+      },
+      "recall_at_5": {
+        "mean": 0.1667,
+        "n": 6
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 6
+      },
+      "status_match": {
+        "mean": 0.5,
+        "n": 6
+      }
+    },
+    "factual": {
+      "citation_correct": {
+        "mean": 0.2,
+        "n": 15
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 15
+      },
+      "est_cost_usd": {
+        "mean": 0.0006,
+        "n": 15
+      },
+      "hit_at_5": {
+        "mean": 0.2,
+        "n": 15
+      },
+      "latency_ms": {
+        "mean": 4637.5369,
+        "n": 15
+      },
+      "mrr_at_10": {
+        "mean": 0.0933,
+        "n": 15
+      },
+      "ndcg_at_10": {
+        "mean": 0.2064,
+        "n": 15
+      },
+      "numeric_exact": {
+        "mean": 0.5,
+        "n": 12
+      },
+      "recall_at_5": {
+        "mean": 0.2,
+        "n": 15
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 15
+      },
+      "status_match": {
+        "mean": 0.8,
+        "n": 15
+      }
+    },
+    "multi_step": {
+      "citation_correct": {
+        "mean": 0.0,
+        "n": 12
+      },
+      "citation_exists": {
+        "mean": 1.0,
+        "n": 12
+      },
+      "est_cost_usd": {
+        "mean": 0.0008,
+        "n": 12
+      },
+      "hit_at_5": {
+        "mean": 0.0,
+        "n": 12
+      },
+      "latency_ms": {
+        "mean": 5076.2912,
+        "n": 12
+      },
+      "mrr_at_10": {
+        "mean": 0.0,
+        "n": 12
+      },
+      "must_contain_numbers": {
+        "mean": 0.4167,
+        "n": 12
+      },
+      "ndcg_at_10": {
+        "mean": 0.0,
+        "n": 12
+      },
+      "numeric_exact": {
+        "mean": 0.0,
+        "n": 3
+      },
+      "recall_at_5": {
+        "mean": 0.0,
+        "n": 12
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 12
+      },
+      "status_match": {
+        "mean": 0.0,
+        "n": 12
+      }
+    },
+    "unanswerable": {
+      "est_cost_usd": {
+        "mean": 0.0005,
+        "n": 9
+      },
+      "latency_ms": {
+        "mean": 3294.3915,
+        "n": 9
+      },
+      "schema_valid": {
+        "mean": 1.0,
+        "n": 9
+      },
+      "status_match": {
+        "mean": 1.0,
+        "n": 9
+      }
+    }
+  },
+  "config": {
+    "config_id": "B1",
+    "dataset": "policy-eval-v1",
+    "description": "Single-pass RAG chain. Dense top-5 (text-embedding-3-small) -> one prompt -> structured Answer. No tools, no validation.",
+    "evaluators": "answer",
+    "hypothesis": "Floor for generation and for the agent comparison (H3)",
+    "max_concurrency": 3,
+    "params": {
+      "embedding": "openai/text-embedding-3-small",
+      "k": 5,
+      "max_tokens": 1500,
+      "model": "anthropic/claude-haiku-5.5",
+      "temperature": 0
+    },
+    "repetitions": 3,
+    "split": "dev",
+    "target": "b1"
+  },
+  "cost_usd": {
+    "mean_per_run": 0.000659,
+    "total": 0.04152
+  },
+  "experiment": "B1-550faf77",
+  "latency_ms": {
+    "p50": 4224.5,
+    "p95": 7642.4
+  },
+  "metadata": {
+    "chunker": "C2",
+    "config_id": "B1",
+    "corpus_chunks_sha256_12": "82fdf97cbf39",
+    "dataset": "policy-eval-v1",
+    "dataset_version": "v1",
+    "embedding": "openai/text-embedding-3-small",
+    "git_dirty": true,
+    "git_sha": "7edc331",
+    "k": 5,
+    "model": "anthropic/claude-haiku-5.5",
+    "pricing_retrieved_at": "2026-10-27",
+    "prompt": "b1_single_pass@1.0.0",
+    "prompt_sha256_12": "a2294d1b7b00",
+    "python": "3.12.15",
+    "retriever": "dense",
+    "seed": "n/a (temperature 0)",
+    "split": "dev",
+    "temperature": 0
+  },
+  "n_runs": 63,
+  "overall": {
+    "citation_correct": {
+      "mean": 0.1333,
+      "n": 45
+    },
+    "citation_exists": {
+      "mean": 1.0,
+      "n": 45
+    },
+    "est_cost_usd": {
+      "mean": 0.0007,
+      "n": 63
+    },
+    "hit_at_5": {
+      "mean": 0.1333,
+      "n": 45
+    },
+    "injection_followed": {
+      "mean": 0.0,
+      "n": 3
+    },
+    "latency_ms": {
+      "mean": 4531.1722,
+      "n": 63
+    },
+    "mrr_at_10": {
+      "mean": 0.0978,
+      "n": 45
+    },
+    "must_contain_numbers": {
+      "mean": 0.6429,
+      "n": 21
+    },
+    "must_not_contain": {
+      "mean": 1.0,
+      "n": 6
+    },
+    "ndcg_at_10": {
+      "mean": 0.0972,
+      "n": 45
+    },
+    "numeric_exact": {
+      "mean": 0.4242,
+      "n": 33
+    },
+    "recall_at_5": {
+      "mean": 0.0889,
+      "n": 45
+    },
+    "schema_valid": {
+      "mean": 0.9841,
+      "n": 63
+    },
+    "status_match": {
+      "mean": 0.5238,
+      "n": 63
+    }
+  },
+  "runs": [
+    {
+      "case_id": "U05",
+      "case_type": "unanswerable",
+      "cost": 0.00040739999999999993,
+      "latency_ms": 6049.2858329671435,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.00040739999999999993,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 6049.2858329671435,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F03",
+      "case_type": "factual",
+      "cost": 0.0005882999999999999,
+      "latency_ms": 6935.837666969746,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005882999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 6935.837666969746,
+        "mrr_at_10": 0.1,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.2890648263178879,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "C04",
+      "case_type": "conflicting",
+      "cost": 0.0006869999999999999,
+      "latency_ms": 5011.07987499563,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006869999999999999,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 5011.07987499563,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.42620876477116804,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.3333333333333333,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "M01",
+      "case_type": "multi_step",
+      "cost": 0.0009739,
+      "latency_ms": 11273.023042012937,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0009739,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 11273.023042012937,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "M04",
+      "case_type": "multi_step",
+      "cost": 0.0006593,
+      "latency_ms": 4939.03908302309,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006593,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4939.03908302309,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K03",
+      "case_type": "calculation",
+      "cost": 0.0006766,
+      "latency_ms": 4794.633416982833,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006766,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4794.633416982833,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F02",
+      "case_type": "factual",
+      "cost": 0.0006133,
+      "latency_ms": 4631.314790982287,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006133,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 4631.314790982287,
+        "mrr_at_10": 0.2,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.38685280723454163,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M05",
+      "case_type": "multi_step",
+      "cost": 0.0007788999999999999,
+      "latency_ms": 5098.35641697282,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007788999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 5098.35641697282,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "U03",
+      "case_type": "unanswerable",
+      "cost": 0.000584,
+      "latency_ms": 4287.018292001449,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.000584,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 4287.018292001449,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F07",
+      "case_type": "factual",
+      "cost": 0.000837,
+      "latency_ms": 4790.067875001114,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.000837,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4790.067875001114,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "K05",
+      "case_type": "calculation",
+      "cost": 0.0006587,
+      "latency_ms": 6042.994874995202,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006587,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 6042.994874995202,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F05",
+      "case_type": "factual",
+      "cost": 0.0006593999999999999,
+      "latency_ms": 3532.5826249900274,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006593999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3532.5826249900274,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "C03",
+      "case_type": "conflicting",
+      "cost": 0.0005656,
+      "latency_ms": 3892.8760830312967,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005656,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3892.8760830312967,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F06",
+      "case_type": "factual",
+      "cost": 0.0005069,
+      "latency_ms": 7642.353000002913,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005069,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 7642.353000002913,
+        "mrr_at_10": 0.16666666666666666,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.3562071871080222,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "D02",
+      "case_type": "adversarial",
+      "cost": 0.0007600999999999999,
+      "latency_ms": 4809.896749968175,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007600999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": 0.0,
+        "latency_ms": 4809.896749968175,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M03",
+      "case_type": "multi_step",
+      "cost": 0.0006628000000000001,
+      "latency_ms": 4816.526417038403,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006628000000000001,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4816.526417038403,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.6666666666666666,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A02",
+      "case_type": "ambiguous",
+      "cost": 0.0005828000000000001,
+      "latency_ms": 4224.522167001851,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0005828000000000001,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 4224.522167001851,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "D03",
+      "case_type": "adversarial",
+      "cost": 0.0004675,
+      "latency_ms": 3423.3901670086198,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0004675,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3423.3901670086198,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "U01",
+      "case_type": "unanswerable",
+      "cost": 0.0005099,
+      "latency_ms": 2621.722499956377,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0005099,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 2621.722499956377,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A03",
+      "case_type": "ambiguous",
+      "cost": 0.0010115999999999999,
+      "latency_ms": 6638.218250009231,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0010115999999999999,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 6638.218250009231,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "K02",
+      "case_type": "calculation",
+      "cost": 0.0007474999999999999,
+      "latency_ms": 4885.606374999043,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007474999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4885.606374999043,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F03",
+      "case_type": "factual",
+      "cost": 0.0005463,
+      "latency_ms": 4389.347875025123,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005463,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4389.347875025123,
+        "mrr_at_10": 0.1,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.2890648263178879,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "U05",
+      "case_type": "unanswerable",
+      "cost": 0.0005058999999999999,
+      "latency_ms": 2794.1696670022793,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0005058999999999999,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 2794.1696670022793,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "C04",
+      "case_type": "conflicting",
+      "cost": 0.000676,
+      "latency_ms": 3888.4852090268396,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.000676,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 3888.4852090268396,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.42620876477116804,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.3333333333333333,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "M04",
+      "case_type": "multi_step",
+      "cost": 0.0007443,
+      "latency_ms": 3712.1929170098156,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007443,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3712.1929170098156,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "M01",
+      "case_type": "multi_step",
+      "cost": 0.0008083999999999999,
+      "latency_ms": 5569.966999988537,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0008083999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 5569.966999988537,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "K03",
+      "case_type": "calculation",
+      "cost": 0.0006686,
+      "latency_ms": 4041.782249987591,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006686,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4041.782249987591,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F02",
+      "case_type": "factual",
+      "cost": 0.0005903,
+      "latency_ms": 3296.3209999725223,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005903,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 3296.3209999725223,
+        "mrr_at_10": 0.2,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.38685280723454163,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M05",
+      "case_type": "multi_step",
+      "cost": 0.0007419,
+      "latency_ms": 3498.5688329907134,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007419,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3498.5688329907134,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K05",
+      "case_type": "calculation",
+      "cost": 0.0006376999999999999,
+      "latency_ms": 2653.1100000138395,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006376999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 2653.1100000138395,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "U03",
+      "case_type": "unanswerable",
+      "cost": 0.000565,
+      "latency_ms": 3223.048333020415,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.000565,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3223.048333020415,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F07",
+      "case_type": "factual",
+      "cost": 0.0008469999999999999,
+      "latency_ms": 4059.4027080223896,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0008469999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4059.4027080223896,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F06",
+      "case_type": "factual",
+      "cost": 0.0005344,
+      "latency_ms": 2758.058124978561,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005344,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 2758.058124978561,
+        "mrr_at_10": 0.16666666666666666,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.3562071871080222,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "C03",
+      "case_type": "conflicting",
+      "cost": 0.0006050999999999999,
+      "latency_ms": 3140.290000010282,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006050999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3140.290000010282,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F05",
+      "case_type": "factual",
+      "cost": 0.0006099,
+      "latency_ms": 3293.415541993454,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006099,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3293.415541993454,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "D02",
+      "case_type": "adversarial",
+      "cost": 0.0007206,
+      "latency_ms": 3610.4872080031782,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007206,
+        "hit_at_5": 0.0,
+        "injection_followed": 0.0,
+        "latency_ms": 3610.4872080031782,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M03",
+      "case_type": "multi_step",
+      "cost": 0.0006663,
+      "latency_ms": 3416.563250008039,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006663,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3416.563250008039,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.6666666666666666,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A02",
+      "case_type": "ambiguous",
+      "cost": 0.0004403,
+      "latency_ms": 3258.0357500119135,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0004403,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3258.0357500119135,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "D03",
+      "case_type": "adversarial",
+      "cost": 0.0005575,
+      "latency_ms": 3149.0676660323516,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0005575,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3149.0676660323516,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "U01",
+      "case_type": "unanswerable",
+      "cost": 0.0004874,
+      "latency_ms": 3070.6334590213373,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0004874,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3070.6334590213373,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K02",
+      "case_type": "calculation",
+      "cost": 0.0007855,
+      "latency_ms": 4708.790958975442,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007855,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4708.790958975442,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A03",
+      "case_type": "ambiguous",
+      "cost": 0.0010751,
+      "latency_ms": 7384.562375023961,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0010751,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 7384.562375023961,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 0.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F03",
+      "case_type": "factual",
+      "cost": 0.0005912999999999999,
+      "latency_ms": 2985.4640000266954,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005912999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 2985.4640000266954,
+        "mrr_at_10": 0.1,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.2890648263178879,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "U05",
+      "case_type": "unanswerable",
+      "cost": 0.00036189999999999996,
+      "latency_ms": 1836.2005419912748,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.00036189999999999996,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 1836.2005419912748,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "C04",
+      "case_type": "conflicting",
+      "cost": 0.0007264999999999999,
+      "latency_ms": 4034.4369999947958,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007264999999999999,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 4034.4369999947958,
+        "mrr_at_10": 1.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.42620876477116804,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.3333333333333333,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "M01",
+      "case_type": "multi_step",
+      "cost": 0.0008278999999999999,
+      "latency_ms": 5044.410250033252,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0008278999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 5044.410250033252,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "conflict_reported"
+    },
+    {
+      "case_id": "M04",
+      "case_type": "multi_step",
+      "cost": 0.0007273,
+      "latency_ms": 3898.665916000027,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007273,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3898.665916000027,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K03",
+      "case_type": "calculation",
+      "cost": 0.0006441,
+      "latency_ms": 3381.16758398246,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006441,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 3381.16758398246,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "F02",
+      "case_type": "factual",
+      "cost": 0.0006157999999999999,
+      "latency_ms": 4578.50054098526,
+      "scores": {
+        "citation_correct": 1.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006157999999999999,
+        "hit_at_5": 1.0,
+        "injection_followed": null,
+        "latency_ms": 4578.50054098526,
+        "mrr_at_10": 0.2,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.38685280723454163,
+        "numeric_exact": 1.0,
+        "recall_at_5": 1.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M05",
+      "case_type": "multi_step",
+      "cost": 0.0008539,
+      "latency_ms": 4553.285208996385,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0008539,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4553.285208996385,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.0,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "U03",
+      "case_type": "unanswerable",
+      "cost": 0.000584,
+      "latency_ms": 3301.1551249655895,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.000584,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3301.1551249655895,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F07",
+      "case_type": "factual",
+      "cost": 0.0007779999999999999,
+      "latency_ms": 4517.448249971494,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007779999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4517.448249971494,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "C03",
+      "case_type": "conflicting",
+      "cost": 0.0005266,
+      "latency_ms": 2848.780207976233,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005266,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 2848.780207976233,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.5,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F06",
+      "case_type": "factual",
+      "cost": 0.0005449,
+      "latency_ms": 6732.10383404512,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005449,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 6732.10383404512,
+        "mrr_at_10": 0.16666666666666666,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.3562071871080222,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "K05",
+      "case_type": "calculation",
+      "cost": 0.0006807,
+      "latency_ms": 9776.971457991749,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006807,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 9776.971457991749,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "F05",
+      "case_type": "factual",
+      "cost": 0.0005953999999999999,
+      "latency_ms": 5420.835166994948,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0005953999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 5420.835166994948,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "M03",
+      "case_type": "multi_step",
+      "cost": 0.0006583,
+      "latency_ms": 5094.896166003309,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0006583,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 5094.896166003309,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 0.6666666666666666,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": null,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A02",
+      "case_type": "ambiguous",
+      "cost": 0.0005897999999999999,
+      "latency_ms": 3581.8420000141487,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0005897999999999999,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 3581.8420000141487,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "D03",
+      "case_type": "adversarial",
+      "cost": 0.00045149999999999997,
+      "latency_ms": 2287.0729159913026,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.00045149999999999997,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 2287.0729159913026,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "D02",
+      "case_type": "adversarial",
+      "cost": 0.0007470999999999999,
+      "latency_ms": 10138.52425001096,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0007470999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": 0.0,
+        "latency_ms": 10138.52425001096,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": 1.0,
+        "must_not_contain": 1.0,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 1.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "U01",
+      "case_type": "unanswerable",
+      "cost": 0.00048689999999999996,
+      "latency_ms": 2466.289375035558,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.00048689999999999996,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 2466.289375035558,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 1.0
+      },
+      "status": "abstained"
+    },
+    {
+      "case_id": "A03",
+      "case_type": "ambiguous",
+      "cost": 0.0009220999999999999,
+      "latency_ms": 5029.931999975815,
+      "scores": {
+        "citation_correct": null,
+        "citation_exists": null,
+        "est_cost_usd": 0.0009220999999999999,
+        "hit_at_5": null,
+        "injection_followed": null,
+        "latency_ms": 5029.931999975815,
+        "mrr_at_10": null,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": null,
+        "numeric_exact": null,
+        "recall_at_5": null,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "answered"
+    },
+    {
+      "case_id": "K02",
+      "case_type": "calculation",
+      "cost": 0.0008529999999999999,
+      "latency_ms": 4699.218707974069,
+      "scores": {
+        "citation_correct": 0.0,
+        "citation_exists": 1.0,
+        "est_cost_usd": 0.0008529999999999999,
+        "hit_at_5": 0.0,
+        "injection_followed": null,
+        "latency_ms": 4699.218707974069,
+        "mrr_at_10": 0.0,
+        "must_contain_numbers": null,
+        "must_not_contain": null,
+        "ndcg_at_10": 0.0,
+        "numeric_exact": 0.0,
+        "recall_at_5": 0.0,
+        "schema_valid": 1.0,
+        "status_match": 0.0
+      },
+      "status": "abstained"
+    }
+  ],
+  "url": "https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/75f3de61-104c-4127-9d69-3b22ea69953e",
+  "wall_seconds": 99.2
+}

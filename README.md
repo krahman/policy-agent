@@ -11,8 +11,9 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 0 | Scaffold, tooling, traced hello-world | Done |
 | 1 | Corpus selection, provenance, synthetic memos, datasheet | Done |
 | 2 | Ingestion, cleaning, stat cards, DuckDB store, EDA | Done |
-| 3 | Evaluation set: 36 cases, retrieval labels, red-team set, leakage check, LangSmith datasets | Done (pending human review) |
-| 4 to 11 | Baselines, retrieval and model experiments, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
+| 3 | Evaluation set: 36 cases, retrieval labels, red-team set, leakage check, LangSmith datasets | Done (open review items in `eval/README.md`) |
+| 4 | Baselines: BM25 (B0/E0), single-pass RAG (B1), table lookup (B2), deterministic evaluators, experiment runner | Done; results in `docs/EVAL_REPORT.md` |
+| 5 to 11 | Retrieval and model experiments, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
 
 There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 
@@ -29,7 +30,7 @@ make test
 | Variable | Used for |
 |---|---|
 | `OPENROUTER_API_KEY` | All LLM calls, through OpenRouter's OpenAI-compatible API (`provider/model` slugs) |
-| `OPENROUTER_MODEL` | Optional default model slug (default `anthropic/claude-haiku-5-5`) |
+| `OPENROUTER_MODEL` | Optional default model slug (default `anthropic/claude-haiku-5.5`) |
 | `LANGSMITH_API_KEY`, `LANGSMITH_TRACING`, `LANGSMITH_PROJECT` | Tracing and experiments |
 
 `.env` is git-ignored. Check the keys with `make hello`, which makes one traced call (it appears in the LangSmith project `policy-agent-dev`).
@@ -70,8 +71,14 @@ notebooks/02_eda.ipynb        # exploratory analysis (executed)
 scripts/fetch_raw.py          # download and verify raw data
 scripts/make_eda_notebook.py  # regenerate the notebook
 scripts/sync_datasets.py      # upload evaluation datasets to LangSmith
+scripts/run_experiment.py     # run a config over a dataset split (LangSmith or --local)
 src/policy_agent/ingest/      # periods, structured loaders, schema, HTML parsing, chunking, stat cards, build
-src/policy_agent/eval/        # evaluation cases, corpus lookups, validation and leakage checks
+src/policy_agent/eval/        # evaluation cases, corpus lookups, validation and leakage checks, evaluators
+src/policy_agent/retrieval/   # BM25 and dense retrievers (role filter applied before ranking)
+src/policy_agent/baselines/   # B0, B1, B2
+src/policy_agent/generation/  # Answer schema
+prompts/                      # versioned prompts
+config/experiments/           # one YAML per experiment; config/pricing.yaml (model prices with date and source)
 eval/                         # evaluation datasets (JSONL) and their README
 src/policy_agent/llm.py       # OpenRouter chat-model factory
 tests/                        # pytest suite
@@ -88,6 +95,7 @@ tests/                        # pytest suite
 | `make hello` | one traced LLM call |
 | `make fetch`, `make ingest`, `make eda` | data pipeline, see above |
 | `make evalset`, `make check-eval`, `make sync-datasets` | build, validate and upload the evaluation set (see [`eval/README.md`](eval/README.md)) |
+| `make baselines`, `make pricing` | run E0/B0/B2/B1 on the dev split (LangSmith + `eval/results/`); refresh model prices from OpenRouter |
 
 Tests that need the raw data are skipped if `data/raw/` has not been fetched.
 
@@ -103,7 +111,7 @@ From the exploratory analysis (`notebooks/02_eda.ipynb`):
 
 ## Limitations
 
-- No retrieval, generation, agent or MCP components yet; nothing here answers questions.
+- Only baselines exist (BM25, a single-pass RAG chain, a table lookup); there is no hybrid retrieval, agent or MCP server yet, so nothing here is a finished question-answering system.
 - The 36 evaluation cases were drafted with AI assistance and are not yet human-reviewed; see [`eval/README.md`](eval/README.md).
 - Revision analysis covers 13 of 20 quarters, extracted by regex and checked by hand; treat it as directional.
 - MOM pages carry no HTML data tables, so annex tables are not available; numbers come from the data.gov.sg series or prose.

@@ -1,0 +1,10 @@
+config_id: B2
+description: Rule-based table lookup for single-value questions. Cannot read prose or compute changes.
+hypothesis: Floor for numeric accuracy
+dataset: policy-eval-v1
+split: dev
+target: b2
+params: {}
+evaluators: answer
+repetitions: 1
+max_concurrency: 4
