@@ -18,3 +18,7 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/raw/manifest.json
+
+# internal
+docs/*.pdf
+docs/DEMO_SCRIPT.md

@@ -20,7 +20,7 @@ from policy_agent.eval import checks
 from policy_agent.eval.models import EvalCase, RedteamCase, RetrievalCase
 from policy_agent.ingest.paths import PROCESSED
 
-VERSION = "v1.1"  # v1: original labels (eval/data/versions/v1); v1.1: F05 and K02 corrected on 2026-10-28
+VERSION = "v1.1"  # v1: original labels; v1.1: F05 and K02 corrected on 2026-10-28 (see eval/LABEL_CHANGES.md)
 NAMESPACE = uuid.UUID("6f1c3e0a-5b0e-4d7c-9a41-0c2e6f1d8b77")  # fixed: example ids are derived, not random
 
 

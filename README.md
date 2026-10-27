@@ -2,23 +2,25 @@
 
 An evidence-grounded research assistant for the **Singapore labour market**. It answers analytical questions about unemployment, retrenchments, job vacancies and related series from official MOM statistics and reports. Every answer carries a status (answered, abstained, needs clarification, conflict reported, refused), claims labelled as *source fact*, *statistical finding* or *model inference*, passage-level citations or tool-call references, and stated limitations. Arithmetic is done by deterministic tools. When the evidence is missing, ambiguous or in conflict, it says so instead of guessing.
 
-This is a prototype built for the GenAI Engineer Tech Challenge. The plan is [`docs/PRD_Policy_Research_Agent.md`](docs/PRD_Policy_Research_Agent.md); the task is [`docs/Tech Challenge - GenAI Engineer v1.0.pdf`](docs/Tech%20Challenge%20-%20GenAI%20Engineer%20v1.0.pdf).
+A prototype built for the GenAI Engineer Tech Challenge ([`docs/Tech Challenge - GenAI Engineer v1.0.pdf`](docs/Tech%20Challenge%20-%20GenAI%20Engineer%20v1.0.pdf)). The original plan is archived in [`docs/archive/`](docs/archive/PRD_Policy_Research_Agent.md).
 
 ## Results at a glance
 
-Held-out `test` split, 15 cases x 3 runs, frozen agent, run once (details and caveats in [`docs/EVAL_REPORT.md`](docs/EVAL_REPORT.md) section 8):
+Held-out `test` split, 15 cases x 3 runs, final agent ([`docs/EVAL_REPORT.md`](docs/EVAL_REPORT.md) sections 7 and 8):
 
 | | Result | PRD target |
 |---|---|---|
-| Groundedness (LLM judge, calibrated on 29 claims) | 0.95 | >= 0.90: met |
-| Citation correctness | 0.85 | >= 0.90: not met |
-| Numeric accuracy on calculation cases | 0.50 | >= 0.95: not met |
-| Retrieval Recall@5 / MRR@10 | 0.64 / 0.60 | 0.85 / 0.70: not met |
+| Groundedness (LLM judge, calibrated on 29 claims) | 0.99 | >= 0.90: met |
+| Citation correctness | 0.94 | >= 0.90: met |
+| Numeric accuracy on calculation cases | 1.00 | >= 0.95: met |
+| Abstain or clarify correctly (unanswerable, ambiguous) | 1.00 | >= 0.85: met |
+| False abstention on answerable cases | 0.09 | <= 0.10: met |
 | Injections followed (red team, 36 runs) | 0 | 0: met |
-| Latency p50 / p95 | 10.3 s / 27.1 s | 8 s / 20 s: not met |
+| Retrieval Recall@5 / MRR@10 | 0.64 / 0.60 | 0.85 / 0.70: **not met** |
+| Latency p50 / p95 | 10.0 s / 24.4 s | 8 s / 20 s: **not met** |
 | Cost per question | about $0.0025 | reported |
 
-**Honest reading.** The system is safe on every attack tried and its answers are checkable (verbatim quotes, tool calls, validation rules), but it does not meet most accuracy targets on held-out data. The agent was **not shown to beat** the simpler fixed chain: with 15 test cases no difference is statistically significant. The main failure modes (the router refusing answerable questions, a skipped calculation, disputed conflict handling) and a fix plan are in section 8.4 to 8.5 of the report. The evaluation cases were drafted with AI help and have had no domain-expert review.
+**Honest reading.** Retrieval and latency miss their targets. The agent is ahead of the plain chain on numbers and citations, but with 15 test cases the difference is **suggestive, not statistically confirmed**. The test split was used three times (a first agent design, then the final design twice), and the final design was chosen from the first design's errors, so the numbers are optimistic. The evaluation cases were drafted with AI help and have had no domain-expert review.
 
 ## Quick start
 
@@ -42,7 +44,7 @@ cp .env.example .env     # fill in OPENROUTER_API_KEY (and LANGSMITH_* if you wa
 make reproduce
 ```
 
-On a fresh clone this installs the environment, downloads the public datasets, rebuilds the processed data, validates the evaluation set, runs lint and the whole test suite, runs the MCP protocol demo, and regenerates every table in the evaluation report from the committed result files. It needs network access once (to download the public data) and **no API key and no spend**.
+On a fresh clone this installs the environment, downloads the public datasets, rebuilds the processed data, validates the evaluation set, runs lint and the test suite, runs the MCP protocol demo, and regenerates every table in the evaluation report from the committed result files. It needs network access once (to download the public data) and **no API key and no spend**.
 
 ### Live runs (need `OPENROUTER_API_KEY`, spend credit)
 
@@ -50,11 +52,12 @@ The first question builds the dense index (embeddings for about 2,400 chunks, a 
 
 | Command | Does | Rough cost |
 |---|---|---|
-| `uv run python -m policy_agent.cli "<question>" --verbose` | Ask one question | $0.0025 |
-| `make agent-demo` | The 10 demo scenarios from the PRD, with pass/fail checks | about $0.05 |
+| `uv run python -m policy_agent.cli "<question>" --verbose` | Ask one question (`--no-upload` keeps it out of LangSmith) | $0.0025 |
+| `make agent-demo` | The 10 demo scenarios from the task, with pass/fail checks | about $0.05 |
 | `make redteam` | 12 red-team cases x 3 runs, plus the offline guardrail tests | about $0.15 |
-| `make agent` | Agent experiment E7 on the dev split and its comparison tables | about $0.20 |
-| `make final` | Frozen-configuration test run (use only once per frozen configuration) | about $0.60 |
+| `make agent` | The router agent (E7) and the final agent (E8) on the dev split | about $0.35 |
+| `make generation` | The model comparison: chain with Haiku (E6) and Sonnet (E5) | about $2.0 (Sonnet is most of it) |
+| `make final` | The held-out test split. **Use sparingly: the split has already been used three times** | about $0.4 |
 
 ## Sample queries
 
@@ -85,16 +88,15 @@ $Q "What was the percentage change in job vacancies between 2Q 2022 and 2Q 2026?
 | `--fault mcp_timeout` | The statistics server is slow; the agent retries, then answers from text evidence and says so in its limitations |
 | `--save-report` | Renders a Markdown brief and **asks before writing** it to `reports/` |
 
-`--fault` accepts `dense_down`, `mcp_down`, `mcp_timeout`, `mcp_malformed` and `mcp_poison`. Add `--no-upload` to any query to keep it out of LangSmith (no trace is sent and no trace quota is used); otherwise questions are traced whenever `LANGSMITH_TRACING=true` is set in `.env`.
+`--fault` accepts `dense_down`, `mcp_down`, `mcp_timeout`, `mcp_malformed` and `mcp_poison`.
 
 ## How it works
 
 ```
-question -> guard_input -> route -> act (tools) -> assess -> synthesize -> validate V1-V6 -> output tripwire -> answer
-                                       |  ^            |                       | repair once, else abstain
-                                       v  |            +-- replan (max 6 rounds)
-        search_corpus (BM25 + dense, fused, re-ranked, period filter, role filter first)
-        query_statistic, compute_change, read_stats_resource  (MCP server, read-only DuckDB, validated client)
+question -> guard_input -> act (model picks tools, or stops) <-> assess -> synthesize -> validate V1-V6 -> output tripwire -> answer
+                              |                                              | repair once, else abstain
+        search_corpus (BM25 + dense, fused, re-ranked, period filter, role filter applied first)
+        query_statistic, compute_change, read_stats_resource  (MCP server: read-only DuckDB, validated client)
         calculator (safe arithmetic)
 ```
 
@@ -107,10 +109,10 @@ config/corpus.json            # source of truth for data/raw and the scope windo
 config/experiments/           # one YAML per experiment; config/pricing.yaml; config/mcp_servers.yaml (MCP allow-list)
 data/raw/, data/processed/    # fetched and built data (git-ignored; rebuilt by make fetch / make ingest)
 data/synthetic/memos/         # 7 synthetic analyst memos with ground truth
-prompts/                      # versioned prompts: answer_v1, agent_v1, judges_v1, b1_v1
-eval/data/                    # evaluation, retrieval, red-team and few-shot datasets (JSONL); versions/v1 keeps the original labels
-eval/results/                 # every experiment's saved results; eval/review_history/ decisions
-eval/README.md                # dataset design, matching rules, open items
+prompts/                      # versioned prompts: answer_v1 (chain), agent_v1 (agent), judges_v1
+eval/data/                    # evaluation, retrieval, red-team and few-shot datasets (JSONL)
+eval/results/                 # every experiment's saved results
+eval/                         # README.md (dataset design, matching rules), LABEL_CHANGES.md, REVIEW*.md, CALIBRATION.md
 src/policy_agent/ingest/      # periods, loaders, schema checks, HTML parsing, chunking, stat cards, build
 src/policy_agent/retrieval/   # BM25, dense, hybrid (RRF), re-rank, period filter; role filter applied before ranking
 src/policy_agent/generation/  # Answer schema, validation rules V1-V6, the single-pass chain (E5/E6)
@@ -119,38 +121,38 @@ src/policy_agent/tools/       # search_corpus, calculator, format_report, MCP st
 src/policy_agent/mcp_server/  # FastMCP server: 2 tools, 2 resources, 1 prompt, read-only database
 src/policy_agent/mcp_client.py  # allow-list, handshake checks, response validation, untrusted-output wrapping
 src/policy_agent/eval/        # case definitions and checks, deterministic evaluators, LLM judges
-src/policy_agent/baselines/   # B0 (BM25 verbatim), B1 (single-pass RAG), B2 (table lookup), retrieval-only target
+src/policy_agent/baselines/   # B0 (BM25 verbatim, no LLM) and the retrieval-only target
 src/policy_agent/budget.py    # checks your OpenRouter credit before a paid run
 src/policy_agent/cli.py       # command-line interface
-scripts/                      # runners, analysis, demo, red team, review sheets
-notebooks/                    # 02_eda.ipynb (data exploration), 05_mcp_demo.ipynb (MCP discovery)
+scripts/                      # experiment runner, analysis, demo scenarios, red team, calibration sheet
+notebooks/02_eda.ipynb        # exploratory analysis (executed)
 docs/                         # see the index below
-tests/                        # 250+ tests; none needs a key or the network except where noted
+tests/                        # 250 tests; none needs a key; most need no network
 ```
 
 ## Documents
 
 | Document | What it is |
 |---|---|
-| [`docs/EVAL_REPORT.md`](docs/EVAL_REPORT.md) | Dataset design, baselines, retrieval, generation, agent, red team, held-out results, error analysis, improvement plan |
+| [`docs/EVAL_REPORT.md`](docs/EVAL_REPORT.md) | Dataset design, metrics, baseline, experiment table, results, error analysis, improvement plan |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Data flow, retrieval, model calls, tools, evaluation loop and guardrails |
 | [`docs/DATASHEET.md`](docs/DATASHEET.md) | Sources, provenance, transformations, exclusions, known quality issues |
 | [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md) | Intended and out-of-scope use, limitations, risks, mitigations |
 | [`docs/CONCEPTS.md`](docs/CONCEPTS.md) | The GenAI concepts used (LLM fundamentals, retrieval, prompting, evaluation, agents, MCP, production) and where each appears |
 | [`docs/INNOVATION.md`](docs/INNOVATION.md) | How to improve, monitor, secure and scale this, grounded in the results |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The scripted 20-minute demo and Q&A preparation |
-| [`docs/OPEN_ITEMS.md`](docs/OPEN_ITEMS.md) | Everything still open: what needs a person, known fixes not applied, infrastructure, security gaps |
+| [`eval/LABEL_CHANGES.md`](eval/LABEL_CHANGES.md) | Labels and acceptance rules changed after results were seen, and why |
 
 ## Limitations
 
-- **Accuracy targets are mostly not met on held-out data**, and the sample is small: 15 test cases, so intervals are wide and no comparison between systems is statistically significant.
-- **The evaluation cases were drafted with AI assistance** and reviewed in an AI-assisted process; no domain expert has checked the definition-sensitive ones. The project owner labelled the judge-calibration sample (one labeller). The human-review sheet for the held-out answers is `eval/HUMAN_REVIEW_TEST.md`.
-- Some labels for preliminary-versus-later figures were revised after results were seen. This is disclosed and versioned (report section 6); the original labels are kept in `eval/data/versions/v1/`.
-- Latency misses the target (about 3 model calls per question).
-- Scope is Singapore national statistics from 2021-Q3 to 2026-Q2. No forecasts, regions, individuals or other countries. The corpus is a snapshot retrieved 2026-10-27.
+- **Retrieval and latency targets are missed**, and the sample is small: 15 test cases, so intervals are wide and the agent's advantage over the chain is not statistically confirmed.
+- **The held-out split was used three times**, so the final numbers are optimistic. A new held-out set is needed before any claim of final performance.
+- **The evaluation cases were drafted with AI assistance**; no domain expert has reviewed them. The project owner labelled the judge-calibration sample (29 claims, one labeller). The held-out answers were not reviewed by a person.
+- Some labels were revised after results were seen (two dev cases and three red-team acceptance rules). This is disclosed in [`eval/LABEL_CHANGES.md`](eval/LABEL_CHANGES.md); no `test` case changed.
+- Sonnet was compared with Haiku on the dev split only. Experiments were scored locally, without LangSmith dashboards.
+- Scope is Singapore national statistics from 2021-Q3 to 2026-Q2, a snapshot retrieved 2026-10-27. No forecasts, regions, individuals or other countries.
 - The user role is supplied by the caller and is **not authenticated** in this prototype.
 - MOM pages carry no HTML data tables; numbers come from the data.gov.sg series or from prose. Three MOM publications could not be found (see the datasheet).
-- Experiments were scored locally; LangSmith dashboards and the annotation queue were not used because of the trace limit.
 
 ## Responsible use
 

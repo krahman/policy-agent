@@ -196,27 +196,40 @@ def build(agent_id: str, chain_id: str, split: str) -> str:
             first = read("E7T", split)
         except FileNotFoundError:
             first = None
+        again_path = ROOT / "eval" / "results" / f"{agent_id}_test_run1_uncommitted.json"
+        again = json.loads(again_path.read_text()) if again_path.exists() else None
         if first:
-            L += ["", "**First held-out run (E7T, agent with a router) against the second (" + agent_id + ", simplified agent).** The test split was "
-                  "used twice, so the second run is optimistic: the changes were motivated by the first run's errors. Mean over cases [95% CI].", "",
-                  "| Metric | First run (E7T) | Second run (" + agent_id + ") |", "|---|---|---|"]  # fmt: skip
+            cols = [("E7T: agent with a router, first held-out run", first)]
+            if again:
+                cols.append((f"{agent_id}, first execution (same code, uncommitted tree)", again))
+            cols.append((f"{agent_id}, second execution (clean commit; the reported run)", a))
+            L += ["", "**Every held-out run of the agent.** The test split was used three times: the router agent (E7T), then the simplified agent twice "
+                  "with identical code (the first execution happened before the commit, so its metadata says dirty). The simplified design was chosen "
+                  "from the first run's errors, so its numbers are optimistic. The difference between the two identical executions shows the "
+                  "run-to-run noise. Mean over cases [95% CI].", "",
+                  "| Metric | " + " | ".join(n for n, _ in cols) + " |", "|---|" + "---|" * len(cols)]  # fmt: skip
             for m in ("status_match", "numeric_exact", "citation_correct", "groundedness"):
-                x, y = ag.per_case(first, m), ag.per_case(a, m)
-                if len(x) >= 2 and len(y) >= 2:
+                cells = []
+                for _, res in cols:
+                    x = ag.per_case(res, m)
                     mx, lx, hx, nx = ag.boot(x)
-                    my, ly, hy, ny = ag.boot(y)
-                    L.append(
-                        f"| {m} | {mx:.2f} [{lx:.2f}, {hx:.2f}] (n={nx}) | {my:.2f} [{ly:.2f}, {hy:.2f}] (n={ny}) |"
-                    )
+                    cells.append(f"{mx:.2f} [{lx:.2f}, {hx:.2f}] (n={nx})")
+                L.append(f"| {m} | " + " | ".join(cells) + " |")
             L.append(
-                f"| latency p50 / p95 (s) | {first['latency_ms']['p50'] / 1000:.1f} / {first['latency_ms']['p95'] / 1000:.1f} | {a['latency_ms']['p50'] / 1000:.1f} / {a['latency_ms']['p95'] / 1000:.1f} |"
+                "| latency p50 / p95 (s) | "
+                + " | ".join(
+                    f"{r['latency_ms']['p50'] / 1000:.1f} / {r['latency_ms']['p95'] / 1000:.1f}" for _, r in cols
+                )
+                + " |"
             )  # noqa: E501
             L.append(
-                f"| cost per run (USD) | {first['cost_usd']['mean_per_run']:.4f} | {a['cost_usd']['mean_per_run']:.4f} |"
+                "| cost per run (USD) | " + " | ".join(f"{r['cost_usd']['mean_per_run']:.4f}" for _, r in cols) + " |"
             )
             L.append(
-                f"| failed runs | {sum(taxonomy(first, cases)[0].values())} of {first['n_runs']} | {sum(taxonomy(a, cases)[0].values())} of {a['n_runs']} |"
-            )  # noqa: E501
+                "| failed runs | "
+                + " | ".join(f"{sum(taxonomy(r, cases)[0].values())} of {r['n_runs']}" for _, r in cols)
+                + " |"
+            )
     return "\n".join(L)
 
 

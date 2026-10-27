@@ -1,1 +1,1 @@
-"""Baselines (PRD §2.6): B0 BM25 verbatim, B1 single-pass RAG chain, B2 deterministic table lookup."""
+"""Baselines: B0 returns the best BM25 passage verbatim (no LLM); retrieval_only runs one retriever on its own."""
