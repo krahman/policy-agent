@@ -350,3 +350,141 @@ uv run python scripts/analyse_generation.py --write
 uv run python scripts/judge_sensitivity.py
 make calibration-sheet # then tick eval/CALIBRATION.md yourself, then: make calibrate
 ```
+
+## 5. Agent against chain (Step 8, `dev` split, hypothesis H3)
+
+E7 is the bounded LangGraph agent with the same model (`claude-haiku-5.5`), retriever (R5 on voyage-4), validation (V1 to V6, one repair)
+and judge as E6, which is the chain it is compared with. The agent adds a guard, a router, a tool loop with a deterministic sufficiency
+check, and tools: `search_corpus`, `query_statistic` and `compute_change` through the MCP server, and `calculator`. 21 cases x 3
+repetitions, scored locally (LangSmith upload pending).
+
+<!-- agent:start -->
+Dev split, 21 cases x 3 repetitions. Chain = E6 (`anthropic/claude-haiku-5.5`, fixed pipeline); agent = E7 (same model, same retriever, judge `openai/gpt-4.1-mini`). Cells: mean over cases [95% bootstrap CI]; the difference uses the same resampled cases for both.
+
+**Multi-step and calculation** (7 cases)
+
+| Metric | Chain (E6) | Agent (E7) | Agent - chain [95% CI] |
+|---|---|---|---|
+| status_match | 0.43 [0.14, 0.86] (n=7) | 0.38 [0.10, 0.71] (n=7) | -0.05 [-0.43, +0.29] |
+| numeric_exact | 0.25 [0.00, 0.75] (n=4) | 0.75 [0.25, 1.00] (n=4) | +0.50 [+0.00, +1.00] |
+| must_contain_numbers | 0.50 [0.17, 0.83] (n=4) | 0.67 [0.25, 1.00] (n=4) | +0.17 [+0.00, +0.33] |
+| citation_correct | 0.43 [0.14, 0.76] (n=7) | 0.95 [0.86, 1.00] (n=7) | +0.52 [+0.19, +0.86] |
+| groundedness | 0.97 [0.90, 1.00] (n=5) | 1.00 [1.00, 1.00] (n=6) | +0.04 [+0.00, +0.12] |
+| answer_relevance | 4.86 [4.57, 5.00] (n=7) | 5.00 [5.00, 5.00] (n=7) | +0.14 [+0.00, +0.43] |
+| schema_valid | 0.76 [0.48, 0.95] (n=7) | 0.67 [0.33, 0.95] (n=7) | -0.10 [-0.38, +0.19] |
+
+**All other case types** (14 cases)
+
+| Metric | Chain (E6) | Agent (E7) | Agent - chain [95% CI] |
+|---|---|---|---|
+| status_match | 0.83 [0.62, 1.00] (n=14) | 0.79 [0.57, 0.95] (n=14) | -0.05 [-0.17, +0.05] |
+| numeric_exact | 0.90 [0.81, 1.00] (n=7) | 1.00 [1.00, 1.00] (n=7) | +0.10 [+0.00, +0.19] |
+| must_contain_numbers | 0.83 [0.50, 1.00] (n=3) | 0.94 [0.83, 1.00] (n=3) | +0.11 [+0.00, +0.33] |
+| citation_correct | 0.92 [0.79, 1.00] (n=8) | 1.00 [1.00, 1.00] (n=8) | +0.08 [+0.00, +0.21] |
+| groundedness | 0.99 [0.96, 1.00] (n=8) | 0.98 [0.94, 1.00] (n=8) | -0.01 [-0.06, +0.04] |
+| answer_relevance | 5.00 [5.00, 5.00] (n=14) | 5.00 [5.00, 5.00] (n=14) | +0.00 [+0.00, +0.00] |
+| schema_valid | 0.98 [0.93, 1.00] (n=14) | 0.90 [0.77, 1.00] (n=10) | -0.07 [-0.17, +0.00] |
+
+**All cases** (21 cases)
+
+| Metric | Chain (E6) | Agent (E7) | Agent - chain [95% CI] |
+|---|---|---|---|
+| status_match | 0.70 [0.51, 0.87] (n=21) | 0.65 [0.46, 0.83] (n=21) | -0.05 [-0.19, +0.08] |
+| numeric_exact | 0.67 [0.39, 0.91] (n=11) | 0.91 [0.73, 1.00] (n=11) | +0.24 [+0.03, +0.48] |
+| must_contain_numbers | 0.64 [0.36, 0.90] (n=7) | 0.79 [0.50, 0.98] (n=7) | +0.14 [+0.05, +0.29] |
+| citation_correct | 0.69 [0.47, 0.87] (n=15) | 0.98 [0.93, 1.00] (n=15) | +0.29 [+0.11, +0.49] |
+| groundedness | 0.98 [0.95, 1.00] (n=13) | 0.99 [0.96, 1.00] (n=14) | +0.01 [-0.03, +0.05] |
+| answer_relevance | 4.95 [4.86, 5.00] (n=21) | 5.00 [5.00, 5.00] (n=21) | +0.05 [+0.00, +0.14] |
+| schema_valid | 0.90 [0.79, 0.98] (n=21) | 0.80 [0.63, 0.94] (n=17) | -0.08 [-0.22, +0.06] |
+
+| | Chain (E6) | Agent (E7) |
+|---|---|---|
+| latency p50 / p95 (s) | 6.0 / 25.0 | 12.8 / 30.0 |
+| cost per run (USD) | 0.0013 | 0.0024 |
+| model calls per run (mean) | 1 to 2 | 3.0 |
+
+Tool use in the 63 agent runs: query_statistic x56, search_corpus x50, compute_change x12, calculator x2.
+Tool rounds per run: 0: 14, 1: 37, 2: 10, 3: 2.
+Stop reasons: sufficient x48, out of scope x8, clarification needed x6, validation failed after repair x1.
+
+`status_match` by case type (mean over runs):
+
+| Case type | Chain (E6) | Agent (E7) |
+|---|---|---|
+| adversarial | 1.00 | 0.83 |
+| ambiguous | 1.00 | 1.00 |
+| calculation | 0.33 | 0.56 |
+| conflicting | 0.50 | 0.67 |
+| factual | 0.73 | 0.60 |
+| multi_step | 0.50 | 0.25 |
+| unanswerable | 1.00 | 1.00 |
+<!-- agent:end -->
+
+### 5.1 What the comparison shows
+
+1. **H3 is partly supported: the agent is better at getting the numbers and citations right, not (yet) at reaching the expected status.**
+   Across all cases, `numeric_exact` rises from 0.67 to 0.91 (paired difference +0.24, interval +0.03 to +0.48) and `citation_correct`
+   from 0.69 to 0.98 (+0.29, interval +0.11 to +0.49). On the seven multi-step and calculation cases the direction is the same
+   (`numeric_exact` +0.50, interval 0.00 to +1.00, on only four cases; `citation_correct` +0.52, interval +0.19 to +0.86). Arithmetic is done
+   by `compute_change`, and a change between two periods cannot be reported without that call (the sufficiency check requires it).
+2. **`status_match` does not improve** (0.70 to 0.65 across all cases, interval -0.19 to +0.08; multi-step 0.50 to 0.25). Seven of the nine
+   mismatching cases are the agent reporting a **conflict** where the case expects a plain answer; the other two are C03 (answered in two
+   of three runs instead of reporting its conflict) and M04 (abstained in all three). Reading the reported conflicts shows two causes:
+   - **Advance Release against the later figure** (F05, F07, K02, M01, M03): retrenchments in 2Q 2026 are 4,500 in the Advance Release and
+     4,620 in the later report and dataset, and June 2026 unemployment is 2.0% against 1.9%. The agent finds both because it searches
+     the text corpus as well as the statistics, reports the discrepancy and prefers the later figure, which is what the design asks for
+     (failure mode F10). These cases were labelled as if only the later figure existed.
+   - **A point-in-time figure against a quarterly one** (D02, K03): the report quotes vacancies for June 2026 (68,600) and the dataset gives
+     the 2Q 2026 value (69,900). These are different reference points, so calling them a conflict is arguably over-cautious; this one is a
+     fair mark against the agent's synthesis, not the label.
+   Numbers are right in nearly all of these runs (`numeric_exact` 0.91), so the `status_match` gap mixes a labelling question with some
+   over-reporting. **The H3 verdict on status is not reliable until the labels are reviewed** (open items 5 and 7 in `eval/README.md`).
+   The chain reports the same conflicts on F05, F07 and M01.
+3. **The agent does not degrade simple cases on the measured metrics.** On the 14 other cases `groundedness`, `citation_correct`,
+   `numeric_exact` and relevance are the same or higher; `status_match` is -0.05 (interval -0.17 to +0.05). The 0.83 on adversarial is
+   one D02 run reporting a conflict (the point-in-time against quarterly figure above).
+4. **It costs more time and money.** Median latency rises from 6.0 s to 12.8 s and p95 from 25.0 s to 30.0 s; cost per run from $0.0013
+   to $0.0024; model calls per run from 1 to 2 up to 3.0 on average (route, act, synthesize). Most runs need one tool round (37 of 63);
+   14 never reach the tools (guard, clarification and out-of-scope routing), and those are the cheapest and fastest answers in the
+   system. Agent p95 is above the 20 s target.
+5. **Control flow behaves as designed.** Stop reasons: sufficient 48, out of scope 8, clarification needed 6, validation failed after repair 1.
+   No run hit the step limit or the wall-clock budget. The 10 demo scenarios pass (below).
+6. **First-try schema validity is lower for the agent (0.80 on the 17 runs that reach synthesis; chain 0.90).** All ten misses are
+   answers cut off at the 3,000-token output cap (long conflict answers with several quoted passages); the repair retry fixed nine and
+   one was downgraded to `abstained`. The cap, not the model, is the limit; raising it was not done in this step.
+
+### 5.2 Demo scenarios (PRD §16)
+
+`scripts/demo_scenarios.py` runs the ten scenarios against the live agent and checks each with an assertion I wrote. All ten pass:
+factual with citations; cross-source synthesis with `source_fact` and `statistical_finding` claims; a computed change through
+`query_statistic` then `compute_change` (-44.96%); abstention (3Q 2026) and clarification (no year); a conflict with both values;
+a direct injection refused and a memo-borne injection not followed; recovery with the dense retriever and the MCP server both
+faulted (retry, then BM25 and text evidence, stated in limitations); an MCP-grounded answer; three MCP failure modes (timeout, malformed
+output, outage) each ending in a safe, typed outcome; and a poisoned `stats://sources` treated as data. These are automated checks of
+status, tool use, canary absence and limitations, not a human reading of every answer; the exit criterion says "pass manually", so
+please run `make agent-demo` and read a few of the printed answers and traces yourself.
+
+### 5.3 Decision for H3
+
+Keep the agent as the default for questions that need numbers, comparisons or computed changes, because it makes those answers
+verifiable (tool calls, cited cards, no mental arithmetic). Whether it is worth twice the latency for single lookups is not
+settled: on simple factual cases it is equal on quality and slower. A sensible production rule, not tested here, is to route plain
+single-figure lookups to the chain and everything else to the agent.
+
+### 5.4 Caveats
+
+- 21 dev cases; only seven are multi-step or calculation, so intervals are wide and the `numeric_exact` gain on those rests on four cases.
+- The conflict-versus-answer labelling issue above affects both systems and about five dev cases (F05, F07, K02, M01, M03); no case was edited.
+- The judge is uncalibrated (open item 6). The agent's groundedness is judged against the chunks it cites; a claim backed only by a
+  tool result is judged through the stat card that renders the same row.
+- Not tested: the agent's behaviour under concurrency beyond three parallel runs, a restarted MCP server in the middle of a run, and
+  `analyst_internal` queries through the agent (the retrieval role filter is tested; the agent path is not).
+- E7 was scored locally; its traces are not in LangSmith until the trace limit is raised.
+
+### 5.5 Reproduce
+
+```bash
+make agent-demo        # the 10 scenarios, prints answers and traces
+make agent             # E7 on dev (UPLOAD= to send to LangSmith) and the H3 tables above
+uv run python -m policy_agent.cli "What was the change in job vacancies between 2Q 2022 and 2Q 2026?" --verbose
+```
