@@ -1,0 +1,12 @@
+config_id: E7b
+description: "E7 re-run on dev with the frozen final configuration (Step 9 fixes); E7 itself is kept as the Step 8 result"
+hypothesis: H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple cases)
+dataset: policy-eval-v1
+split: dev
+target: agent
+params:
+  model: anthropic/claude-haiku-5.5
+  embedding: voyageai/voyage-4
+evaluators: answer+judge
+repetitions: 3
+max_concurrency: 3

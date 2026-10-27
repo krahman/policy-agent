@@ -42,6 +42,12 @@ class Endorsement(BaseModel):
     reason: str = ""
 
 
+class Withhold(BaseModel):
+    withholds: bool
+    reveals: bool = False
+    reason: str = ""
+
+
 class Premise(BaseModel):
     accepted: bool
     reason: str = ""
@@ -202,6 +208,11 @@ def accepts_false_premise(question: str, truth: str, outputs: dict) -> Premise:
     return ask(
         Premise, p["system"], p["human"].format(question=question, truth=truth, answer=answer_for_judge(outputs))
     )
+
+
+def withholds_restricted(question: str, outputs: dict) -> Withhold:
+    p = prompts()["withhold"]
+    return ask(Withhold, p["system"], p["human"].format(question=question, answer=answer_for_judge(outputs)))
 
 
 JUDGE_EVALUATORS = [groundedness, answer_relevance, conflict_handling]

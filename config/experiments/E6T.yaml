@@ -1,0 +1,16 @@
+config_id: E6T
+description: "Final evaluation: chain with the same model on the test split, 3 repetitions"
+hypothesis: H2 (smaller model reaches at least 90% of the larger model's groundedness at lower cost and latency); H3 floor
+dataset: policy-eval-v1
+split: test
+target: chain
+params:
+  model: anthropic/claude-haiku-5.5
+  embedding: voyageai/voyage-4
+  retriever: r5
+  k: 5
+  max_tokens: 3000
+  repair: true
+evaluators: answer+judge
+repetitions: 3
+max_concurrency: 3

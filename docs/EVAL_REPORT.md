@@ -324,10 +324,12 @@ provisional until the judge is calibrated and E5/E6 are uploaded to LangSmith.
   (period labels untouched), and the judge saw the original evidence. It marked all 50 unaltered claims as supported and all 50 altered
   claims as unsupported (`eval/calibration/sensitivity.json`). So it reliably catches a wrong number. It has not been tested on subtler
   errors (wrong residency group, wrong seasonal-adjustment basis, wrong period), which are the likelier real mistakes.
-- **Human calibration is pending.** `eval/CALIBRATION.md` is a blind sheet with 10 answers and 29 claims, 4 of which are altered copies
-  mixed in without a mark. Agreement and Cohen's kappa are computed by `make calibrate` after you tick the boxes. Until then the groundedness and
-  relevance scores are *uncalibrated* and should be read as indicative. The judge scored 4.98 and 5.00 out of 5 on relevance, which is
-  too lenient to distinguish systems.
+- **Human calibration (done after this section was first written).** The project owner labelled `eval/CALIBRATION.md` (10 answers, 29
+  claims, 4 of them deliberately altered copies mixed in blind). Groundedness: the judge and the owner agreed on all 29 claims (Cohen's
+  kappa 1.0); 86% of claims were supported and both rejected all four altered ones. That is strong but thin evidence: one labeller, 29
+  claims, and few unsupported claims to find. **Relevance:** exact agreement 0.5 and within one point 0.6, so the relevance judge
+  (almost always 5 out of 5) is too lenient and should not be used to rank systems. The judge prompt file has since gained two prompts, so its hash differs from the one
+  recorded in `result.json`; the groundedness and relevance prompts themselves are unchanged.
 - **Same-family risk** is limited, not removed: the judge is not from the generators' family, but the eval cases were drafted by the same
   family as the generators (see Open items).
 

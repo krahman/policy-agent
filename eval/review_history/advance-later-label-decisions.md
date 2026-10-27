@@ -27,3 +27,7 @@ K03's dataset-based calculation remains the canonical answer, but an answer that
 ## Implementation and reporting
 
 Label decisions are complete for F05/F07/K02/M01/M03/D02; K03 retains its current label with the narrow comparison question above still open. Update F05 and K02 in the builder, including conflict values, source quotes, preliminary-versus-final framing and tool requirements. Preserve case types and dev/test membership. Regenerate and validate without overwriting review approvals or changing test definitions. Version the corrected labels and retain original E5–E7 outputs/scores. Re-score saved outputs first; fresh runs are needed only for changed system configurations or missing required outputs. Separate changes caused by labels from changes caused by model behavior. No test definition may be edited after results have been seen.
+
+## Pre-test freeze decision — 2026-10-28
+
+K03's scoring label is now settled for this evaluation: retain `answered`, with the existing dataset-series calculation (127,000 to 69,900; a 45.0% fall). Do not add an alternative accepted status after test results are observed. The report-versus-dataset vacancy basis remains an unresolved source-comparability limitation, not a promise to change this frozen scoring rule later. A future resolution belongs in a separately versioned evaluation; it must not be used to revise this run's acceptance criteria. This decision does not establish that the different vacancy counts are or are not comparable.

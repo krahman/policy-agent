@@ -1,0 +1,10 @@
+config_id: E4dT
+description: "Final evaluation: chosen retriever R5 (voyage-4) on the retrieval test split"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: test
+target: retriever
+params: {retriever: r5, embedding: voyageai/voyage-4, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

@@ -1,0 +1,12 @@
+config_id: E7T
+description: "Final evaluation: frozen agent on the test split, 3 repetitions"
+hypothesis: H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple cases)
+dataset: policy-eval-v1
+split: test
+target: agent
+params:
+  model: anthropic/claude-haiku-5.5
+  embedding: voyageai/voyage-4
+evaluators: answer+judge
+repetitions: 3
+max_concurrency: 3

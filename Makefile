@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent redteam rescore pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent redteam final rescore pricing
 
 sync:
 	uv sync --frozen
@@ -83,6 +83,16 @@ agent:
 redteam:
 	LANGSMITH_TRACING=false uv run python scripts/run_redteam.py --reps 3
 	uv run pytest -q tests/test_guardrails.py
+
+# Step 10 (spends credit; each run is checked against your balance first). Order matters: dev re-run of the frozen config,
+# then the single held-out test run of agent, chain and retriever, then the red team, then the analysis.
+final:
+	uv run python scripts/run_experiment.py E7b --no-upload
+	uv run python scripts/run_experiment.py E7T --no-upload --allow-test
+	uv run python scripts/run_experiment.py E6T --no-upload --allow-test
+	uv run python scripts/run_experiment.py E4dT --no-upload --allow-test
+	LANGSMITH_TRACING=false uv run python scripts/run_redteam.py --reps 3 --out redteam_agent_final
+	uv run python scripts/analyse_final.py --write
 
 # Re-score saved E5-E7 outputs under the corrected labels (v1.1); originals are not touched
 rescore:

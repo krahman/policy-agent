@@ -71,6 +71,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/analyse_generation.py" = ["E501"]  # markdown text
 "scripts/analyse_agent.py" = ["E501"]  # markdown text
 "scripts/rescore_labels.py" = ["E501"]  # markdown text
+"scripts/analyse_final.py" = ["E501"]  # markdown text
 "scripts/run_redteam.py" = ["E501"]  # case labels and check table
 "tests/test_graph.py" = ["E501"]  # scripted-model fixtures
 "tests/test_guardrails.py" = ["E501"]  # threat table text

@@ -175,6 +175,7 @@ def main() -> int:
     ap.add_argument("--local", action="store_true")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--allow-test", action="store_true")
+    ap.add_argument("--skip-budget-check", action="store_true", help="do not check the OpenRouter credit balance first")
     ap.add_argument(
         "--no-upload", action="store_true",
         help="score locally with tracing off and write eval/results/ only (no LangSmith traces, so no quota use)",
@@ -194,6 +195,15 @@ def main() -> int:
         evaluators = ev.ANSWER_EVALUATORS + JUDGE_EVALUATORS
         cfg["judge_model"] = JUDGE_MODEL
     assert evaluators, f"unknown evaluators {cfg['evaluators']!r}"
+    if not args.skip_budget_check and cfg["target"] in ("b1", "chain", "agent") and not args.local:
+        from policy_agent import budget
+
+        n = len(local_examples(cfg["dataset"], cfg["split"], args.limit)) * cfg.get("repetitions", 1)
+        prefix = {"agent": "E7", "chain": "E6" if "haiku" in cfg["params"].get("model", "") else "E5", "b1": "B1"}[
+            cfg["target"]
+        ]
+        left = budget.check(budget.estimate_from_history(prefix, n, 0.004), f"{cfg['config_id']} ({n} runs)")
+        print(f"budget ok: ${left:.2f} left")
     target, tmeta = build_target(cfg)
     chunks_sha = hashlib.sha256((ROOT / "data" / "processed" / "chunks.jsonl").read_bytes()).hexdigest()[:12]
     metadata = {
