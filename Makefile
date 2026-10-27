@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook agent-demo redteam final analyse reproduce pricing
+.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook notebooks agent-demo redteam final analyse reproduce pricing
 
 # Setup and checks ----------------------------------------------------------------------------------------------------
 sync:
@@ -29,6 +29,23 @@ ingestion-notebook: # re-execute notebooks/01_ingestion.ipynb (needs make fetch 
 
 retrieval-notebook: # re-execute notebooks/03_retrieval.ipynb (uses the embedding and re-rank caches; needs OPENROUTER_API_KEY for the live cells)
 	uv run python scripts/make_retrieval_notebook.py
+
+generation-notebook: # re-execute notebooks/04_generation.ipynb (V1-V6 on crafted answers; offline)
+	uv run python scripts/make_generation_notebook.py
+
+agent-notebook: # re-execute notebooks/06_agent.ipynb (graph and traces from saved runs)
+	uv run python scripts/make_agent_notebook.py
+
+evaluation-notebook: # re-execute notebooks/07_evaluation.ipynb (metrics, intervals, error taxonomy, from saved results)
+	uv run python scripts/make_evaluation_notebook.py
+
+security-notebook: # re-execute notebooks/08_security.ipynb (each defence on an attack, plus the red-team results)
+	uv run python scripts/make_security_notebook.py
+
+cost-notebook: # re-execute notebooks/09_cost_latency.ipynb (from saved results)
+	uv run python scripts/make_cost_notebook.py
+
+notebooks: eda generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook mcp-notebook # all notebooks that need no key and no fetch beyond make ingest
 
 eda:          # re-execute notebooks/02_eda.ipynb
 	uv run python scripts/make_eda_notebook.py
