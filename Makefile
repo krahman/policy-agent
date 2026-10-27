@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate pricing
 
 sync:
 	uv sync --frozen
@@ -55,6 +55,16 @@ baselines:
 retrieval:
 	for e in E1 E2 E2b E3 E3b E4 E4b E4c E4d; do uv run python scripts/run_experiment.py $$e $(UPLOAD); done
 	uv run python scripts/analyse_retrieval.py --write
+
+# Step 6: validated chain with two models (E5 sonnet, E6 haiku) and LLM judges, dev split, 3 repetitions each
+generation:
+	for e in E6 E5; do uv run python scripts/run_experiment.py $$e $(UPLOAD); done
+
+# Blind human-labelling sheet for the judge, then compare the judge with your ticks (agreement and Cohen's kappa)
+calibration-sheet:
+	uv run python scripts/make_calibration_sheet.py E5
+calibrate:
+	uv run python scripts/calibrate_judge.py
 
 # Refresh config/pricing.yaml from OpenRouter (records the date)
 pricing:

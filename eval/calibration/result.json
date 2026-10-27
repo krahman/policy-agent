@@ -1,0 +1,22 @@
+{
+ "judge_model": "openai/gpt-4.1-mini",
+ "judge_prompt_sha256_12": "fe3436481725",
+ "groundedness": {
+  "claims_labelled": 29,
+  "agreement": 1.0,
+  "cohen_kappa": 1.0,
+  "human_supported_rate": 0.8620689655172413,
+  "judge_supported_rate": 0.8620689655172413,
+  "claims_with_both_boxes_ticked": 0,
+  "altered_claims_labelled": 4,
+  "altered_claims_judge_rejected": 4,
+  "altered_claims_human_rejected": 4
+ },
+ "relevance": {
+  "answers_labelled": 10,
+  "exact": 0.5,
+  "within_one": 0.6
+ },
+ "trust_threshold_kappa": 0.6,
+ "groundedness_trusted": true
+}

@@ -9,6 +9,9 @@ models:
   anthropic/claude-sonnet-5.5:
     prompt: 2.0e-06
     completion: 1.0e-05
+  openai/gpt-4.1-mini:
+    prompt: 4.0e-07
+    completion: 1.6e-06
 embeddings:
   openai/text-embedding-3-small:
     per_token: 2.0e-08

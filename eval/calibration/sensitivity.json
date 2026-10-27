@@ -1,0 +1,7 @@
+{
+ "claims_tested": 50,
+ "originals_judged_supported": 50,
+ "altered_judged_unsupported": 50,
+ "judge_model": "openai/gpt-4.1-mini",
+ "missed_examples": []
+}

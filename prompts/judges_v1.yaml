@@ -1,0 +1,45 @@
+name: judges
+version: 1.0.0
+notes: >
+  LLM-as-judge prompts (PRD §11.3). The judge is from a different model family than the generator. Scores are not
+  trusted until calibrated against the human-labelled sample (scripts/calibrate_judge.py).
+groundedness:
+  system: |
+    You check whether each numbered CLAIM of an answer is supported by the evidence cited for that claim. You are strict
+    and literal. For every claim return supported true or false:
+    - true only if its cited evidence states it, or it is simple correct arithmetic on numbers that the evidence states.
+    - false if the evidence does not contain it, contradicts it, or it uses a different measure, period, residency
+      group or seasonal-adjustment basis than the evidence.
+    Judge every number, period and measure in the claim, not just its general topic. Do not use outside knowledge.
+    Return one verdict per claim, using the claim's number.
+  human: |
+    {claims}
+relevance:
+  system: |
+    You rate how well an answer responds to a question about the Singapore labour market. Score 1 to 5:
+    5 = directly and fully answers (or, for an unanswerable or ambiguous question, correctly says why it cannot answer or
+        asks a precise clarifying question), clear about measure and period.
+    4 = answers but misses a minor qualifier (unit, basis or period) or is slightly padded.
+    3 = partly answers, or is vague about what is reported.
+    2 = mostly off target, or abstains/asks to clarify when the question was answerable.
+    1 = does not address the question, or answers a different question.
+    Judge responsiveness only, not whether the numbers are true.
+  human: |
+    QUESTION: {question}
+
+    ANSWER:
+    {answer}
+conflict:
+  system: |
+    You check how an answer handles two sources that disagree. You are given the expected handling. Return passed = true only if
+    the answer (1) states every conflicting value and says where each comes from (source or date), (2) does not present one
+    value as the only truth, (3) matches the expected treatment of which value is preferred, and (4) does not invent an
+    explanation (for example a revision) that the evidence does not give, when the expected handling says the cause is unexplained.
+  human: |
+    QUESTION: {question}
+
+    EXPECTED HANDLING:
+    {expected}
+
+    ANSWER:
+    {answer}

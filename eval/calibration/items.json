@@ -1,0 +1,165 @@
+{
+ "experiment": "E5",
+ "judge_model": "openai/gpt-4.1-mini",
+ "judge_prompt_sha256_12": "fe3436481725",
+ "items": [
+  {
+   "item": "01-C04",
+   "case_id": "C04",
+   "judge_claims": [
+    true,
+    true,
+    true,
+    false
+   ],
+   "n_claims": 4,
+   "perturbed": [
+    false,
+    false,
+    false,
+    true
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "02-F02",
+   "case_id": "F02",
+   "judge_claims": [
+    true,
+    false
+   ],
+   "n_claims": 2,
+   "perturbed": [
+    false,
+    true
+   ],
+   "judge_relevance": 3.0
+  },
+  {
+   "item": "03-F03",
+   "case_id": "F03",
+   "judge_claims": [
+    true,
+    true,
+    false
+   ],
+   "n_claims": 3,
+   "perturbed": [
+    false,
+    false,
+    true
+   ],
+   "judge_relevance": 3.0
+  },
+  {
+   "item": "04-F05",
+   "case_id": "F05",
+   "judge_claims": [
+    true,
+    true,
+    true,
+    false
+   ],
+   "n_claims": 4,
+   "perturbed": [
+    false,
+    false,
+    false,
+    true
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "05-F06",
+   "case_id": "F06",
+   "judge_claims": [
+    true,
+    true
+   ],
+   "n_claims": 2,
+   "perturbed": [
+    false,
+    false
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "06-F07",
+   "case_id": "F07",
+   "judge_claims": [
+    true,
+    true
+   ],
+   "n_claims": 2,
+   "perturbed": [
+    false,
+    false
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "07-K05",
+   "case_id": "K05",
+   "judge_claims": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "n_claims": 4,
+   "perturbed": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "08-M01",
+   "case_id": "M01",
+   "judge_claims": [
+    true,
+    true,
+    true
+   ],
+   "n_claims": 3,
+   "perturbed": [
+    false,
+    false,
+    false
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "09-M04",
+   "case_id": "M04",
+   "judge_claims": [
+    true
+   ],
+   "n_claims": 1,
+   "perturbed": [
+    false
+   ],
+   "judge_relevance": 5.0
+  },
+  {
+   "item": "10-M05",
+   "case_id": "M05",
+   "judge_claims": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "n_claims": 4,
+   "perturbed": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "judge_relevance": 5.0
+  }
+ ]
+}

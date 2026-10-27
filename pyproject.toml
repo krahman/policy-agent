@@ -59,6 +59,9 @@ select = ["E", "F", "I", "UP", "B"]
 "src/policy_agent/eval/review.py" = ["E501"]  # prose in the generated sheet header
 "scripts/make_baseline_report.py" = ["E501"]  # markdown text
 "scripts/analyse_retrieval.py" = ["E501"]  # markdown text
+"scripts/analyse_generation.py" = ["E501"]  # markdown text
+"scripts/make_calibration_sheet.py" = ["E501"]  # sheet text
+"scripts/calibrate_judge.py" = ["E501"]  # result dict
 "notebooks/*.ipynb" = ["E501", "E702", "I001"]
 
 [tool.mypy]

@@ -9,6 +9,7 @@ Only `dev` may be used while tuning; `test` needs --allow-test and should be run
 
 import argparse
 import hashlib
+import inspect
 import json
 import os
 import platform
@@ -55,6 +56,24 @@ def build_target(cfg: dict):
         if p["retriever"] in ("r4", "r5"):
             meta["rerank_model"] = "cohere/rerank-v3.5"
         return retrieval_only.make_target(p["retriever"], emb, p.get("k", 10)), meta
+    if t == "chain":
+        from policy_agent.generation import chain
+
+        run, prompt = chain.make_target(
+            p["model"],
+            p["embedding"],
+            p["k"],
+            p.get("max_tokens", 1500),
+            p.get("retriever", "r5"),
+            p.get("repair", True),
+            p.get("structured_output", "json_schema"),
+        )
+        return run, {
+            "retriever": p.get("retriever", "r5"), "chunker": "C2", "model": p["model"], "embedding": p["embedding"],
+            "k": p["k"], "temperature": 0, "repair": p.get("repair", True),
+            "structured_output": p.get("structured_output", "json_schema"),
+            "prompt": f"{prompt['name']}@{prompt['version']}", "prompt_sha256_12": prompt["sha256_12"],
+        }  # fmt: skip
     if t == "b2":
         from policy_agent.baselines import b2
 
@@ -107,15 +126,35 @@ def aggregate(rows: list[dict]) -> dict:
     }  # fmt: skip
 
 
+def with_judge_cost(agg: dict, cfg: dict) -> dict:
+    """Judge calls are not part of the system's cost; report them separately."""
+    if cfg.get("judge_model"):
+        from policy_agent.eval import judges
+
+        agg["judge"] = {"model": judges.JUDGE_MODEL, "prompt_sha256_12": judges.prompts()["sha256_12"],
+                        "cost_usd": round(judges.judge_cost_usd(), 5), **judges.USAGE}  # fmt: skip
+    return agg
+
+
+def keep_output(outputs: dict) -> dict | None:
+    """Store the structured answer with the scores so judges can be calibrated and errors analysed offline."""
+    if not outputs.get("answer"):
+        return None
+    return {k: outputs.get(k) for k in ("status", "answer", "citations", "validation", "retrieved")}
+
+
 def score_row(example: dict, outputs: dict, evaluators: list) -> dict:
     scores = {}
     for fn in evaluators:
-        res = fn(outputs=outputs, reference_outputs=example["outputs"])
+        kwargs = {"outputs": outputs, "reference_outputs": example["outputs"]}
+        if "inputs" in inspect.signature(fn).parameters:
+            kwargs["inputs"] = example["inputs"]
+        res = fn(**kwargs)
         scores[res["key"]] = res.get("score")
     meta = example["metadata"]
     return {"case_id": meta["case_id"], "case_type": meta.get("case_type", "retrieval"), "scores": scores,
             "latency_ms": outputs.get("latency_ms"), "cost": cost_usd(outputs.get("usage")),
-            "status": outputs.get("error") or outputs.get("status")}  # fmt: skip
+            "status": outputs.get("error") or outputs.get("status"), "output": keep_output(outputs)}  # fmt: skip
 
 
 def main() -> int:
@@ -136,7 +175,13 @@ def main() -> int:
     cfg = yaml.safe_load((ROOT / "config" / "experiments" / f"{args.config_id}.yaml").read_text())
     if cfg["split"] == "test" and not args.allow_test:
         raise SystemExit("refusing to run the test split without --allow-test (run once per frozen configuration)")
-    evaluators = ev.ANSWER_EVALUATORS if cfg["evaluators"] == "answer" else ev.RETRIEVAL_EVALUATORS
+    evaluators = {"answer": ev.ANSWER_EVALUATORS, "retrieval": ev.RETRIEVAL_EVALUATORS}.get(cfg["evaluators"])
+    if cfg["evaluators"] == "answer+judge":
+        from policy_agent.eval.judges import JUDGE_EVALUATORS, JUDGE_MODEL
+
+        evaluators = ev.ANSWER_EVALUATORS + JUDGE_EVALUATORS
+        cfg["judge_model"] = JUDGE_MODEL
+    assert evaluators, f"unknown evaluators {cfg['evaluators']!r}"
     target, tmeta = build_target(cfg)
     chunks_sha = hashlib.sha256((ROOT / "data" / "processed" / "chunks.jsonl").read_bytes()).hexdigest()[:12]
     metadata = {
@@ -145,6 +190,10 @@ def main() -> int:
         "split": cfg["split"], "corpus_chunks_sha256_12": chunks_sha, "pricing_retrieved_at": pricing()["retrieved_at"],
         "seed": "n/a (temperature 0)", "python": platform.python_version(),
     }  # fmt: skip
+    if cfg.get("judge_model"):
+        from policy_agent.eval import judges
+
+        metadata |= {"judge_model": cfg["judge_model"], "judge_prompt_sha256_12": judges.prompts()["sha256_12"]}
 
     if args.local:
         rows = []
@@ -169,7 +218,7 @@ def main() -> int:
         examples = local_examples(cfg["dataset"], cfg["split"], args.limit) * cfg.get("repetitions", 1)
         with ThreadPoolExecutor(max_workers=cfg.get("max_concurrency", 2)) as pool:
             rows = list(pool.map(lambda ex: score_row(ex, target(ex["inputs"]), evaluators), examples))
-        agg = aggregate(rows)
+        agg = with_judge_cost(aggregate(rows), cfg)
         out = {"experiment": f"{cfg['config_id']}-local", "url": None, "metadata": metadata, "config": cfg,
                "wall_seconds": round(time.time() - t0, 1), **agg, "runs": rows}  # fmt: skip
         path = ROOT / "eval" / "results" / f"{cfg['config_id']}_{cfg['split']}.json"
@@ -202,8 +251,9 @@ def main() -> int:
             "case_id": example.metadata["case_id"], "case_type": example.metadata.get("case_type", "retrieval"),
             "scores": scores, "latency_ms": (run.outputs or {}).get("latency_ms"),
             "cost": cost_usd((run.outputs or {}).get("usage")), "status": (run.outputs or {}).get("status"),
+            "output": keep_output(run.outputs or {}),
         })  # fmt: skip
-    agg = aggregate(rows)
+    agg = with_judge_cost(aggregate(rows), cfg)
     url = None
     try:
         url = client.read_project(project_name=results.experiment_name).url

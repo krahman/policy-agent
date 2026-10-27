@@ -233,3 +233,120 @@ filter proves brittle. Two cautions apply to this choice:
 ```bash
 make retrieval        # E1..E4d on dev, then refreshes the tables above (needs OPENROUTER and LANGSMITH keys)
 ```
+
+## 4. Generation experiments (Step 6, `dev` split, hypothesis H2)
+
+Both models use the same pipeline: R5 retrieval on voyage-4 (top 5 into the prompt), prompt `answer_chain@1.0.0` with three worked
+examples, structured output (`json_schema`), validation rules V1 to V6, one repair attempt, then downgrade to `abstained`. E5 uses
+`anthropic/claude-sonnet-5.5` (A) and E6 `anthropic/claude-haiku-5.5` (B), 21 cases x 3 repetitions each. The judge is
+`openai/gpt-4.1-mini`, a different model family from both generators. These runs were scored locally; LangSmith upload is pending.
+
+<!-- generation:start -->
+Dev split, 21 cases x 3 repetitions. A = `anthropic/claude-sonnet-5.5`, B = `anthropic/claude-haiku-5.5`. Both use R5 retrieval (voyage-4), prompt `answer_chain@1.0.0`, V1-V6 with one repair. Judge: `openai/gpt-4.1-mini` (prompt fe3436481725). Cells: mean over cases [95% bootstrap CI], n = cases where the metric applies.
+
+| Metric | A | B | B - A [95% CI] |
+|---|---|---|---|
+| status_match | 0.76 [0.57, 0.90] (n=21) | 0.67 [0.48, 0.86] (n=21) | -0.10 [-0.24, +0.02] |
+| numeric_exact | 0.73 [0.45, 1.00] (n=11) | 0.73 [0.45, 1.00] (n=11) | +0.00 [+0.00, +0.00] |
+| must_contain_numbers | 0.86 [0.57, 1.00] (n=7) | 0.74 [0.45, 0.95] (n=7) | -0.12 [-0.29, +0.00] |
+| groundedness | 1.00 [1.00, 1.00] (n=13) | 1.00 [1.00, 1.00] (n=14) | +0.00 [+0.00, +0.00] |
+| answer_relevance | 4.98 [4.95, 5.00] (n=21) | 5.00 [5.00, 5.00] (n=21) | +0.02 [+0.00, +0.05] |
+| citation_exists | 0.91 [0.76, 1.00] (n=15) | 0.84 [0.64, 1.00] (n=15) | -0.07 [-0.18, +0.00] |
+| citation_correct | 0.80 [0.60, 1.00] (n=15) | 0.78 [0.56, 0.96] (n=15) | -0.02 [-0.07, +0.00] |
+| conflict_handling | 0.50 [0.00, 1.00] (n=2) | 0.50 [0.00, 1.00] (n=2) | +0.00 [+0.00, +0.00] |
+| injection_followed | 0.00 [0.00, 0.00] (n=1) | 0.00 [0.00, 0.00] (n=1) | +0.00 [+0.00, +0.00] |
+| schema_valid | 1.00 [1.00, 1.00] (n=21) | 0.90 [0.78, 1.00] (n=21) | -0.10 [-0.22, +0.00] |
+
+**H2 test:** groundedness B/A = 1.00 [1.00, 1.00] over 13 cases that both answered. H2 holds if the ratio is at least 0.90 (the interval's lower end is the safer reading).
+
+| | A | B |
+|---|---|---|
+| latency p50 / p95 (s) | 8.4 / 26.5 | 6.3 / 23.9 |
+| cost per run (USD, retrieval + generation) | 0.0270 | 0.0014 |
+| judge cost for the experiment (USD) | 0.039 | 0.036 |
+
+Output validation on the first pass (all 63 runs per model):
+
+| | A | B |
+|---|---|---|
+| runs with at least one violation | 14 / 63 | 17 / 63 |
+| repaired by the single retry | 14 / 63 | 16 / 63 |
+| downgraded to abstained after the retry | 0 / 63 | 1 / 63 |
+| first-pass violations of V1 | 0 | 6 |
+| first-pass violations of V3 | 27 | 17 |
+
+`status_match` by case type (mean over runs):
+
+| Case type | A | B |
+|---|---|---|
+| adversarial | 1.00 | 1.00 |
+| ambiguous | 1.00 | 0.83 |
+| calculation | 0.33 | 0.33 |
+| conflicting | 0.50 | 0.50 |
+| factual | 0.80 | 0.60 |
+| multi_step | 0.75 | 0.58 |
+| unanswerable | 1.00 | 1.00 |
+<!-- generation:end -->
+
+### 4.1 What the experiments show
+
+1. **H2 holds on the metrics we have, with caveats.** Haiku's groundedness is 1.00 against 1.00 for Sonnet (ratio 1.00), at about 5% of
+   the cost per run ($0.0014 against $0.027) and a lower median latency (6.3 s against 8.4 s). But groundedness is at its ceiling for both
+   models, so it cannot separate them, and the judge has not been calibrated against human labels yet (4.3 below). The differences that
+   do show are small and not significant on 21 cases: Sonnet is ahead on `status_match` (0.76 against 0.67, interval for the difference
+   -0.24 to +0.02) and on `must_contain_numbers` (0.86 against 0.74).
+2. **Validation does real work.** 14 of 63 Sonnet runs and 17 of 63 Haiku runs broke at least one rule on the first try, almost all of
+   them V3 (a number in the answer that is not in any cited quote). The single repair fixed 14 of 14 and 16 of 17; one Haiku run was
+   downgraded to `abstained`. Without the validator those answers would have been emitted. Citation correctness (a gold chunk is
+   actually cited) rose from 0.13 for B1 to 0.80 (Sonnet) and 0.78 (Haiku).
+3. **Schema validity on the first try is 1.00 for Sonnet and 0.90 for Haiku; the PRD target is 0.98.** Haiku's six misses were output the
+   parser could not read (or that hit the token limit); the retry fixed all but one. After the repair step, 62 of 63 Haiku runs produced an
+   answer that passed every check (98.4%) and one was downgraded to `abstained`, so Haiku meets the target only with the repair loop.
+4. **Latency misses the target for both.** p95 is 26.5 s (Sonnet) and 23.9 s (Haiku) against a 20 s target, driven by runs that need a
+   repair (two model calls) and by the re-ranker. p50 is 8.4 s and 6.3 s against 8 s. Streaming and trimming the prompt are the likely fixes; not done.
+5. **The remaining failures are mostly not generation failures.**
+   - **Calculation:** K02 and K03 were abstained on in all six runs. These need figures from two different periods and retrieval
+     finds none of the gold chunks for them (Step 5), so abstaining is the correct response to the evidence shown. No tools exist yet to compute the change; that is the Step 8 agent's job (H3).
+   - **Conflicts:** C03 (unexplained 0.6% vs 0.7%) was answered rather than reported as a conflict in all six runs. `conflict_handling` is 0.50 but on only two cases.
+   - **F05:** all six runs reported a conflict (4,500 in the Advance Release against 4,620 in the later dataset) where the case expects a plain answer. The data supports the model: the Advance Release does give 4,500. The case label ("same figure in the dataset and the report") looks wrong or incomplete. This is a question for the optional human second look in `eval/README.md`; the case has not been changed.
+   - **Multi-step:** M03 is inconsistent across repetitions for both models; Haiku also reports a conflict on M01 and F07 where Sonnet answers.
+6. **Both models resisted the injection case** (`injection_followed` 0 of 1) and abstained on every unanswerable case (3 of 3).
+
+### 4.2 Choice for Step 8
+
+**Haiku 5.5 with the repair loop** is the working choice for the agent (E7): comparable measured quality, about 19 times cheaper,
+faster. Sonnet stays as the fallback model (it needs no repairs as often and has perfect first-try schema validity). This choice is
+provisional until the judge is calibrated and E5/E6 are uploaded to LangSmith.
+
+### 4.3 LLM-judge reliability
+
+- **Sensitivity (automatic, no human involved):** one measured value was altered in each of 50 numeric claims taken from E5 and E6
+  (period labels untouched), and the judge saw the original evidence. It marked all 50 unaltered claims as supported and all 50 altered
+  claims as unsupported (`eval/calibration/sensitivity.json`). So it reliably catches a wrong number. It has not been tested on subtler
+  errors (wrong residency group, wrong seasonal-adjustment basis, wrong period), which are the likelier real mistakes.
+- **Human calibration is pending.** `eval/CALIBRATION.md` is a blind sheet with 10 answers and 29 claims, 4 of which are altered copies
+  mixed in without a mark. Agreement and Cohen's kappa are computed by `make calibrate` after you tick the boxes. Until then the groundedness and
+  relevance scores are *uncalibrated* and should be read as indicative. The judge scored 4.98 and 5.00 out of 5 on relevance, which is
+  too lenient to distinguish systems.
+- **Same-family risk** is limited, not removed: the judge is not from the generators' family, but the eval cases were drafted by the same
+  family as the generators (see Open items).
+
+### 4.4 Caveats
+
+- 21 dev cases x 3 repetitions, with only 13 to 14 cases where groundedness applies and 2 where conflict handling applies. Intervals are wide.
+- The first E5 run failed on every call because Sonnet rejects forced tool-calling (HTTP 400); the second lost about a third of its runs
+  to a 1,500-token output cap. Both were harness faults, fixed (`json_schema` output, 3,000 tokens, truncation counted as a V1 failure)
+  and covered by tests. The reported numbers are from the third run. The B1 baseline still uses `function_calling` and a 1,500-token cap,
+  so B1 and E6 differ in more than the prompt and validation; they are not a clean ablation.
+- Derived numbers (changes, ratios) are only required to be *labelled* `model_inference` and to show their working; V3 does not
+  check the arithmetic. Verified arithmetic comes with the calculator tool in Step 8 (V4).
+- Costs use the OpenRouter prices recorded on 2026-10-27 and include re-ranking only when the re-rank was not already cached.
+
+### 4.5 Reproduce
+
+```bash
+make generation        # E6 then E5 on dev, scored locally (UPLOAD= to send to LangSmith)
+uv run python scripts/analyse_generation.py --write
+uv run python scripts/judge_sensitivity.py
+make calibration-sheet # then tick eval/CALIBRATION.md yourself, then: make calibrate
+```
