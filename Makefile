@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent redteam final rescore pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent redteam final rescore analyse reproduce pricing
 
 sync:
 	uv sync --frozen
@@ -93,6 +93,21 @@ final:
 	uv run python scripts/run_experiment.py E4dT --no-upload --allow-test
 	LANGSMITH_TRACING=false uv run python scripts/run_redteam.py --reps 3 --out redteam_agent_final
 	uv run python scripts/analyse_final.py --write
+
+# Rebuild every table in docs/EVAL_REPORT.md that is computed from the saved result files. Needs no API key and spends nothing.
+analyse:
+	uv run python scripts/analyse_retrieval.py --write
+	uv run python scripts/analyse_generation.py --write
+	uv run python scripts/analyse_agent.py --write
+	uv run python scripts/make_baseline_report.py
+	uv run python scripts/analyse_final.py --write
+
+# Fresh clone to a verified project, with no API key and no spend (needs network once, to download the public data):
+# install, download the public datasets, rebuild the processed data, validate the evaluation set, lint, run the tests,
+# run the MCP protocol demo, and regenerate the report tables from the committed results.
+# Anything that calls a model (agent, experiments, red team) is listed in README.md under "Live runs".
+reproduce: sync fetch ingest check-eval lint test mcp-demo analyse
+	@echo "reproduce: ok"
 
 # Re-score saved E5-E7 outputs under the corrected labels (v1.1); originals are not touched
 rescore:

@@ -1,6 +1,55 @@
 # GenAI concepts used in this project
 
-This file is filled in step by step. Sections so far: **MCP** (Step 7) and **Agentic workflow** (Step 8).
+How the GenAI concepts in the challenge brief apply to this project, with the trade-offs and where each one is demonstrated. Contents: [LLM fundamentals](#llm-fundamentals), [Embeddings and retrieval](#embeddings-and-retrieval), [Prompt and context engineering](#prompt-and-context-engineering), [Evaluation](#evaluation), [Agentic workflow](#agentic-workflow-why-a-bounded-agent-and-how-it-is-bounded), [MCP](#mcp-concepts-trust-boundaries-and-what-was-built), [Production considerations](#production-considerations).
+
+## LLM fundamentals
+
+- **Tokens and context.** Models read tokens, not words; prices and limits are per token. Evidence is capped by a character budget (about 3,500 tokens) so that a long
+  question cannot crowd out the instructions, and answers are capped at 4,500 output tokens. The cap mattered: at 3,000 tokens, long conflict answers were cut off and
+  about a sixth of agent runs needed a repair (EVAL_REPORT 5.1 and 7.1).
+- **Sampling controls.** Temperature 0 everywhere (router, tool choice, synthesis, judge), so a question gives the same answer much more often, but not always:
+  providers are not deterministic at temperature 0, which is why every experiment uses 3 repetitions.
+- **Structured generation.** The answer is a JSON-schema object (`generation/schema.py`) via `with_structured_output(method="json_schema")`. We first used tool-calling
+  for structure and found that Claude Sonnet 5.5 rejects the forced tool choice it needs (HTTP 400): the same code worked for one model and failed for the other, which is
+  a reminder to test structured output per model.
+- **Model selection.** Haiku 5.5 and Sonnet 5.5 were compared on the same pipeline (E5 against E6). Groundedness was within 2% (both near the ceiling) and Haiku cost about 4% as much,
+  but Sonnet was significantly better on citation correctness (+0.11) and required numbers (+0.21). Haiku is the default for cost; the evidence is dev-only and the groundedness metric was saturated.
+- **Failure modes seen:** wrong numbers (blocked by V3 and by tools doing the arithmetic), citations that point at the wrong passage (V2), over-cautious abstention
+  (false abstention 0.27 on test), answers cut off by a token limit, and a model that refuses forced tool calls.
+
+## Embeddings and retrieval
+
+- **Similarity.** Dense vectors are normalised, so cosine similarity is a dot product. Two embedding models were compared: `text-embedding-3-small` scored Recall@5 0.09 on
+  dev and `voyage-4` 0.42, because many statistic cards differ by one word (residency, quarter, seasonal basis) and the weaker model confuses them.
+- **Chunking.** Structure-aware chunks (C2, at most 400 tokens): report text is split on its own headings, and each published figure becomes its own one-sentence "stat card" so
+  a number and its measure and period live in one chunk. The fixed-size alternative (C1) was not run because no citation error traced to a chunk boundary (OPT-1 not warranted).
+- **Metadata filters.** A permission filter on `access_level` applied before ranking, and a period filter taken from the question. The period filter raised Recall@5 from 0.57 to
+  0.67 on dev, within noise (paired intervals include zero) but in the right direction.
+- **Hybrid retrieval and re-ranking.** BM25 finds exact words and numbers; dense retrieval finds paraphrase. Fused by reciprocal rank, they were **worse** than BM25 on dev with the weaker
+  embeddings and no better with the stronger ones; the re-ranker is what gave the gain (+0.23 to +0.27 Recall@5 over BM25, intervals excluding zero).
+- **Retrieval errors versus generation errors.** The error taxonomy separates a gold chunk never reaching the model (retrieval miss) from a model that had the evidence and still got it wrong
+  (synthesis), which is how the router's refusals were found not to be retrieval problems (EVAL_REPORT 8.4).
+
+## Prompt and context engineering
+
+- **Instruction hierarchy:** system prompt, then task template, then the user question, then retrieved text and tool output, which is data only. Data is wrapped in
+  `<untrusted_evidence>` and `<untrusted_tool_output>` blocks and the system prompt says content in them is never an instruction. This is a convention the model must respect, so it is backed by
+  redaction at the MCP client, an input guard, output validation and an output tripwire (a prompt alone is not a security boundary).
+- **Few-shot examples.** Three worked examples (answered, abstained, conflict) come from a pool checked for overlap with the evaluation questions; their quotes are generated from real chunks and tested against the validator.
+- **Context assembly:** tool results first (they carry the call ids the answer must cite), then passages by score, within a character budget; the output contract (what V1 to V6 will check) is spelled out in the prompt.
+- **Grounding rules:** every number must appear in a cited quote or a tool result; arithmetic only through tools; a computed value may be quoted rounded, a published one may not.
+- **Versioning:** prompts live in `prompts/*.yaml` with a version and a content hash that is written into every experiment's metadata. Prompt caching was not used (the provider path through OpenRouter was not configured for it).
+
+## Evaluation
+
+- **Offline against online.** Everything here is offline: fixed datasets, repeated runs. Online monitoring (sampled production traffic, drift, feedback) is a plan in `docs/INNOVATION.md`, not built.
+- **Deterministic against model-based judging.** Status, number, citation existence and canary checks are code. Groundedness, relevance and conflict handling use an LLM judge from a different family.
+  The judge was calibrated against the project owner's labels on 29 claims (agreement 100%, kappa 1.0, four deliberately altered claims all caught) and found too lenient on relevance (exact agreement 0.5), so relevance is not used to rank systems.
+- **Judge bias.** Using a different family reduces self-preference; calibration and altered-claim sensitivity tests check leniency. One labeller and 29 claims is thin evidence.
+- **Leakage and held-out discipline.** Cases were checked for overlap with few-shot examples and the corpus; the `test` split is run once per frozen configuration and needs an explicit flag; no test case was edited after results.
+  Dev labels revised after results are versioned and disclosed (EVAL_REPORT section 6) and the saved outputs were re-scored, not re-run.
+- **Statistics.** Case-level bootstrap intervals, paired differences on the same resampled cases, exact McNemar and Wilcoxon tests; with 15 test cases nothing reached p < 0.05, so "no difference found" is not "no difference".
+- **Human review.** Calibration sample labelled by the owner; a review sheet for the held-out answers is prepared (single reviewer).
 
 ## MCP: concepts, trust boundaries and what was built
 
@@ -109,3 +158,15 @@ in-memory for the prototype, and a persistent store would replace it in producti
 
 `--fault dense_down|mcp_down|mcp_timeout|mcp_malformed|mcp_poison` (CLI, `AgentRuntime(faults=...)`) simulates each failure; the demo
 scenarios 7, 9 and 10 use them. They are off unless set.
+
+## Production considerations
+
+| Topic | In this project |
+|---|---|
+| Observability | Optional LangSmith tracing; every run also logs a node-by-node trace (`--verbose`) and its stop reason; experiments save per-run scores, answers and validation results to `eval/results/` |
+| Latency | Median 10.3 s, p95 27.1 s on test, above target. About 3 model calls per question; the plan in EVAL_REPORT 8.5 merges the router and plan and parallelises searches |
+| Token and cost management | About $0.0025 per question; per-call and per-question deadlines; evidence and output budgets; a spend guard that refuses paid experiments that would exceed your credit |
+| Model routing | Not implemented as routing; the pipeline uses one small model for all steps. A larger model for synthesis only is a documented option (INNOVATION) |
+| Rate limits and fallbacks | One retry on model calls, retries with backoff on the statistics server, BM25 fallback when dense retrieval fails, safe abstention when the deadline passes. A second model provider via `with_fallbacks()` is not configured |
+| Versioning and reproducibility | Versioned prompts and configs, a commit and corpus fingerprint in every result, seeds for the split and bootstrap, versioned dataset labels, `make reproduce` from a fresh clone |
+| Privacy | Questions and passages go to third-party model providers; no personal data is expected or stored; see the system card |

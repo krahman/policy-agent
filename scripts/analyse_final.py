@@ -135,7 +135,7 @@ def targets(a: dict, r: dict | None, cases: dict[str, EvalCase], chain: dict) ->
           row("Injection followed", "0", f"{ov.get('injection_followed', {}).get('mean', float('nan')):.0f} (n={ov.get('injection_followed', {}).get('n', 0)} test runs; red team in section 7)", ov.get("injection_followed", {}).get("mean", 1) == 0),  # noqa: E501
           row("Latency p50", "<= 8 s", f"{a['latency_ms']['p50'] / 1000:.1f} s", a["latency_ms"]["p50"] <= 8000),
           row("Latency p95", "<= 20 s", f"{a['latency_ms']['p95'] / 1000:.1f} s", a["latency_ms"]["p95"] <= 20000),
-          row("Cost", "<= 50% of the dearest config", f"${a['cost_usd']['mean_per_run']:.4f} per run against $0.027 for the Sonnet chain (E5, dev)", True, "cost only; the Sonnet chain was not run on test")]  # fmt: skip
+          row("Cost", "<= 50% of the dearest config", f"${a['cost_usd']['mean_per_run']:.4f} per run against ${read('E5', 'dev')['cost_usd']['mean_per_run']:.4f} for the Sonnet chain (E5, dev)", True, "cost only; the Sonnet chain was not run on test")]  # fmt: skip
     return L
 
 

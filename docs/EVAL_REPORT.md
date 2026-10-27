@@ -246,77 +246,81 @@ Dev split, 21 cases x 3 repetitions. A = `anthropic/claude-sonnet-5.5`, B = `ant
 
 | Metric | A | B | B - A [95% CI] |
 |---|---|---|---|
-| status_match | 0.76 [0.57, 0.90] (n=21) | 0.67 [0.48, 0.86] (n=21) | -0.10 [-0.24, +0.02] |
-| numeric_exact | 0.73 [0.45, 1.00] (n=11) | 0.73 [0.45, 1.00] (n=11) | +0.00 [+0.00, +0.00] |
-| must_contain_numbers | 0.86 [0.57, 1.00] (n=7) | 0.74 [0.45, 0.95] (n=7) | -0.12 [-0.29, +0.00] |
-| groundedness | 1.00 [1.00, 1.00] (n=13) | 1.00 [1.00, 1.00] (n=14) | +0.00 [+0.00, +0.00] |
-| answer_relevance | 4.98 [4.95, 5.00] (n=21) | 5.00 [5.00, 5.00] (n=21) | +0.02 [+0.00, +0.05] |
-| citation_exists | 0.91 [0.76, 1.00] (n=15) | 0.84 [0.64, 1.00] (n=15) | -0.07 [-0.18, +0.00] |
-| citation_correct | 0.80 [0.60, 1.00] (n=15) | 0.78 [0.56, 0.96] (n=15) | -0.02 [-0.07, +0.00] |
+| status_match | 0.76 [0.57, 0.90] (n=21) | 0.70 [0.51, 0.87] (n=21) | -0.06 [-0.17, +0.00] |
+| numeric_exact | 0.73 [0.45, 1.00] (n=11) | 0.67 [0.39, 0.91] (n=11) | -0.06 [-0.15, +0.00] |
+| must_contain_numbers | 0.86 [0.57, 1.00] (n=7) | 0.64 [0.36, 0.90] (n=7) | -0.21 [-0.43, -0.05] |
+| groundedness | 1.00 [1.00, 1.00] (n=13) | 0.98 [0.95, 1.00] (n=13) | -0.02 [-0.05, +0.00] |
+| answer_relevance | 4.98 [4.95, 5.00] (n=21) | 4.95 [4.86, 5.00] (n=21) | -0.03 [-0.14, +0.05] |
+| citation_exists | 0.91 [0.76, 1.00] (n=15) | 0.78 [0.62, 0.93] (n=15) | -0.13 [-0.24, -0.04] |
+| citation_correct | 0.80 [0.60, 1.00] (n=15) | 0.69 [0.47, 0.87] (n=15) | -0.11 [-0.22, -0.02] |
 | conflict_handling | 0.50 [0.00, 1.00] (n=2) | 0.50 [0.00, 1.00] (n=2) | +0.00 [+0.00, +0.00] |
 | injection_followed | 0.00 [0.00, 0.00] (n=1) | 0.00 [0.00, 0.00] (n=1) | +0.00 [+0.00, +0.00] |
-| schema_valid | 1.00 [1.00, 1.00] (n=21) | 0.90 [0.78, 1.00] (n=21) | -0.10 [-0.22, +0.00] |
+| schema_valid | 0.98 [0.95, 1.00] (n=21) | 0.90 [0.79, 0.98] (n=21) | -0.08 [-0.19, +0.00] |
 
-**H2 test:** groundedness B/A = 1.00 [1.00, 1.00] over 13 cases that both answered. H2 holds if the ratio is at least 0.90 (the interval's lower end is the safer reading).
+**H2 test:** groundedness B/A = 0.98 [0.95, 1.00] over 13 cases that both answered. H2 holds if the ratio is at least 0.90 (the interval's lower end is the safer reading).
 
 | | A | B |
 |---|---|---|
-| latency p50 / p95 (s) | 8.4 / 26.5 | 6.3 / 23.9 |
-| cost per run (USD, retrieval + generation) | 0.0270 | 0.0014 |
-| judge cost for the experiment (USD) | 0.039 | 0.036 |
+| latency p50 / p95 (s) | 9.9 / 26.9 | 6.0 / 25.0 |
+| cost per run (USD, retrieval + generation) | 0.0294 | 0.0013 |
+| judge cost for the experiment (USD) | 0.039 | 0.033 |
 
 Output validation on the first pass (all 63 runs per model):
 
 | | A | B |
 |---|---|---|
-| runs with at least one violation | 14 / 63 | 17 / 63 |
-| repaired by the single retry | 14 / 63 | 16 / 63 |
-| downgraded to abstained after the retry | 0 / 63 | 1 / 63 |
-| first-pass violations of V1 | 0 | 6 |
-| first-pass violations of V3 | 27 | 17 |
+| runs with at least one violation | 21 / 63 | 14 / 63 |
+| repaired by the single retry | 21 / 63 | 11 / 63 |
+| downgraded to abstained after the retry | 0 / 63 | 3 / 63 |
+| first-pass violations of V1 | 1 | 6 |
+| first-pass violations of V3 | 30 | 14 |
 
 `status_match` by case type (mean over runs):
 
 | Case type | A | B |
 |---|---|---|
 | adversarial | 1.00 | 1.00 |
-| ambiguous | 1.00 | 0.83 |
+| ambiguous | 1.00 | 1.00 |
 | calculation | 0.33 | 0.33 |
 | conflicting | 0.50 | 0.50 |
-| factual | 0.80 | 0.60 |
-| multi_step | 0.75 | 0.58 |
+| factual | 0.80 | 0.73 |
+| multi_step | 0.75 | 0.50 |
 | unanswerable | 1.00 | 1.00 |
 <!-- generation:end -->
 
 ### 4.1 What the experiments show
 
-1. **H2 holds on the metrics we have, with caveats.** Haiku's groundedness is 1.00 against 1.00 for Sonnet (ratio 1.00), at about 5% of
-   the cost per run ($0.0014 against $0.027) and a lower median latency (6.3 s against 8.4 s). But groundedness is at its ceiling for both
-   models, so it cannot separate them, and the judge has not been calibrated against human labels yet (4.3 below). The differences that
-   do show are small and not significant on 21 cases: Sonnet is ahead on `status_match` (0.76 against 0.67, interval for the difference
-   -0.24 to +0.02) and on `must_contain_numbers` (0.86 against 0.74).
-2. **Validation does real work.** 14 of 63 Sonnet runs and 17 of 63 Haiku runs broke at least one rule on the first try, almost all of
-   them V3 (a number in the answer that is not in any cited quote). The single repair fixed 14 of 14 and 16 of 17; one Haiku run was
-   downgraded to `abstained`. Without the validator those answers would have been emitted. Citation correctness (a gold chunk is
-   actually cited) rose from 0.13 for B1 to 0.80 (Sonnet) and 0.78 (Haiku).
-3. **Schema validity on the first try is 1.00 for Sonnet and 0.90 for Haiku; the PRD target is 0.98.** Haiku's six misses were output the
-   parser could not read (or that hit the token limit); the retry fixed all but one. After the repair step, 62 of 63 Haiku runs produced an
-   answer that passed every check (98.4%) and one was downgraded to `abstained`, so Haiku meets the target only with the repair loop.
-4. **Latency misses the target for both.** p95 is 26.5 s (Sonnet) and 23.9 s (Haiku) against a 20 s target, driven by runs that need a
-   repair (two model calls) and by the re-ranker. p50 is 8.4 s and 6.3 s against 8 s. Streaming and trimming the prompt are the likely fixes; not done.
+(These statements were corrected in Step 11: an earlier version quoted numbers from a different run than the saved result files. The tables
+above are regenerated from `eval/results/E5_dev.json` and `E6_dev.json` by `make analyse`, and the text below matches them.)
+
+1. **H2 holds on groundedness, but not on every metric.** Haiku's groundedness is 0.98 against 1.00 for Sonnet (ratio 0.98, interval 0.95 to
+   1.00, so above the 0.90 threshold), at about 4% of the cost per run ($0.0013 against $0.0294) and a lower median latency (6.0 s against
+   9.9 s). Groundedness is at its ceiling for both models, so it barely separates them. On other metrics **Sonnet is better**: citation
+   correctness 0.80 against 0.69 (difference for Haiku -0.11, interval -0.22 to -0.02) and `must_contain_numbers` 0.86 against 0.64 (-0.21,
+   interval -0.43 to -0.05). `status_match` (0.76 against 0.70) and `numeric_exact` (0.73 against 0.67) are ahead for Sonnet but not significantly
+   so on 21 cases. So the cheaper model costs some citation quality; the judge was calibrated on 29 claims (4.3).
+2. **Validation does real work.** 21 of 63 Sonnet runs and 14 of 63 Haiku runs broke at least one rule on the first try, mostly V3 (a number in
+   the answer that is not in any cited quote: 30 and 14 violations). The single repair fixed all 21 Sonnet cases and 11 of the 14 Haiku cases; three
+   Haiku runs ended downgraded to `abstained`. Without the validator those answers would have been emitted. Citation correctness (a gold chunk
+   is actually cited) rose from 0.13 for B1 to 0.80 (Sonnet) and 0.69 (Haiku).
+3. **Schema validity on the first try is 0.98 for Sonnet and 0.90 for Haiku; the PRD target is 0.98.** Haiku's first-pass failures were mostly
+   V1 (output the parser could not read or that hit the token limit: 6 against 1 for Sonnet). With the repair loop, 60 of 63 Haiku runs ended with
+   an answer that passed every check (95%) and three were downgraded, so Haiku does not reach the target even with repair.
+4. **Latency misses the target for both.** p95 is 26.9 s (Sonnet) and 25.0 s (Haiku) against a 20 s target, driven by runs that need a
+   repair (two model calls) and by the re-ranker. p50 is 9.9 s and 6.0 s against 8 s. Streaming and trimming the prompt are the likely fixes; not done.
 5. **The remaining failures are mostly not generation failures.**
    - **Calculation:** K02 and K03 were abstained on in all six runs. These need figures from two different periods and retrieval
      finds none of the gold chunks for them (Step 5), so abstaining is the correct response to the evidence shown. No tools exist yet to compute the change; that is the Step 8 agent's job (H3).
-   - **Conflicts:** C03 (unexplained 0.6% vs 0.7%) was answered rather than reported as a conflict in all six runs. `conflict_handling` is 0.50 but on only two cases.
-   - **F05:** all six runs reported a conflict (4,500 in the Advance Release against 4,620 in the later dataset) where the case expects a plain answer. The data supports the model: the Advance Release does give 4,500. The case label ("same figure in the dataset and the report") looks wrong or incomplete. This is a question for the optional human second look in `eval/README.md`; the case has not been changed.
-   - **Multi-step:** M03 is inconsistent across repetitions for both models; Haiku also reports a conflict on M01 and F07 where Sonnet answers.
-6. **Both models resisted the injection case** (`injection_followed` 0 of 1) and abstained on every unanswerable case (3 of 3).
+   - **Conflicts:** C03 (unexplained 0.6% vs 0.7%) was answered rather than reported as a conflict in five of six runs (Haiku asked for clarification once). `conflict_handling` is 0.50 but on only two cases.
+   - **F05:** Sonnet reported a conflict in all three runs and Haiku in two (4,500 in the Advance Release against 4,620 in the later dataset), where the v1 case expected a plain answer. The data supports the models: the Advance Release does give 4,500. This became the label correction of section 6.
+   - **Multi-step:** Sonnet reports a conflict on M03 in all three runs (June 2026 unemployment 2.0% in the Advance Release against 1.9% later); Haiku is inconsistent on M03, M01 and F07 (conflict, abstention or a plain answer from run to run).
+6. **Both models resisted the injection case** (`injection_followed` 0 in 3 runs of the one case) and abstained on every unanswerable case.
 
 ### 4.2 Choice for Step 8
 
-**Haiku 5.5 with the repair loop** is the working choice for the agent (E7): comparable measured quality, about 19 times cheaper,
-faster. Sonnet stays as the fallback model (it needs no repairs as often and has perfect first-try schema validity). This choice is
-provisional until the judge is calibrated and E5/E6 are uploaded to LangSmith.
+**Haiku 5.5 with the repair loop** was the working choice for the agent (E7): groundedness within 2% of Sonnet's, about 23 times cheaper, faster.
+The price of that choice is real and measured: lower citation correctness (-0.11) and fewer of the required numbers (-0.21), and 3 of 63 runs
+that never produced a checked answer. Sonnet remains the better model on those metrics; it was not run on the held-out split because of cost.
 
 ### 4.3 LLM-judge reliability
 
@@ -470,8 +474,7 @@ please run `make agent-demo` and read a few of the printed answers and traces yo
 
 Keep the agent as the default for questions that need numbers, comparisons or computed changes, because it makes those answers
 verifiable (tool calls, cited cards, no mental arithmetic). Whether it is worth twice the latency for single lookups is not
-settled: on simple factual cases it is equal on quality and slower. A sensible production rule, not tested here, is to route plain
-single-figure lookups to the chain and everything else to the agent.
+settled: on the dev factual cases it was equal on quality and slower, but on the held-out factual cases (section 8) it scored 1.00 against the chain's 0.78 on both status and number, so routing lookups to the chain is untested and not recommended on this evidence. (Section 8 revisits H3 on held-out data: no significant difference overall.)
 
 ### 5.4 Caveats
 
@@ -679,7 +682,7 @@ Held-out `test` split, 15 cases x 3 repetitions each. Agent = E7T (`anthropic/cl
 | Injection followed | 0 | 0 (n=3 test runs; red team in section 7) | met |  |
 | Latency p50 | <= 8 s | 10.3 s | not met |  |
 | Latency p95 | <= 20 s | 27.1 s | not met |  |
-| Cost | <= 50% of the dearest config | $0.0025 per run against $0.027 for the Sonnet chain (E5, dev) | met | cost only; the Sonnet chain was not run on test |
+| Cost | <= 50% of the dearest config | $0.0025 per run against $0.0294 for the Sonnet chain (E5, dev) | met | cost only; the Sonnet chain was not run on test |
 
 **Error taxonomy, Agent (E7T)** (14 failed runs of 45):
 
@@ -721,7 +724,7 @@ dense retrieval on `test` (+0.04, wide interval). No retriever meets the 0.85 ta
   intervals exclude zero). Hybrid fusion without the re-ranker was not better than BM25 on `dev`. Against dense retrieval with the better
   embedding model the difference is within noise on both splits. The embedding model mattered more than the retriever type.
 - **H2 (a smaller model reaches 90% of a larger model's groundedness at a fraction of cost and latency).** Supported on `dev` only: groundedness
-  ratio 1.00 (both near the ceiling), at about 5% of the cost. Sonnet was **not** run on `test` (credit), so H2 is not confirmed on held-out data.
+  ratio 0.98 (both near the ceiling), at about 4% of the cost, with Sonnet significantly better on citation correctness (+0.11) and required numbers (+0.21). Sonnet was **not** run on `test` (credit), so H2 is not confirmed on held-out data.
 - **H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple ones).** **Not demonstrated.** On `test`
   no difference reaches significance (every Wilcoxon and McNemar p is at least 0.25). The agent is nominally ahead on `status_match` (+0.04) and
   `citation_correct` (+0.27) and behind on `numeric_exact` (-0.11) and `conflict_handling` (two cases), at 1.4 times the cost and +3.3 s median latency.
