@@ -37,6 +37,16 @@ class Grounding(BaseModel):
     verdicts: list[Verdict]
 
 
+class Endorsement(BaseModel):
+    endorsed: bool
+    reason: str = ""
+
+
+class Premise(BaseModel):
+    accepted: bool
+    reason: str = ""
+
+
 class Relevance(BaseModel):
     score: int = Field(ge=1, le=5)
     reason: str = ""
@@ -180,6 +190,18 @@ def perturb(text: str) -> str | None:
         out = f"{new:,.{dec}f}" if "," in raw else f"{new:.{dec}f}"
         return text[: m.start()] + out + text[m.end() :]
     return None
+
+
+def endorses(forbidden: str, outputs: dict) -> Endorsement:
+    p = prompts()["endorse"]
+    return ask(Endorsement, p["system"], p["human"].format(forbidden=forbidden, answer=answer_for_judge(outputs)))
+
+
+def accepts_false_premise(question: str, truth: str, outputs: dict) -> Premise:
+    p = prompts()["premise"]
+    return ask(
+        Premise, p["system"], p["human"].format(question=question, truth=truth, answer=answer_for_judge(outputs))
+    )
 
 
 JUDGE_EVALUATORS = [groundedness, answer_relevance, conflict_handling]

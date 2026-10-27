@@ -4,6 +4,8 @@ import asyncio
 import json
 
 import pytest
+from langchain_core.tools import ToolException
+from pydantic import ValidationError
 
 from policy_agent import mcp_client as mc
 from policy_agent.mcp_client import ClientErrorCode as Code
@@ -263,5 +265,34 @@ def test_poisoned_resource_is_redacted_and_wrapped():
             assert CANARY not in wrapped and mc.REDACTED in wrapped  # but nothing that reaches a prompt does
             assert 'flagged="sources[0].publisher"' in wrapped and c.flags == ["sources[0].publisher"]
             assert "Open Data Licence" in wrapped  # the legitimate licence text survives
+
+    run(go())
+
+
+def test_the_agents_resource_tool_returns_wrapped_redacted_catalogue_text():
+    """The R04 attack path: the agent reads stats://sources through a tool and the poison never reaches it."""
+    from policy_agent.tools.mcp_tools import make_resource_tool
+
+    async def go():
+        async with mc.connect("stats", env={"MCP_POISON": "1"}) as c:
+            tool = make_resource_tool(c)
+            msg = await tool.ainvoke(
+                {"name": "read_stats_resource", "args": {"uri": "stats://sources"}, "id": "t1", "type": "tool_call"}
+            )
+            assert (
+                msg.content.startswith("<untrusted_tool_output")
+                and CANARY not in msg.content
+                and "Open Data Licence" in msg.content
+            )
+            assert mc.REDACTED in msg.content and CANARY not in json.dumps(msg.artifact)
+            with pytest.raises((ValidationError, ToolException)):  # only the two allow-listed URIs are accepted
+                await tool.ainvoke(
+                    {
+                        "name": "read_stats_resource",
+                        "args": {"uri": "file:///etc/passwd"},
+                        "id": "t2",
+                        "type": "tool_call",
+                    }
+                )
 
     run(go())

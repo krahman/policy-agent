@@ -24,14 +24,15 @@ from policy_agent.graph.nodes import Deps
 from policy_agent.graph.state import RECURSION_LIMIT
 from policy_agent.retrieval.dense import DEFAULT_EMBEDDING
 from policy_agent.tools import calculator_tool, make_search_corpus
-from policy_agent.tools.mcp_tools import load_stats_tools
+from policy_agent.tools.mcp_tools import load_stats_tools, make_resource_tool
 from policy_agent.tools.search_corpus import SearchContext
 
 DEFAULT_MODEL = "anthropic/claude-haiku-5.5"
+HARD_DEADLINE_S = 75.0  # absolute cap per question; the graph's own 30 s budget is checked between steps only
 FAULTS = {"dense_down", "mcp_down", "mcp_timeout", "mcp_malformed", "mcp_poison"}
 
 
-def make_llm(model: str, max_tokens: int = 3000, http_client: httpx.AsyncClient | None = None) -> ChatOpenAI:
+def make_llm(model: str, max_tokens: int = 4500, http_client: httpx.AsyncClient | None = None) -> ChatOpenAI:
     import os
 
     return ChatOpenAI(
@@ -41,13 +42,15 @@ def make_llm(model: str, max_tokens: int = 3000, http_client: httpx.AsyncClient 
         base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
         temperature=0,
         max_completion_tokens=max_tokens,
+        timeout=45,  # one model call may not hang a run
+        max_retries=1,
     )
 
 
 class AgentRuntime:
     def __init__(
         self, model: str = DEFAULT_MODEL, embedding: str = DEFAULT_EMBEDDING, faults: set[str] | frozenset[str] = frozenset(),
-        max_tokens: int = 3000, llm: Any = None,
+        max_tokens: int = 4500, llm: Any = None,
     ):  # fmt: skip
         unknown = set(faults) - FAULTS
         if unknown:
@@ -94,7 +97,7 @@ class AgentRuntime:
                 env["MCP_POISON"] = "1"
             try:
                 async with mc.connect("stats", allow, env) as conn:
-                    self.mcp_tools = {t.name: t for t in await load_stats_tools(conn)}
+                    self.mcp_tools = {t.name: t for t in [*await load_stats_tools(conn), make_resource_tool(conn)]}
                     self.mcp_ok, self.mcp_error = True, None
                     self._signal_ready()
                     await self._wait_for_reset_or_stop()  # leaving the block closes the connection and the server
@@ -150,7 +153,7 @@ class AgentRuntime:
     def _reconnect_and_refresh(self, tools: dict):
         async def go() -> None:
             await self.reconnect()
-            for k in ("query_statistic", "compute_change"):
+            for k in ("query_statistic", "compute_change", "read_stats_resource"):
                 tools.pop(k, None)
             tools.update(self.mcp_tools)
 
@@ -159,17 +162,28 @@ class AgentRuntime:
     async def _ask(self, question: str, role: str, want_report: bool, thread_id: str) -> dict:
         graph, deps, ctx = self._make()
         t0 = time.perf_counter()
-        state = await graph.ainvoke(
-            {
-                "question": question,
-                "user_role": role,
-                "want_report": want_report,
-                "usage": {},
-                "log": [],
-                "messages": [],
-            },
-            {"configurable": {"thread_id": thread_id}, "recursion_limit": RECURSION_LIMIT},
-        )
+        try:
+            state = await asyncio.wait_for(
+                graph.ainvoke(
+                    {
+                        "question": question,
+                        "user_role": role,
+                        "want_report": want_report,
+                        "usage": {},
+                        "log": [],
+                        "messages": [],
+                    },
+                    {"configurable": {"thread_id": thread_id}, "recursion_limit": RECURSION_LIMIT},
+                ),
+                timeout=HARD_DEADLINE_S,
+            )
+        except TimeoutError:  # a hung model or tool call: end safely instead of hanging the caller
+            state = {
+                "answer": {"status": "abstained", "summary": "I could not finish within the time budget, so I am not giving an answer.",
+                           "claims": [], "conflicts": [], "clarifying_question": None, "confidence": "low",
+                           "limitations": [f"Time budget exceeded ({HARD_DEADLINE_S:.0f} s); the request was stopped."]},
+                "stop_reason": "hard deadline", "log": ["hard deadline reached"], "usage": {},
+            }  # fmt: skip
         return to_outputs(state, time.perf_counter() - t0, ctx, self.model, deps.mcp_available, thread_id)
 
     def ask(

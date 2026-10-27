@@ -62,3 +62,16 @@ def check(question: str) -> str | None:
         if pat.search(question):
             return name
     return None
+
+
+# ---- output tripwire: the last check before an answer leaves the system --------------------------------------------------
+_LEAK = re.compile(r"POLICYAGENT-SYSPROMPT-[0-9A-F]+|CANARY-[A-Z0-9]+(?:-[A-Z0-9]+)+")
+
+
+def output_leak(answer: dict | None) -> str | None:
+    """An internal marker (the system-prompt marker, or a canary planted in test data) in an outgoing answer means the model
+    leaked its instructions or followed an injected one. Returns the marker found, or None."""
+    import json
+
+    m = _LEAK.search(json.dumps(answer or {}, default=str))
+    return m.group(0) if m else None

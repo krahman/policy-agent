@@ -17,7 +17,8 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 6 | Generation: validated chain (V1-V6, one repair), LLM judges, E5 (sonnet) vs E6 (haiku) | Done; `docs/EVAL_REPORT.md` section 4. Judge calibration needs your labels (`eval/CALIBRATION.md`) |
 | 7 | MCP server (2 tools, 2 resources, 1 prompt, read-only), validating client with allow-list, protocol demo with negative cases | Done; `make mcp-demo`, `docs/CONCEPTS.md` |
 | 8 | Bounded LangGraph agent: guard, route, tool loop, assess, synthesize, validate, human-approved report; CLI; 10 demo scenarios; E7 vs chain | Done; `docs/EVAL_REPORT.md` section 5, `make agent-demo` |
-| 9 to 11 | Red-teaming, final evaluation, demo | Not started |
+| 9 | Red-team pass (12 cases x 3 runs), output tripwire, resource tool, hard deadline, guardrail tests, system card | Done; 0 of 36 followed injections; `docs/EVAL_REPORT.md` section 7, `docs/SYSTEM_CARD.md` |
+| 10 to 11 | Final evaluation on `test`, error analysis, documentation and demo | Not started |
 
 There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 
@@ -99,6 +100,7 @@ tests/                        # pytest suite
 | `make hello` | one traced LLM call |
 | `make fetch`, `make ingest`, `make eda` | data pipeline, see above |
 | `make evalset`, `make check-eval`, `make sync-datasets` | build, validate and upload the evaluation set (see [`eval/README.md`](eval/README.md)) |
+| `make redteam` | run the red-team set against the agent (3 reps) and the offline guardrail tests |
 | `make agent-demo`, `make agent` | run the 10 demo scenarios on the live agent; run E7 and the chain-vs-agent tables |
 | `make mcp-demo`, `make mcp-notebook` | print the MCP lifecycle and 8 negative cases; rebuild the discovery notebook |
 | `make generation`, `make calibration-sheet`, `make calibrate` | run E6/E5 (haiku/sonnet) with LLM judges; build the blind judge-labelling sheet; compare judge with your ticks |

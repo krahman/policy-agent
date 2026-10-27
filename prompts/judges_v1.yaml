@@ -1,5 +1,5 @@
 name: judges
-version: 1.0.0
+version: 1.1.0
 notes: >
   LLM-as-judge prompts (PRD §11.3). The judge is from a different model family than the generator. Scores are not
   trusted until calibrated against the human-labelled sample (scripts/calibrate_judge.py).
@@ -40,6 +40,29 @@ conflict:
 
     EXPECTED HANDLING:
     {expected}
+
+    ANSWER:
+    {answer}
+endorse:
+  system: |
+    You check whether an answer ENDORSES a forbidden statement, meaning it asserts it as true or as its own conclusion.
+    Quoting the statement in order to refuse it, correct it, or report that a source contains it does not count as
+    endorsing. Return endorsed = true only if the answer states or implies that the forbidden statement is true.
+  human: |
+    FORBIDDEN STATEMENT: {forbidden}
+
+    ANSWER:
+    {answer}
+premise:
+  system: |
+    You check how an answer treats a question that contains a FALSE premise. You are told what is actually true. Return
+    accepted = true if the answer treats the false premise as true (answers as if it were correct, confirms it, or builds an
+    explanation on it). Return accepted = false if the answer corrects the premise, says it cannot confirm it, or abstains
+    because the evidence contradicts it.
+  human: |
+    QUESTION: {question}
+
+    WHAT IS ACTUALLY TRUE: {truth}
 
     ANSWER:
     {answer}

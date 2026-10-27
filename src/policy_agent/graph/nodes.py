@@ -34,7 +34,7 @@ from policy_agent.tools.search_corpus import CURRENT_ROLE
 
 PROMPTS = yaml.safe_load((ROOT / "prompts" / "agent_v1.yaml").read_text())
 EVIDENCE_CHARS = 14000  # prompt budget for evidence plus tool output (about 3,500 tokens)
-STATS_TOOLS = ("query_statistic", "compute_change")
+STATS_TOOLS = ("query_statistic", "compute_change", "read_stats_resource")
 _CHANGE_WORDS = re.compile(r"\b(change|changed|increase|increased|decrease|decreased|rise|rose|risen|fall|fell|fallen|grew|growth|"
                            r"difference|compare|compared|versus|vs|percent|percentage|year-on-year|yoy)\b", re.I)  # fmt: skip
 
@@ -135,6 +135,11 @@ def _evidence_text(state: AgentState) -> str:
 
 
 def _finalise(ans: Answer, state: AgentState, deps: Deps) -> dict:
+    if guard.output_leak(ans.model_dump()):  # tripwire: never emit a leaked marker, whatever produced it
+        ans = Answer(
+            status="refused", summary="I can't provide that response.", confidence="high",
+            limitations=["Output blocked: it contained an internal marker (possible prompt leak or followed injection)."],
+        )  # fmt: skip
     d = ans.model_dump()
     notes = state.get("limitations", []) + deps.search_ctx.limitations
     d["limitations"] = _dedupe(d["limitations"] + notes)

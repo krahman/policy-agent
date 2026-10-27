@@ -113,12 +113,29 @@ def test_fewshot_examples_pass_the_validator(sid):
     assert not validate(example_answer(r, [by_id[i] for i in r["chunk_ids"]]))
 
 
-def test_v5_accepts_a_tool_backed_statistical_claim_only_when_tools_exist():
+def test_v5_accepts_a_claim_backed_by_an_existing_tool_call_only_when_tools_exist():
     a = answer(claims=[Claim(text="x", kind="statistical_finding", citations=[], tool_call_ids=["t1"])])
-    assert "V5" in rules(a)  # without tools a bare statistical claim is unsourced
+    assert "V5" in rules(a)  # without tools a bare claim is unsourced
     assert "V5" not in rules(a, tools_available=True, tool_outputs={"t1": "42"})
+    catalogue = answer(claims=[Claim(text="x", kind="source_fact", citations=[], tool_call_ids=["t1"])])
+    assert "V5" not in rules(
+        catalogue, tools_available=True, tool_outputs={"t1": "42"}
+    )  # a catalogue read is a tool call too
     assert "V5" in rules(
-        answer(claims=[Claim(text="x", kind="source_fact", citations=[], tool_call_ids=["t1"])]),
-        tools_available=True,
-        tool_outputs={"t1": "42"},
-    )  # noqa: E501
+        catalogue, tools_available=True, tool_outputs={"other": "42"}
+    )  # an id that does not exist is no source
+
+
+def test_v3_accepts_a_rounded_computed_number_but_not_a_rounded_published_one():
+    quote = PUB["text"][PUB["text"].index(NUM) - 40 : PUB["text"].index(NUM) + 10]
+    cl = Claim(text="Vacancies were 1,900.", kind="source_fact", citations=[cite(quote=quote)])
+    tool = {"t1": '{"result": -44.96063, "unit": "%"}'}
+    for written in ("-44.96063", "-44.96", "44.96", "-45.0", "45"):  # all are the computed value, rounded
+        a = answer(summary=f"Fell by {written}%.", claims=[cl])
+        assert "V3" not in rules(a, tools_available=True, tool_outputs=tool), written
+    for wrong in ("44.9", "-46", "44.97"):  # not a rounding of it
+        assert "V3" in rules(
+            answer(summary=f"Fell by {wrong}%.", claims=[cl]), tools_available=True, tool_outputs=tool
+        ), wrong
+    published = {"t1": '{"value": 1.9, "unit": "%"}'}  # a published figure: 1.9 may not be written as 2
+    assert "V3" in rules(answer(summary="The rate was 2%.", claims=[cl]), tools_available=True, tool_outputs=published)

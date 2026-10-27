@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent rescore pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent redteam rescore pricing
 
 sync:
 	uv sync --frozen
@@ -78,6 +78,11 @@ agent-demo:
 agent:
 	uv run python scripts/run_experiment.py E7 $(UPLOAD)
 	uv run python scripts/analyse_agent.py --write
+
+# Step 9: policy-redteam-v1 against the agent (3 reps), and the offline guardrail tests
+redteam:
+	LANGSMITH_TRACING=false uv run python scripts/run_redteam.py --reps 3
+	uv run pytest -q tests/test_guardrails.py
 
 # Re-score saved E5-E7 outputs under the corrected labels (v1.1); originals are not touched
 rescore:

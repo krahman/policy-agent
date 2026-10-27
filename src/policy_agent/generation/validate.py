@@ -17,6 +17,8 @@ RULES = {
     "V5": "answered / conflict_reported needs at least one claim and a citation on every claim",
     "V6": "no chunk the current role may not read is cited",
 }
+COMPUTED_DECIMALS = 3
+_TOKEN = re.compile(r"(?<![\w.])([-−+]?)\$?(\d[\d,]*(?:\.\d+)?)(?![\w])")
 _YEAR = re.compile(r"^(19|20)\d\d$")
 
 
@@ -37,6 +39,18 @@ def parse(raw: dict | Answer | None) -> tuple[Answer | None, list[Violation]]:
         return Answer.model_validate(raw), []
     except (ValidationError, TypeError) as e:
         return None, [Violation("V1", f"schema does not parse: {str(e)[:200]}")]
+
+
+def numbers_with_decimals(text: str) -> list[tuple[float, int]]:
+    """Each number in `text` with the count of decimals it was written with (signed like `numbers_in`)."""
+    out = []
+    for sign, digits in _TOKEN.findall(text):
+        try:
+            v = float(digits.replace(",", ""))
+        except ValueError:
+            continue
+        out.append((-v if sign in ("-", "−") else v, len(digits.split(".")[1]) if "." in digits else 0))
+    return out
 
 
 def _is_year(v: float) -> bool:
@@ -78,10 +92,17 @@ def validate(
     tool_nums = [v for t in (tool_outputs or {}).values() for v in numbers_in(t)]
     inferred = [v for cl in answer.claims if cl.kind == "model_inference" for v in numbers_in(cl.text)]
 
+    # A value a tool computed (three or more decimals, e.g. -44.96063) may be quoted rounded (-44.96, -45.0, -45).
+    # Published figures never get this latitude: 1.9 may not be written as 2.
+    computed = [v for t in (tool_outputs or {}).values() for v, d in numbers_with_decimals(t) if d >= COMPUTED_DECIMALS]
+
+    def matches(v: float, decimals: int, pool: list[float]) -> bool:
+        if any(abs(abs(v) - abs(s)) < 1e-9 for s in pool):  # sign is wording: 'fell 1.2' vs '-1.2'
+            return True
+        return any(abs(round(abs(c), decimals) - abs(v)) < 1e-9 for c in computed)
+
     def missing(text: str, pool: list[float]) -> list[float]:
-        return [
-            v for v in numbers_in(text) if not _is_year(v) and not any(abs(abs(v) - abs(s)) < 1e-9 for s in pool)
-        ]  # sign is wording: 'fell 1.2' vs '-1.2'
+        return [v for v, d in numbers_with_decimals(text) if not _is_year(v) and not matches(v, d, pool)]
 
     for cl in answer.claims:
         if cl.kind != "model_inference" and cl.citations:  # derived numbers must be labelled model_inference
@@ -102,10 +123,8 @@ def validate(
         if not answer.claims:
             out.append(Violation("V5", f"status {answer.status} with no claims"))
         for cl in answer.claims:
-            # a statistical finding computed by a tool is sourced by that tool call (checked by V4)
-            sourced = bool(cl.citations) or (
-                tools_available and cl.kind == "statistical_finding" and bool(cl.tool_call_ids)
-            )
+            # a claim backed by an existing tool call (a computed change, a catalogue read) is sourced by it
+            sourced = bool(cl.citations) or (tools_available and bool(set(cl.tool_call_ids) & set(tool_outputs or {})))
             if not sourced:
                 out.append(Violation("V5", f"claim without citation: {cl.text[:60]!r}"))
     return out
