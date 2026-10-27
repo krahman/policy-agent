@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo agent-demo redteam final analyse reproduce pricing
+.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook agent-demo redteam final analyse reproduce pricing
 
 # Setup and checks ----------------------------------------------------------------------------------------------------
 sync:
@@ -69,6 +69,9 @@ calibrate:
 # Demos ------------------------------------------------------------------------------------------------------------------
 mcp-demo:     # raw MCP JSON-RPC lifecycle over stdio, then the negative cases (no key needed)
 	uv run python scripts/mcp_protocol_demo.py
+
+mcp-notebook: # re-execute notebooks/05_mcp_demo.ipynb (capability discovery, a tool call, resources, the ambiguity warning)
+	uv run python scripts/make_mcp_notebook.py
 
 agent-demo:   # the 10 demo scenarios on the live agent (needs OPENROUTER_API_KEY)
 	LANGSMITH_TRACING=false uv run python scripts/demo_scenarios.py

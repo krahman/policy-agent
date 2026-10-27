@@ -53,6 +53,7 @@ The first question builds the dense index (embeddings for about 2,400 chunks, a 
 | Command | Does | Rough cost |
 |---|---|---|
 | `uv run python -m policy_agent.cli "<question>" --verbose` | Ask one question (`--no-upload` keeps it out of LangSmith) | $0.0025 |
+| `make mcp-demo`, `make mcp-notebook` | The raw MCP lifecycle with 8 negative cases (no key needed); the MCP discovery notebook | free |
 | `make agent-demo` | The 10 demo scenarios from the task, with pass/fail checks | about $0.05 |
 | `make redteam` | 12 red-team cases x 3 runs, plus the offline guardrail tests | about $0.15 |
 | `make agent` | The router agent (E7) and the final agent (E8) on the dev split | about $0.35 |
@@ -125,7 +126,7 @@ src/policy_agent/baselines/   # B0 (BM25 verbatim, no LLM) and the retrieval-onl
 src/policy_agent/budget.py    # checks your OpenRouter credit before a paid run
 src/policy_agent/cli.py       # command-line interface
 scripts/                      # experiment runner, analysis, demo scenarios, red team, calibration sheet
-notebooks/02_eda.ipynb        # exploratory analysis (executed)
+notebooks/                    # 02_eda.ipynb (data exploration), 05_mcp_demo.ipynb (MCP capability discovery); both executed
 docs/                         # see the index below
 tests/                        # 250 tests; none needs a key; most need no network
 ```

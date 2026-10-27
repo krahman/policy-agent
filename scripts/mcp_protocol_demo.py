@@ -133,7 +133,20 @@ def lifecycle() -> list[tuple[str, bool]]:
     )
     r = s.request("resources/read", {"uri": "stats://schema"})["result"]["contents"][0]
     checks.append(("resources/read returns JSON text", "indicators" in json.loads(r["text"])))
-    print("7. shutdown (close stdin)")
+    print("7. prompts/list and prompts/get (the third MCP primitive: a reusable prompt template)")
+    prompts = s.request("prompts/list")["result"]["prompts"]
+    checks.append(("prompts/list shows cited_stat_answer", [p["name"] for p in prompts] == ["cited_stat_answer"]))
+    got = s.request(
+        "prompts/get",
+        {"name": "cited_stat_answer", "arguments": {"indicator": "unemployment_rate", "period": "2Q 2025"}},
+    )
+    checks.append(
+        (
+            "prompts/get renders the template with the arguments",
+            "unemployment_rate" in json.dumps(got["result"]) and "2Q 2025" in json.dumps(got["result"]),
+        )
+    )  # noqa: E501
+    print("8. shutdown (close stdin)")
     checks.append(("server exits cleanly", s.close() == 0))
     print("   server exit code checked")
     return checks
