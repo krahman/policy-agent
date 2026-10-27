@@ -196,7 +196,7 @@ Exact datasets, report editions and the scope window are fixed in Step 1 and doc
 
 **Indicator vocabulary** (used as enums by the router and MCP tools):
 
-`unemployment_rate`, `unemployed_persons`, `long_term_unemployment_rate`, `employment_change`, `retrenchments`, `job_vacancies`, `vacancy_to_unemployed_ratio`, plus breakdowns `residency ∈ {overall, resident, citizen}`, `age_group`, `industry`, `seasonal_adjustment ∈ {sa, nsa}`.
+`unemployment_rate`, `unemployed_persons`, `long_term_unemployment_rate`, `long_term_unemployed_persons`, `employment_change` (report text only, no structured source), `retrenchments`, `job_vacancies`, `vacancy_to_unemployed_ratio`, plus breakdowns `residency ∈ {overall, resident, citizen}`, `age_group`, `industry`, `sex`, `qualification` (age table only), `seasonal_adjustment ∈ {sa, nsa, unspecified}` (`unspecified` where the source does not state it).
 
 ### 5.2 Ingestion and cleaning
 
