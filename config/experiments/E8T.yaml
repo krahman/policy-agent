@@ -1,0 +1,12 @@
+config_id: E8T
+description: "Simplified agent on the held-out test split (second use of the split; see EVAL_REPORT)"
+hypothesis: H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple ones)
+dataset: policy-eval-v1
+split: test
+target: agent
+params:
+  model: anthropic/claude-haiku-5.5
+  embedding: voyageai/voyage-4
+evaluators: answer+judge
+repetitions: 3
+max_concurrency: 3

@@ -137,7 +137,7 @@ Reviewer notes:
   - *contains the answer* (quarterly_report, 2026-09-21): ...26. 3 Retrenchments rose from 3,830 (or 1.6 retrenched per 1,000 employees) in 1Q 2026 to 4,620 (or 2.0) in 2Q 2026. The increase in retrenchments was driven by business reorganisation and restructuring in outward-oriented sectors such as Manufacturing, Information & Communicatio...
   - *context only (stale or background)* (advance, 2026-07-31): Employment figures cited in this press release exclude Migrant Domestic Workers. Data for 2Q 2026 are preliminary (denoted as “p” in the Annex). Refers to Singapore citizens and permanent residents. Quarterly retrenchments ranged from 5,980 to 12,760 and 5,640 to 9,120 during the...
 
-**Why this case exists:** Label v1.1 (decision 2026-10-27, eval/review_history/F05-label-decision.md): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.
+**Why this case exists:** Label v1.1, see eval/LABEL_CHANGES.md (decision 2026-10-27): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.
 
 **Changed after your review** (4/4 boxes were ticked; please re-tick). 
 
@@ -452,7 +452,7 @@ Reviewer notes:
   - *contains the answer* (stat card): Singapore number of retrenched employees, 2Q 2026: 4,620 (Source: MOM via data.gov.sg, dataset d_000d49cda016c13522d7d5be6a050f59, retrieved 2026-10-27)
   - *context only (stale or background)* (advance, 2026-07-31): Employment figures cited in this press release exclude Migrant Domestic Workers. Data for 2Q 2026 are preliminary (denoted as “p” in the Annex). Refers to Singapore citizens and permanent residents. Quarterly retrenchments ranged from 5,980 to 12,760 and 5,640 to 9,120 during the...
 
-**Why this case exists:** Label v1.1 (decision 2026-10-28, eval/review_history/advance-later-label-decisions.md): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.
+**Why this case exists:** Label v1.1, see eval/LABEL_CHANGES.md (decision 2026-10-28): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.
 
 **Changed after your review** (4/4 boxes were ticked; please re-tick). 
 

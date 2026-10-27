@@ -29,8 +29,6 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from policy_agent.eval import evaluators as ev  # noqa: E402
 from policy_agent.eval.evaluators import cost_usd, pricing  # noqa: E402
 
-DATASET_VERSION = "v1"
-
 
 def git_info() -> dict:
     def run(*a):
@@ -40,6 +38,11 @@ def git_info() -> dict:
         "git_sha": run("rev-parse", "--short", "HEAD"),
         "git_dirty": bool(run("status", "--porcelain", "--", ".", ":(exclude)eval/results")),
     }
+
+
+def agent_prompt_id() -> str:
+    d = yaml.safe_load((ROOT / "prompts" / "agent_v1.yaml").read_text())
+    return f"{d['name']}@{d['version']}"
 
 
 def build_target(cfg: dict):
@@ -83,21 +86,8 @@ def build_target(cfg: dict):
         atexit.register(rt.close)
         return (lambda inputs: rt.ask(inputs["question"], inputs.get("user_role", "analyst_public"))), {
             "retriever": "r5 via search_corpus tool", "chunker": "C2", "model": p["model"], "embedding": p["embedding"],  # noqa: E501
-            "temperature": 0, "agent": "langgraph bounded agent", "prompt": "agent_v1@1.0.0", "faults": sorted(p.get("faults", [])),  # noqa: E501
+            "temperature": 0, "agent": "langgraph bounded agent", "prompt": agent_prompt_id(), "faults": sorted(p.get("faults", [])),  # noqa: E501
             "mcp_available": rt.mcp_ok,
-        }  # fmt: skip
-    if t == "b2":
-        from policy_agent.baselines import b2
-
-        return b2.run, {"retriever": "none (table lookup)"}
-    if t == "b1":
-        from policy_agent.baselines import b1
-
-        run, prompt = b1.make_target(p["model"], p["embedding"], p["k"], p.get("max_tokens", 1500))
-        return run, {
-            "retriever": "dense", "chunker": "C2", "model": p["model"], "embedding": p["embedding"], "k": p["k"],
-            "temperature": p.get("temperature", 0), "prompt": f"{prompt['name']}@{prompt['version']}",
-            "prompt_sha256_12": prompt["sha256_12"],
         }  # fmt: skip
     raise SystemExit(f"unknown target {t!r}")
 
@@ -169,6 +159,50 @@ def score_row(example: dict, outputs: dict, evaluators: list) -> dict:
             "status": outputs.get("error") or outputs.get("status"), "output": keep_output(outputs)}  # fmt: skip
 
 
+LABEL_DEPENDENT = {
+    "status_match", "numeric_exact", "must_contain_numbers", "must_not_contain", "injection_followed",
+    "citation_exists", "citation_correct", "recall_at_5", "hit_at_5", "mrr_at_10", "ndcg_at_10",
+}  # fmt: skip
+
+
+def rescore(config_id: str, split: str) -> int:
+    """Score the saved answers of an earlier run against the CURRENT labels, without calling the system again. Only
+    label-dependent metrics change (see eval/LABEL_CHANGES.md); groundedness, latency and cost carry over because the
+    answers are the same. The file is updated in place (git keeps the old one) and stamped with the label version."""
+    import sync_datasets as sd
+
+    from policy_agent.eval import judges
+    from policy_agent.generation.schema import Answer
+
+    path = ROOT / "eval" / "results" / f"{config_id}_{split}.json"
+    res = json.loads(path.read_text())
+    refs = {e["metadata"]["case_id"]: e["outputs"] for e in sd.eval_examples()}
+    inputs = {e["metadata"]["case_id"]: e["inputs"] for e in sd.eval_examples()}
+    changed = 0
+    for r in res["runs"]:
+        o = r.get("output")
+        if not (o and o.get("answer")):
+            continue
+        outputs = {"status": o["status"], "answer": o["answer"], "text": Answer.model_validate(o["answer"]).text(),
+                   "citations": o["citations"], "retrieved": o.get("retrieved") or [], "error": None}  # fmt: skip
+        before = dict(r["scores"])
+        for fn in ev.ANSWER_EVALUATORS:
+            if fn.__name__ in LABEL_DEPENDENT:
+                out = fn(outputs=outputs, reference_outputs=refs[r["case_id"]])
+                r["scores"][out["key"]] = out.get("score")
+        if "conflict_handling" in r["scores"] or refs[r["case_id"]].get("expected_status") == "conflict_reported":
+            cj = judges.conflict_handling(inputs[r["case_id"]], outputs, refs[r["case_id"]])
+            r["scores"]["conflict_handling"] = cj.get("score")
+        changed += before != r["scores"]
+    agg = with_judge_cost(aggregate(res["runs"]), res["config"])
+    res.update({k: agg[k] for k in ("overall", "by_case_type")})
+    res["metadata"]["dataset_version"] = sd.VERSION
+    res["metadata"]["rescored_from_saved_outputs"] = True
+    path.write_text(json.dumps(res, indent=2, sort_keys=True, default=str) + "\n")
+    print(f"rescored {path.name} under labels {sd.VERSION}: {changed} of {len(res['runs'])} runs changed score")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("config_id")
@@ -176,6 +210,11 @@ def main() -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--allow-test", action="store_true")
     ap.add_argument("--skip-budget-check", action="store_true", help="do not check the OpenRouter credit balance first")
+    ap.add_argument(
+        "--rescore",
+        action="store_true",
+        help="re-score the saved answers of this run against the current labels (no new run)",
+    )
     ap.add_argument(
         "--no-upload", action="store_true",
         help="score locally with tracing off and write eval/results/ only (no LangSmith traces, so no quota use)",
@@ -186,6 +225,9 @@ def main() -> int:
         os.environ["LANGSMITH_TRACING"] = "false"  # must be set before any LangChain object is called
 
     cfg = yaml.safe_load((ROOT / "config" / "experiments" / f"{args.config_id}.yaml").read_text())
+    if args.rescore:
+        os.environ["LANGSMITH_TRACING"] = "false"
+        return rescore(cfg["config_id"], cfg["split"])
     if cfg["split"] == "test" and not args.allow_test:
         raise SystemExit("refusing to run the test split without --allow-test (run once per frozen configuration)")
     evaluators = {"answer": ev.ANSWER_EVALUATORS, "retrieval": ev.RETRIEVAL_EVALUATORS}.get(cfg["evaluators"])
@@ -195,20 +237,18 @@ def main() -> int:
         evaluators = ev.ANSWER_EVALUATORS + JUDGE_EVALUATORS
         cfg["judge_model"] = JUDGE_MODEL
     assert evaluators, f"unknown evaluators {cfg['evaluators']!r}"
-    if not args.skip_budget_check and cfg["target"] in ("b1", "chain", "agent") and not args.local:
+    if not args.skip_budget_check and cfg["target"] in ("chain", "agent") and not args.local:
         from policy_agent import budget
 
         n = len(local_examples(cfg["dataset"], cfg["split"], args.limit)) * cfg.get("repetitions", 1)
-        prefix = {"agent": "E7", "chain": "E6" if "haiku" in cfg["params"].get("model", "") else "E5", "b1": "B1"}[
-            cfg["target"]
-        ]
+        prefix = {"agent": "E7", "chain": "E6" if "haiku" in cfg["params"].get("model", "") else "E5"}[cfg["target"]]
         left = budget.check(budget.estimate_from_history(prefix, n, 0.004), f"{cfg['config_id']} ({n} runs)")
         print(f"budget ok: ${left:.2f} left")
     target, tmeta = build_target(cfg)
     chunks_sha = hashlib.sha256((ROOT / "data" / "processed" / "chunks.jsonl").read_bytes()).hexdigest()[:12]
     metadata = {
         "config_id": cfg["config_id"], **git_info(), **tmeta, "dataset": cfg["dataset"],
-        "dataset_version": DATASET_VERSION,
+        "dataset_version": __import__("sync_datasets").VERSION,
         "split": cfg["split"], "corpus_chunks_sha256_12": chunks_sha, "pricing_retrieved_at": pricing()["retrieved_at"],
         "seed": "n/a (temperature 0)", "python": platform.python_version(),
     }  # fmt: skip

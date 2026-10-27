@@ -191,12 +191,38 @@ def build(agent_id: str, chain_id: str, split: str) -> str:
         ]
         for k, v in kinds.most_common():
             L.append(f"| {k} | {v} | {', '.join(where[k])} |")
+    if split == "test" and agent_id != "E7T":
+        try:
+            first = read("E7T", split)
+        except FileNotFoundError:
+            first = None
+        if first:
+            L += ["", "**First held-out run (E7T, agent with a router) against the second (" + agent_id + ", simplified agent).** The test split was "
+                  "used twice, so the second run is optimistic: the changes were motivated by the first run's errors. Mean over cases [95% CI].", "",
+                  "| Metric | First run (E7T) | Second run (" + agent_id + ") |", "|---|---|---|"]  # fmt: skip
+            for m in ("status_match", "numeric_exact", "citation_correct", "groundedness"):
+                x, y = ag.per_case(first, m), ag.per_case(a, m)
+                if len(x) >= 2 and len(y) >= 2:
+                    mx, lx, hx, nx = ag.boot(x)
+                    my, ly, hy, ny = ag.boot(y)
+                    L.append(
+                        f"| {m} | {mx:.2f} [{lx:.2f}, {hx:.2f}] (n={nx}) | {my:.2f} [{ly:.2f}, {hy:.2f}] (n={ny}) |"
+                    )
+            L.append(
+                f"| latency p50 / p95 (s) | {first['latency_ms']['p50'] / 1000:.1f} / {first['latency_ms']['p95'] / 1000:.1f} | {a['latency_ms']['p50'] / 1000:.1f} / {a['latency_ms']['p95'] / 1000:.1f} |"
+            )  # noqa: E501
+            L.append(
+                f"| cost per run (USD) | {first['cost_usd']['mean_per_run']:.4f} | {a['cost_usd']['mean_per_run']:.4f} |"
+            )
+            L.append(
+                f"| failed runs | {sum(taxonomy(first, cases)[0].values())} of {first['n_runs']} | {sum(taxonomy(a, cases)[0].values())} of {a['n_runs']} |"
+            )  # noqa: E501
     return "\n".join(L)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", default="E7T")
+    ap.add_argument("--agent", default="E8T")
     ap.add_argument("--chain", default="E6T")
     ap.add_argument("--split", default="test")
     ap.add_argument("--write", action="store_true")

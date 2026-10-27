@@ -88,7 +88,7 @@ def eval_cases() -> list[EvalCase]:
         gold_chunk_ids={C.card("retrenched_q", "2026-Q2"): 2, rep["chunk_id"]: 2, adv26["chunk_id"]: 2, pre26["chunk_id"]: 1},
         gold_quotes=[quote(rep, "4,620 (or 2.0) in 2Q 2026"), quote(adv26, "to 4,500 in 2Q 2026")],
         requires_tools=["query_statistic", "search_corpus"],
-        notes="Label v1.1 (decision 2026-10-27, eval/review_history/F05-label-decision.md): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.",
+        notes="Label v1.1, see eval/LABEL_CHANGES.md (decision 2026-10-27): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.",
     ))  # fmt: skip
     r = C.value("vacancy_unemployed_ratio_q", "2025-Q4")
     cases.append(case(
@@ -227,7 +227,7 @@ def eval_cases() -> list[EvalCase]:
         gold_value=round(pct(a, b), 1), unit="%", tolerance=0.1, conflict_values=pvf26, must_contain=["4,500"],
         gold_chunk_ids={C.card("retrenched_q", "2025-Q2"): 2, C.card("retrenched_q", "2026-Q2"): 2, adv26["chunk_id"]: 2, pre26["chunk_id"]: 1},
         gold_quotes=[quote(adv26, "to 4,500 in 2Q 2026")], requires_tools=["query_statistic", "compute_change", "search_corpus"],
-        notes="Label v1.1 (decision 2026-10-28, eval/review_history/advance-later-label-decisions.md): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.",
+        notes="Label v1.1, see eval/LABEL_CHANGES.md (decision 2026-10-28): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.",
     ))  # fmt: skip
     a, b = C.value("job_vacancy_q", "2022-Q2"), C.value("job_vacancy_q", "2026-Q2")
     cases.append(case(

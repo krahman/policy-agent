@@ -26,10 +26,10 @@ def test_aggregate_means_percentiles_and_na_handling():
 
 def test_test_split_needs_explicit_permission(monkeypatch, tmp_path):
     cfg_dir = Path(runner.ROOT) / "config" / "experiments"
-    assert (cfg_dir / "B1.yaml").exists() and (cfg_dir / "E0.yaml").exists()
-    monkeypatch.setattr("sys.argv", ["run_experiment.py", "B2_test_guard"])
-    guard = cfg_dir / "B2_test_guard.yaml"
-    guard.write_text("config_id: B2_test_guard\ndescription: d\ndataset: policy-eval-v1\nsplit: test\ntarget: b2\n"
+    assert (cfg_dir / "B0.yaml").exists() and (cfg_dir / "E8.yaml").exists()
+    monkeypatch.setattr("sys.argv", ["run_experiment.py", "B0_test_guard"])
+    guard = cfg_dir / "B0_test_guard.yaml"
+    guard.write_text("config_id: B0_test_guard\ndescription: d\ndataset: policy-eval-v1\nsplit: test\ntarget: b0\n"
                      "params: {}\nevaluators: answer\n")  # fmt: skip
     try:
         with pytest.raises(SystemExit) as e:

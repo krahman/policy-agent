@@ -57,10 +57,8 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 "scripts/make_eda_notebook.py" = ["E501"]  # long lines inside generated notebook cells
-"scripts/make_mcp_notebook.py" = ["E501"]  # long lines inside generated notebook cells
 "src/policy_agent/eval/build.py" = ["E501"]  # question and answer text is data
 "src/policy_agent/eval/review.py" = ["E501"]  # prose in the generated sheet header
-"scripts/make_baseline_report.py" = ["E501"]  # markdown text
 "scripts/analyse_retrieval.py" = ["E501"]  # markdown text
 "src/policy_agent/mcp_server/*.py" = ["E501"]  # schema descriptions and SQL strings
 "src/policy_agent/mcp_client.py" = ["E501"]  # error messages
@@ -70,10 +68,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/demo_scenarios.py" = ["E501"]  # scenario table
 "scripts/analyse_generation.py" = ["E501"]  # markdown text
 "scripts/analyse_agent.py" = ["E501"]  # markdown text
-"scripts/rescore_labels.py" = ["E501"]  # markdown text
 "scripts/analyse_final.py" = ["E501"]  # markdown text
-"scripts/make_test_review_sheet.py" = ["E501"]  # sheet text
-"scripts/compare_test_review.py" = ["E501"]  # result dict
 "scripts/run_redteam.py" = ["E501"]  # case labels and check table
 "tests/test_graph.py" = ["E501"]  # scripted-model fixtures
 "tests/test_runner.py" = ["E501"]  # fake CLI output fixture

@@ -1,0 +1,12 @@
+config_id: E8
+description: "Simplified agent (no router or plan node; scope and ambiguity rules in act and synthesize; broader calculation trigger), haiku-5.5, dev, 3 repetitions"
+hypothesis: H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple ones)
+dataset: policy-eval-v1
+split: dev
+target: agent
+params:
+  model: anthropic/claude-haiku-5.5
+  embedding: voyageai/voyage-4
+evaluators: answer+judge
+repetitions: 3
+max_concurrency: 3

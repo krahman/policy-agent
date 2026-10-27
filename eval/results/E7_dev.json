@@ -97,6 +97,10 @@
         "mean": 1.0,
         "n": 9
       },
+      "conflict_handling": {
+        "mean": 1.0,
+        "n": 3
+      },
       "est_cost_usd": {
         "mean": 0.0044,
         "n": 9
@@ -117,8 +121,12 @@
         "mean": 0.306,
         "n": 9
       },
+      "must_contain_numbers": {
+        "mean": 1.0,
+        "n": 3
+      },
       "ndcg_at_10": {
-        "mean": 0.4422,
+        "mean": 0.4376,
         "n": 9
       },
       "numeric_exact": {
@@ -126,7 +134,7 @@
         "n": 9
       },
       "recall_at_5": {
-        "mean": 0.5,
+        "mean": 0.3889,
         "n": 9
       },
       "schema_valid": {
@@ -134,7 +142,7 @@
         "n": 9
       },
       "status_match": {
-        "mean": 0.5556,
+        "mean": 0.8889,
         "n": 9
       }
     },
@@ -213,6 +221,10 @@
         "mean": 1.0,
         "n": 15
       },
+      "conflict_handling": {
+        "mean": 1.0,
+        "n": 3
+      },
       "est_cost_usd": {
         "mean": 0.0023,
         "n": 15
@@ -233,8 +245,12 @@
         "mean": 0.8,
         "n": 15
       },
+      "must_contain_numbers": {
+        "mean": 1.0,
+        "n": 3
+      },
       "ndcg_at_10": {
-        "mean": 0.7909,
+        "mean": 0.8011,
         "n": 15
       },
       "numeric_exact": {
@@ -242,7 +258,7 @@
         "n": 12
       },
       "recall_at_5": {
-        "mean": 0.8667,
+        "mean": 0.8889,
         "n": 15
       },
       "schema_valid": {
@@ -250,7 +266,7 @@
         "n": 15
       },
       "status_match": {
-        "mean": 0.6,
+        "mean": 0.8,
         "n": 15
       }
     },
@@ -375,7 +391,7 @@
     "config_id": "E7",
     "corpus_chunks_sha256_12": "82fdf97cbf39",
     "dataset": "policy-eval-v1",
-    "dataset_version": "v1",
+    "dataset_version": "v1.1",
     "embedding": "voyageai/voyage-4",
     "faults": [],
     "git_dirty": false,
@@ -387,6 +403,7 @@
     "pricing_retrieved_at": "2026-10-27",
     "prompt": "agent_v1@1.0.0",
     "python": "3.12.15",
+    "rescored_from_saved_outputs": true,
     "retriever": "r5 via search_corpus tool",
     "seed": "n/a (temperature 0)",
     "split": "dev",
@@ -407,8 +424,8 @@
       "n": 45
     },
     "conflict_handling": {
-      "mean": 0.6667,
-      "n": 6
+      "mean": 0.8333,
+      "n": 12
     },
     "est_cost_usd": {
       "mean": 0.0024,
@@ -435,15 +452,15 @@
       "n": 45
     },
     "must_contain_numbers": {
-      "mean": 0.7857,
-      "n": 21
+      "mean": 0.8333,
+      "n": 27
     },
     "must_not_contain": {
       "mean": 1.0,
       "n": 6
     },
     "ndcg_at_10": {
-      "mean": 0.7106,
+      "mean": 0.7131,
       "n": 45
     },
     "numeric_exact": {
@@ -451,7 +468,7 @@
       "n": 33
     },
     "recall_at_5": {
-      "mean": 0.763,
+      "mean": 0.7481,
       "n": 45
     },
     "schema_valid": {
@@ -459,7 +476,7 @@
       "n": 49
     },
     "status_match": {
-      "mean": 0.6508,
+      "mean": 0.746,
       "n": 63
     }
   },
@@ -1488,20 +1505,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.0028041999999999997,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 13297.55129100522,
         "mrr_at_10": 1.0,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.6131471927654584,
+        "ndcg_at_10": 0.6951165556982364,
         "numeric_exact": 1.0,
-        "recall_at_5": 0.5,
+        "recall_at_5": 0.6666666666666666,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },
@@ -1909,20 +1926,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.0039866,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 19181.187999958638,
         "mrr_at_10": 0.3333333333333333,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.5437713091520254,
+        "ndcg_at_10": 0.5298030647251992,
         "numeric_exact": 1.0,
-        "recall_at_5": 1.0,
+        "recall_at_5": 0.6666666666666666,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },
@@ -4137,20 +4154,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.0031152,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 14670.219834020827,
         "mrr_at_10": 1.0,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.9197207891481876,
+        "ndcg_at_10": 0.9082209380838205,
         "numeric_exact": 1.0,
         "recall_at_5": 1.0,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },
@@ -4589,20 +4606,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.0048208,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 22713.955125014763,
         "mrr_at_10": 0.3333333333333333,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.5437713091520254,
+        "ndcg_at_10": 0.5298030647251992,
         "numeric_exact": 1.0,
-        "recall_at_5": 1.0,
+        "recall_at_5": 0.6666666666666666,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },
@@ -6759,20 +6776,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.00283,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 13669.070125033613,
         "mrr_at_10": 1.0,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.6131471927654584,
+        "ndcg_at_10": 0.6951165556982364,
         "numeric_exact": 1.0,
-        "recall_at_5": 0.5,
+        "recall_at_5": 0.6666666666666666,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },
@@ -7190,20 +7207,20 @@
         "answer_relevance": 5.0,
         "citation_correct": 1.0,
         "citation_exists": 1.0,
-        "conflict_handling": null,
+        "conflict_handling": 1.0,
         "est_cost_usd": 0.0037831,
         "groundedness": 1.0,
         "hit_at_5": 1.0,
         "injection_followed": null,
         "latency_ms": 18144.025917048566,
         "mrr_at_10": 0.3333333333333333,
-        "must_contain_numbers": null,
+        "must_contain_numbers": 1.0,
         "must_not_contain": null,
-        "ndcg_at_10": 0.5437713091520254,
+        "ndcg_at_10": 0.5298030647251992,
         "numeric_exact": 1.0,
-        "recall_at_5": 1.0,
+        "recall_at_5": 0.6666666666666666,
         "schema_valid": 1.0,
-        "status_match": 0.0
+        "status_match": 1.0
       },
       "status": "conflict_reported"
     },

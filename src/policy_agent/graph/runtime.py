@@ -229,7 +229,7 @@ def to_outputs(state: dict, seconds: float, ctx: SearchContext, model: str, mcp_
         "validation": {"first_pass": state.get("first_pass_violations") or [], "repaired": bool(state.get("repairs")) and not (state.get("answer") or {}).get("downgraded") and not state.get("violations"),  # noqa: E501
                        "downgraded": bool((state.get("answer") or {}).get("downgraded"))},  # fmt: skip
         "agent": {
-            "route": state.get("route"), "steps": state.get("step", 0), "llm_calls": usage.get("llm_calls", 0),
+            "steps": state.get("step", 0), "llm_calls": usage.get("llm_calls", 0),
             "tools": [r["tool"] for r in state.get("tool_results", [])],
             "tool_status": [r["status"] for r in state.get("tool_results", [])],
             "tool_latency_ms": [round(r["latency_ms"]) for r in state.get("tool_results", [])],

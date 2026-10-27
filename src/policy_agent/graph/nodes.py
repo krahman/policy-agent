@@ -4,13 +4,12 @@ import asyncio
 import re
 import time
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
 import yaml
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langgraph.types import interrupt
 from openai import LengthFinishReasonError
-from pydantic import BaseModel, Field
 
 from policy_agent.generation.schema import Answer
 from policy_agent.generation.validate import Violation, downgrade, validate
@@ -35,16 +34,12 @@ from policy_agent.tools.search_corpus import CURRENT_ROLE
 PROMPTS = yaml.safe_load((ROOT / "prompts" / "agent_v1.yaml").read_text())
 EVIDENCE_CHARS = 14000  # prompt budget for evidence plus tool output (about 3,500 tokens)
 STATS_TOOLS = ("query_statistic", "compute_change", "read_stats_resource")
-_CHANGE_WORDS = re.compile(r"\b(change|changed|increase|increased|decrease|decreased|rise|rose|risen|fall|fell|fallen|grew|growth|"
-                           r"difference|compare|compared|versus|vs|percent|percentage|year-on-year|yoy)\b", re.I)  # fmt: skip
-
-
-class Route(BaseModel):
-    route: Literal["answerable", "ambiguous", "out_of_scope", "unsafe"]
-    needs_numbers: bool = False
-    plan: list[str] = Field(default_factory=list, max_length=4)
-    clarifying_question: str | None = None
-    reason: str = ""
+# any wording that compares two named periods: "change", "rose", "how many more ... than", "between 2Q 2022 and 2Q 2026", ...
+_CHANGE_WORDS = re.compile(
+    r"\b(change|changed|increase|increased|decrease|decreased|rise|rose|risen|fall|fell|fallen|grew|growth|difference|"
+    r"compare|compared|versus|vs|percent|percentage|year-on-year|yoy|more|fewer|less|than|between|gap)\b",
+    re.I,
+)
 
 
 @dataclass
@@ -201,41 +196,18 @@ def make_nodes(deps: Deps) -> dict:
     async def guard_input(state: AgentState) -> dict:
         hit = guard.check(state["question"])
         return {
-            "route": "unsafe" if hit else None, "route_info": {"guard": hit} if hit else {}, "step": 0, "retries": {},
-            "errors": [], "repairs": 0, "limitations": [], "evidence": [], "tool_results": [], "violations": [],
-            "started": time.monotonic(), "log": [f"guard_input: {'blocked (' + hit + ')' if hit else 'ok'}"],
+            "guard": hit, "step": 0, "retries": {}, "errors": [], "repairs": 0, "limitations": [], "evidence": [],
+            "tool_results": [], "violations": [], "last_calls": 0, "started": time.monotonic(),
+            "messages": [HumanMessage(content=f"Question: {state['question']}")],
+            "log": [f"guard_input: {'blocked (' + hit + ')' if hit else 'ok'}"],
         }  # fmt: skip
-
-    async def route(state: AgentState) -> dict:
-        p = PROMPTS["route"]
-        msgs = [SystemMessage(content=p["system"]), HumanMessage(content=p["human"].format(question=state["question"]))]
-        res = await _structured(deps, Route, msgs)
-        r = res["parsed"] or Route(
-            route="answerable", plan=["search_corpus"], reason="router output unreadable; defaulted"
-        )
-        brief = f"Question: {state['question']}\nPlan: {'; '.join(r.plan) or 'search_corpus'}"
-        return {
-            "route": r.route, "route_info": r.model_dump(), "plan": r.plan, "usage": _usage(res["raw"]),
-            "messages": [HumanMessage(content=brief)], "log": [f"route: {r.route} | numbers={r.needs_numbers} | plan={r.plan}"],
-        }  # fmt: skip
-
-    async def plan(state: AgentState) -> dict:
-        note = "The evidence so far is not enough."
-        if missing := _missing_periods(state):
-            note += f" It does not yet cover: {', '.join(sorted(missing))}."
-        if _needs_calc(state) and not _calc_done(state):
-            note += " The change between the periods must be computed with compute_change (pass the query_id of a range query)."
-        if failed := [r for r in state["tool_results"] if r["status"] == "error"][-2:]:
-            note += " Failed calls: " + "; ".join(f"{r['tool']}: {r['output'][:120]}" for r in failed) + "."
-        note += " Call the tools again for what is missing, with different arguments if a call failed."
-        return {"messages": [HumanMessage(content=note)], "log": [f"plan: replan ({note[:110]})"]}
 
     async def act(state: AgentState) -> dict:
         bound = deps.llm.bind_tools(list(deps.tools.values()))
         ai: AIMessage = await bound.ainvoke([SystemMessage(content=PROMPTS["act"]["system"]), *state["messages"]])
-        out: dict = {"step": state["step"] + 1, "usage": _usage(ai), "messages": [ai]}
+        out: dict = {"step": state["step"] + 1, "usage": _usage(ai), "messages": [ai], "last_calls": 0}
         calls = list(ai.tool_calls)
-        if not calls:
+        if not calls:  # the model chose to stop: it has what it needs, or the question needs no lookup
             return out | {"log": [f"act: step {state['step'] + 1}, no tool calls"]}
         CURRENT_ROLE.set(state.get("user_role", "analyst_public"))
         retries = dict(state["retries"])
@@ -254,12 +226,14 @@ def make_nodes(deps: Deps) -> dict:
         summary = ", ".join(f"{r['tool']}[{r['status']},{r['latency_ms']:.0f}ms]" for r in results)
         return out | {
             "tool_results": state["tool_results"] + results, "messages": [ai, *tool_msgs], "retries": retries,
+            "last_calls": len(results),
             "evidence": _merge_evidence(state["evidence"], new_evidence), "errors": state["errors"] + errors,
             "log": [f"act: step {state['step'] + 1}: {summary}"],
         }  # fmt: skip
 
     async def assess(state: AgentState) -> dict:
-        """Deterministic sufficiency check: evidence present, every named period covered, progress, budgets."""
+        """Deterministic sufficiency check: evidence present, every named period covered, a change computed when one is
+        asked for, progress, budgets. Insufficient and budget left: add a note saying what is missing and go back to `act`."""
         good = [e for e in state["evidence"] if e.get("score", 1.0) >= MIN_EVIDENCE_SCORE]
         ok_stats = [
             r for r in state["tool_results"] if r["status"] == "ok" and r["tool"] in (*STATS_TOOLS, "calculator")
@@ -267,20 +241,32 @@ def make_nodes(deps: Deps) -> dict:
         has = bool(good or ok_stats)
         missing = _missing_periods(state)
         size = len(state["evidence"]) + len(ok_stats)  # an empty search result is not progress
-        calc_missing = _needs_calc(state) and not _calc_done(state) and deps.mcp_available
-        if has and not missing and not calc_missing:
+        calc_missing = _needs_calc(state) and not _calc_done(state) and deps.mcp_available and has
+        upd: dict = {}
+        if state["last_calls"] == 0 and state["step"] >= 1 and not calc_missing:
+            reason, nxt = "model made no tool calls", "synthesize"
+        elif has and not missing and not calc_missing:
             reason, nxt = "sufficient", "synthesize"
         elif _elapsed(state) > WALL_CLOCK_S:
-            reason, nxt = "wall-clock budget used", "synthesize" if has else "abstain"
+            reason, nxt = "wall-clock budget used", "synthesize"
         elif state["step"] >= MAX_STEPS:
-            reason, nxt = "step limit reached", "synthesize" if has else "abstain"
+            reason, nxt = "step limit reached", "synthesize"
         elif size <= state.get("size", -1):  # the last round added neither evidence nor a tool result
-            reason, nxt = "no progress in the last round", "synthesize" if has else "abstain"
+            reason, nxt = "no progress in the last round", "synthesize"
         else:
             what = sorted(missing) or ("a computed change" if calc_missing else "evidence")
-            reason, nxt = f"insufficient (missing {what})", "plan"
+            reason, nxt = f"insufficient (missing {what})", "act"
+            note = "The evidence so far is not enough."
+            if missing:
+                note += f" It does not yet cover: {', '.join(sorted(missing))}."
+            if calc_missing:
+                note += " The change between the periods must be computed with compute_change (pass the query_id of a range query)."
+            if failed := [r for r in state["tool_results"] if r["status"] == "error"][-2:]:
+                note += " Failed calls: " + "; ".join(f"{r['tool']}: {r['output'][:120]}" for r in failed) + "."
+            note += " Call the tools again for what is missing, with different arguments if a call failed."
+            upd["messages"] = [HumanMessage(content=note)]
         lim: list[str] = []
-        if missing and nxt != "plan":
+        if missing and nxt == "synthesize":
             lim.append(f"No evidence was found for: {', '.join(sorted(missing))}.")
         if any(r["status"] == "error" and r["tool"] in STATS_TOOLS for r in state["tool_results"]):
             lim.append(
@@ -288,7 +274,7 @@ def make_nodes(deps: Deps) -> dict:
             )
         if not deps.mcp_available:
             lim.append("The statistics server is unavailable; figures come from text passages only.")
-        return {
+        return upd | {
             "stop_reason": reason, "size": size, "next_node": nxt, "limitations": _dedupe(state["limitations"] + lim),
             "log": [f"assess: {reason} -> {nxt}"],
         }  # fmt: skip
@@ -351,31 +337,8 @@ def make_nodes(deps: Deps) -> dict:
             "answer": _finalise(downgrade(ans, viol), state, deps) | {"downgraded": True},
         }  # fmt: skip
 
-    async def clarify(state: AgentState) -> dict:
-        q = state["route_info"].get("clarifying_question") or "Which measure, group and period do you mean?"
-        a = Answer(
-            status="needs_clarification",
-            summary="I need one detail before I can answer.",
-            clarifying_question=q,
-            confidence="high",
-        )
-        return {"answer": _finalise(a, state, deps), "stop_reason": "clarification needed", "log": ["clarify"]}
-
-    async def abstain(state: AgentState) -> dict:
-        why = (
-            state["route_info"].get("reason") or state.get("stop_reason") or "The evidence needed is not in the corpus."
-        )
-        lim = _dedupe(state.get("limitations", []) + deps.search_ctx.limitations)
-        a = Answer(status="abstained", summary=f"I can't answer this from the available data. {why}".strip(), confidence="high",
-                   limitations=lim or ["Nothing in the corpus (2021-Q3 to 2026-Q2) supports an answer."])  # fmt: skip
-        return {
-            "answer": _finalise(a, state, deps),
-            "stop_reason": state.get("stop_reason") or "out of scope",
-            "log": ["abstain"],
-        }
-
     async def refuse(state: AgentState) -> dict:
-        kind = state["route_info"].get("guard") or "injection"
+        kind = state.get("guard") or "injection"
         a = Answer(status="refused", summary=guard.REFUSAL.get(kind, guard.REFUSAL["injection"]), confidence="high",
                    limitations=[f"Request blocked by the input guard ({kind})."])  # fmt: skip
         return {"answer": _finalise(a, state, deps), "stop_reason": f"guard: {kind}", "log": [f"refuse ({kind})"]}
@@ -395,6 +358,6 @@ def make_nodes(deps: Deps) -> dict:
         return {"report": {"saved": False, "path": None}, "log": ["report: not saved (not approved)"]}
 
     return {
-        "guard_input": guard_input, "route": route, "plan": plan, "act": act, "assess": assess, "synthesize": synthesize,
-        "validate": validate_node, "clarify": clarify, "abstain": abstain, "refuse": refuse, "report": report,
+        "guard_input": guard_input, "act": act, "assess": assess, "synthesize": synthesize, "validate": validate_node,
+        "refuse": refuse, "report": report,
     }  # fmt: skip

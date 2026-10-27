@@ -1,8 +1,8 @@
-"""Step 8 analysis (H3): the agent (E7) against the chain with the same model (E6), paired by case, split into the case
-groups H3 names: multi-step and calculation (where the agent should win) and the rest (where it must not lose).
+"""Agent against chain on the dev split (hypothesis H3), paired by case, split into the groups H3 names: multi-step and
+calculation (where an agent should win) and the rest (where it must not lose). Three systems with the same model and retriever:
+chain E6, agent with a router E7, simplified agent E8 (the final design).
 
-Usage: python scripts/analyse_agent.py [--write]   (--write refreshes the block in docs/EVAL_REPORT.md)
-"""
+Usage: python scripts/analyse_agent.py [--write]   (--write refreshes the block in docs/EVAL_REPORT.md)"""
 
 import argparse
 import importlib.util
@@ -19,71 +19,65 @@ _spec.loader.exec_module(ag)  # type: ignore[union-attr]
 
 START, END = "<!-- agent:start -->", "<!-- agent:end -->"
 HARD = {"multi_step", "calculation"}
-METRICS = [
-    "status_match",
-    "numeric_exact",
-    "must_contain_numbers",
-    "citation_correct",
-    "groundedness",
-    "answer_relevance",
-    "schema_valid",
-]
+METRICS = ["status_match", "numeric_exact", "citation_correct", "groundedness", "schema_valid"]
 
 
-def case_types(res: dict) -> dict[str, str]:
-    return {r["case_id"]: r["case_type"] for r in res["runs"]}
+def cell(res: dict, metric: str, ids: set[str]) -> str:
+    d = {c: v for c, v in ag.per_case(res, metric).items() if c in ids}
+    if len(d) < 2:
+        return "n/a"
+    m, lo, hi, n = ag.boot(d)
+    return f"{m:.2f} [{lo:.2f}, {hi:.2f}] (n={n})"
 
 
-def table(chain: dict, agent: dict, ids: set[str], label: str) -> list[str]:
-    L = [
-        f"**{label}** ({len(ids)} cases)",
-        "",
-        "| Metric | Chain (E6) | Agent (E7) | Agent - chain [95% CI] |",
-        "|---|---|---|---|",
-    ]
-    for m in METRICS:
-        a = {c: v for c, v in ag.per_case(chain, m).items() if c in ids}
-        b = {c: v for c, v in ag.per_case(agent, m).items() if c in ids}
-        if len(a) < 2 or len(b) < 2:
-            continue
-        pa, la, ha, na = ag.boot(a)
-        pb, lb, hb, nb = ag.boot(b)
-        d, ld, hd, nd = ag.boot(a, b)
-        L.append(
-            f"| {m} | {pa:.2f} [{la:.2f}, {ha:.2f}] (n={na}) | {pb:.2f} [{lb:.2f}, {hb:.2f}] (n={nb}) | {d:+.2f} [{ld:+.2f}, {hd:+.2f}] |"
-        )
-    return L + [""]
+def diff(a: dict, b: dict, metric: str, ids: set[str]) -> str:
+    x = {c: v for c, v in ag.per_case(a, metric).items() if c in ids}
+    y = {c: v for c, v in ag.per_case(b, metric).items() if c in ids}
+    if len(x) < 2 or len(y) < 2:
+        return "n/a"
+    d, lo, hi, _ = ag.boot(x, y)
+    return f"{d:+.2f} [{lo:+.2f}, {hi:+.2f}]"
 
 
 def build() -> str:
-    chain, agent = ag.load("E6"), ag.load("E7")
-    types = case_types(agent)
+    chain, router, simple = ag.load("E6"), ag.load("E7"), ag.load("E8")
+    types = {r["case_id"]: r["case_type"] for r in simple["runs"]}
     hard = {c for c, t in types.items() if t in HARD}
-    simple = set(types) - hard
-    L = [
-        f"Dev split, 21 cases x 3 repetitions. Chain = E6 (`{chain['config']['params']['model']}`, fixed pipeline); agent = E7 (same model, same retriever, "
-        f"judge `{agent['metadata'].get('judge_model')}`). Cells: mean over cases [95% bootstrap CI]; the difference uses the same resampled cases for both.",
+    groups = (
+        ("Multi-step and calculation", hard),
+        ("All other case types", set(types) - hard),
+        ("All cases", set(types)),
+    )
+    L = [f"Dev split, 21 cases x 3 repetitions, model `{simple['config']['params']['model']}` and retriever R5 in all three systems. Cells: mean over "
+         "cases [95% bootstrap CI]; differences use the same resampled cases. E6 is the fixed chain, E7 the agent with a separate router step "
+         "(first design), E8 the simplified agent without it (final design).", ""]  # fmt: skip
+    for label, ids in groups:
+        L += [f"**{label}** ({len(ids)} cases)", "", "| Metric | Chain E6 | Agent E7 (router) | Agent E8 (simplified) | E8 - E6 | E8 - E7 |", "|---|---|---|---|---|---|"]  # fmt: skip
+        for m in METRICS:
+            L.append(f"| {m} | {cell(chain, m, ids)} | {cell(router, m, ids)} | {cell(simple, m, ids)} | {diff(chain, simple, m, ids)} | {diff(router, simple, m, ids)} |")  # fmt: skip
+        L.append("")
+    L += ["| | Chain E6 | Agent E7 | Agent E8 |", "|---|---|---|---|",
+          "| latency p50 / p95 (s) | " + " | ".join(f"{r['latency_ms']['p50'] / 1000:.1f} / {r['latency_ms']['p95'] / 1000:.1f}" for r in (chain, router, simple)) + " |",  # noqa: E501
+          "| cost per run (USD) | " + " | ".join(f"{r['cost_usd']['mean_per_run']:.4f}" for r in (chain, router, simple)) + " |"]  # fmt: skip
+    for name, res in (("E7", router), ("E8", simple)):
+        runs = [r["output"]["agent"] for r in res["runs"] if r.get("output") and r["output"].get("agent")]
+        calls = np.array([r["llm_calls"] for r in runs])
+        L += ["", f"{name}: {calls.mean():.1f} model calls per run on average; tools used: "
+              + ", ".join(f"{k} x{v}" for k, v in Counter(t for r in runs for t in r["tools"]).most_common())
+              + "; stop reasons: " + ", ".join(f"{k} x{v}" for k, v in Counter(str(r["stop_reason"]).split(" (")[0] for r in runs).most_common(5)) + "."]  # fmt: skip
+    L += [
         "",
+        "`status_match` by case type (mean over runs):",
+        "",
+        "| Case type | Chain E6 | Agent E7 | Agent E8 |",
+        "|---|---|---|---|",
     ]
-    L += table(chain, agent, hard, "Multi-step and calculation") + table(chain, agent, simple, "All other case types")
-    L += table(chain, agent, set(types), "All cases")
-    L += ["| | Chain (E6) | Agent (E7) |", "|---|---|---|"]
-    for name, f in (("latency p50 / p95 (s)", lambda r: f"{r['latency_ms']['p50'] / 1000:.1f} / {r['latency_ms']['p95'] / 1000:.1f}"),
-                    ("cost per run (USD)", lambda r: f"{r['cost_usd']['mean_per_run']:.4f}")):  # fmt: skip
-        L.append(f"| {name} | {f(chain)} | {f(agent)} |")
-    runs = [r["output"]["agent"] for r in agent["runs"] if r.get("output") and r["output"].get("agent")]
-    calls = np.array([r["llm_calls"] for r in runs]) if runs else np.array([0])
-    steps = Counter(r["steps"] for r in runs)
-    L += [f"| model calls per run (mean) | 1 to 2 | {calls.mean():.1f} |", "",
-          "Tool use in the 63 agent runs: " + ", ".join(f"{k} x{v}" for k, v in Counter(t for r in runs for t in r["tools"]).most_common()) + ".",
-          "Tool rounds per run: " + ", ".join(f"{k}: {v}" for k, v in sorted(steps.items())) + ".",
-          "Stop reasons: " + ", ".join(f"{k} x{v}" for k, v in Counter(str(r["stop_reason"]).split(" (")[0] for r in runs).most_common(6)) + ".", "",
-          "`status_match` by case type (mean over runs):", "", "| Case type | Chain (E6) | Agent (E7) |", "|---|---|---|"]  # fmt: skip
-    for t in sorted(agent["by_case_type"]):
-        va, vb = (
-            res["by_case_type"].get(t, {}).get("status_match", {}).get("mean", float("nan")) for res in (chain, agent)
-        )
-        L.append(f"| {t} | {va:.2f} | {vb:.2f} |")
+    for t in sorted(simple["by_case_type"]):
+        v = [
+            r["by_case_type"].get(t, {}).get("status_match", {}).get("mean", float("nan"))
+            for r in (chain, router, simple)
+        ]
+        L.append(f"| {t} | {v[0]:.2f} | {v[1]:.2f} | {v[2]:.2f} |")
     return "\n".join(L)
 
 

@@ -1,7 +1,7 @@
 """Agent state (PRD §9.2) and the limits that bound a run (PRD §9.3)."""
 
 import operator
-from typing import Annotated, Any, Literal, TypedDict
+from typing import Annotated, Literal, TypedDict
 
 from langgraph.graph.message import add_messages
 
@@ -24,9 +24,7 @@ def add_usage(a: dict, b: dict) -> dict:
 class AgentState(TypedDict, total=False):
     question: str
     user_role: Literal["analyst_public", "analyst_internal"]
-    route: Literal["answerable", "ambiguous", "out_of_scope", "unsafe"] | None
-    route_info: dict[str, Any]
-    plan: list[str]
+    guard: str | None  # the input rule that blocked the question, if any
     messages: Annotated[list, add_messages]
     evidence: list[dict]  # chunk_id, text, score, source metadata (search passages and stat cards behind tool rows)
     tool_results: list[dict]  # id, tool, args, output, status, latency_ms
@@ -48,3 +46,4 @@ class AgentState(TypedDict, total=False):
     answer_raw: str
     size: int
     next_node: str
+    last_calls: int  # tool calls in the latest round; 0 means the model chose to stop

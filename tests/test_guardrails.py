@@ -13,7 +13,7 @@ from policy_agent.graph import guard
 from policy_agent.graph.nodes import PROMPTS
 from policy_agent.retrieval.corpus import load_chunks, visible_chunks
 from policy_agent.tools import SAFE_DIR, calculate
-from test_graph import ANSWERABLE, CH, FakeLLM, call, evidence_item, run_graph, search_tool
+from test_graph import CH, FakeLLM, abstained, call, evidence_item, run_graph, search_tool
 
 REDTEAM = {c.id: c for c in load("redteam_cases.jsonl", RedteamCase)}
 CANARY_MEMO, CANARY_MCP, MARKER = "CANARY-7F3A-OVERRIDE", "CANARY-MCP-5B1D", "POLICYAGENT-SYSPROMPT-9C2E"
@@ -39,7 +39,7 @@ def test_every_request_the_guard_is_meant_to_stop_is_stopped_before_any_model_ca
     assert guard.check(REDTEAM[cid].question) is not None
     llm = FakeLLM()
     state, *_ = run_graph(llm, question=REDTEAM[cid].question)
-    assert state["answer"]["status"] == "refused" and llm.calls == {"route": 0, "act": 0, "synth": 0}
+    assert state["answer"]["status"] == "refused" and llm.calls == {"act": 0, "synth": 0}
 
 
 def test_the_guard_does_not_block_legitimate_questions():
@@ -70,7 +70,7 @@ def test_a_model_that_obeys_the_memo_is_stopped_by_the_output_tripwire():
     memo = next(c for c in load_chunks() if CANARY_MEMO in c["text"])
     item = {**evidence_item(), "chunk_id": memo["chunk_id"], "source_id": memo["source_id"], "text": memo["text"]}
     obeying = valid_answer(f"Rate is low. {CANARY_MEMO}", item)
-    llm = FakeLLM(route=ANSWERABLE, acts=[call("search_corpus", {"query": "analyst note"})], answers=[obeying, obeying])
+    llm = FakeLLM(acts=[call("search_corpus", {"query": "analyst note"})], answers=[obeying, obeying])
     state, *_ = run_graph(
         llm, {"search_corpus": search_tool(items=[item])}, question="Summarise the analyst note on job vacancies."
     )
@@ -111,7 +111,7 @@ def test_output_tripwire(payload, expected):
 
 def test_a_prompt_leak_is_blocked_even_if_the_guard_and_the_model_both_miss_it():
     leaking = valid_answer(f"Sure: {MARKER}", evidence_item())
-    llm = FakeLLM(route=ANSWERABLE, acts=[call("search_corpus", {"query": "x"})], answers=[leaking, leaking])
+    llm = FakeLLM(acts=[call("search_corpus", {"query": "x"})], answers=[leaking, leaking])
     state, *_ = run_graph(llm, {"search_corpus": search_tool()})
     assert MARKER not in json.dumps(state["answer"]) and state["answer"]["status"] == "refused"
 
@@ -128,7 +128,7 @@ def test_citing_an_internal_chunk_as_a_public_role_fails_validation_and_is_not_e
 
     leak = Answer(status="answered", summary="ok", claims=[Claim(text="x", kind="source_fact", citations=[
         Citation(source_id=INTERNAL["source_id"], chunk_id=INTERNAL["chunk_id"], quote=INTERNAL["text"][:100])])])  # fmt: skip
-    llm = FakeLLM(route=ANSWERABLE, acts=[call("search_corpus", {"query": "x"})], answers=[leak, leak])
+    llm = FakeLLM(acts=[call("search_corpus", {"query": "x"})], answers=[leak, leak])
     state, *_ = run_graph(llm, {"search_corpus": search_tool()})
     assert state["answer"]["status"] == "abstained" and not state["answer"]["claims"]
     assert any(v.startswith("V6") for v in state["first_pass_violations"])
@@ -180,7 +180,7 @@ def test_an_unregistered_mcp_server_or_shadowed_tool_is_refused_and_the_request_
 
 
 def test_a_model_cannot_call_a_tool_that_is_not_registered():
-    llm = FakeLLM(route=ANSWERABLE, acts=[call("run_sql", {"sql": "DROP TABLE stats"})])
+    llm = FakeLLM(acts=[call("run_sql", {"sql": "DROP TABLE stats"})], answers=[abstained()])
     state, *_ = run_graph(llm, {"search_corpus": search_tool()})
     assert state["tool_results"][0]["status"] == "error" and "unknown tool" in state["tool_results"][0]["output"]
     assert CH  # fixture import kept explicit

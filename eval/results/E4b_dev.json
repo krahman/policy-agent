@@ -2,27 +2,27 @@
   "by_case_type": {
     "retrieval": {
       "est_cost_usd": {
-        "mean": 0.0018,
+        "mean": 0.0,
         "n": 15
       },
       "hit_at_5": {
-        "mean": 0.7333,
+        "mean": 0.8,
         "n": 15
       },
       "latency_ms": {
-        "mean": 1227.8651,
+        "mean": 375.7115,
         "n": 15
       },
       "mrr_at_10": {
-        "mean": 0.519,
+        "mean": 0.6079,
         "n": 15
       },
       "ndcg_at_10": {
-        "mean": 0.5759,
+        "mean": 0.6124,
         "n": 15
       },
       "recall_at_5": {
-        "mean": 0.5667,
+        "mean": 0.6,
         "n": 15
       }
     }
@@ -44,23 +44,23 @@
     "target": "retriever"
   },
   "cost_usd": {
-    "mean_per_run": 0.0018,
-    "total": 0.027
+    "mean_per_run": 0.0,
+    "total": 0.0
   },
-  "experiment": "E4b-ad47edee",
+  "experiment": "E4b-local",
   "latency_ms": {
-    "p50": 763.2,
-    "p95": 4208.5
+    "p50": 7.4,
+    "p95": 2757.5
   },
   "metadata": {
     "chunker": "C2",
     "config_id": "E4b",
     "corpus_chunks_sha256_12": "82fdf97cbf39",
     "dataset": "policy-retrieval-v1",
-    "dataset_version": "v1",
+    "dataset_version": "v1.1",
     "embedding": "voyageai/voyage-4",
-    "git_dirty": false,
-    "git_sha": "3f88dc2",
+    "git_dirty": true,
+    "git_sha": "d5f0cdd",
     "k": 10,
     "pricing_retrieved_at": "2026-10-27",
     "python": "3.12.15",
@@ -72,85 +72,41 @@
   "n_runs": 15,
   "overall": {
     "est_cost_usd": {
-      "mean": 0.0018,
+      "mean": 0.0,
       "n": 15
     },
     "hit_at_5": {
-      "mean": 0.7333,
+      "mean": 0.8,
       "n": 15
     },
     "latency_ms": {
-      "mean": 1227.8651,
+      "mean": 375.7115,
       "n": 15
     },
     "mrr_at_10": {
-      "mean": 0.519,
+      "mean": 0.6079,
       "n": 15
     },
     "ndcg_at_10": {
-      "mean": 0.5759,
+      "mean": 0.6124,
       "n": 15
     },
     "recall_at_5": {
-      "mean": 0.5667,
+      "mean": 0.6,
       "n": 15
     }
   },
   "runs": [
     {
-      "case_id": "F02",
-      "case_type": "retrieval",
-      "cost": 0.001,
-      "latency_ms": 4208.5150420316495,
-      "scores": {
-        "est_cost_usd": 0.001,
-        "hit_at_5": 0.0,
-        "latency_ms": 4208.5150420316495,
-        "mrr_at_10": 0.0,
-        "ndcg_at_10": 0.0,
-        "recall_at_5": 0.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "K03",
-      "case_type": "retrieval",
-      "cost": 0.001,
-      "latency_ms": 4173.46608301159,
-      "scores": {
-        "est_cost_usd": 0.001,
-        "hit_at_5": 0.0,
-        "latency_ms": 4173.46608301159,
-        "mrr_at_10": 0.14285714285714285,
-        "ndcg_at_10": 0.20438239758848611,
-        "recall_at_5": 0.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "F05",
-      "case_type": "retrieval",
-      "cost": 0.001,
-      "latency_ms": 715.7218750216998,
-      "scores": {
-        "est_cost_usd": 0.001,
-        "hit_at_5": 1.0,
-        "latency_ms": 715.7218750216998,
-        "mrr_at_10": 0.5,
-        "ndcg_at_10": 0.5802792108518124,
-        "recall_at_5": 0.5
-      },
-      "status": null
-    },
-    {
       "case_id": "C03",
       "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 942.7782499697059,
+      "cost": 0.0,
+      "latency_ms": 2751.966707990505,
+      "output": null,
       "scores": {
-        "est_cost_usd": 0.002,
+        "est_cost_usd": 0.0,
         "hit_at_5": 1.0,
-        "latency_ms": 942.7782499697059,
+        "latency_ms": 2751.966707990505,
         "mrr_at_10": 0.3333333333333333,
         "ndcg_at_10": 0.3065735963827292,
         "recall_at_5": 0.5
@@ -158,14 +114,159 @@
       "status": null
     },
     {
+      "case_id": "C04",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 2757.504582987167,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 2757.504582987167,
+        "mrr_at_10": 0.5,
+        "ndcg_at_10": 0.6655702971450115,
+        "recall_at_5": 0.6666666666666666
+      },
+      "status": null
+    },
+    {
+      "case_id": "D02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 29.48625001590699,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 29.48625001590699,
+        "mrr_at_10": 0.5,
+        "ndcg_at_10": 0.8597186998521972,
+        "recall_at_5": 1.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 6.182875018566847,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 6.182875018566847,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 5.079415976069868,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 5.079415976069868,
+        "mrr_at_10": 0.5,
+        "ndcg_at_10": 0.6309297535714575,
+        "recall_at_5": 1.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 4.325541958678514,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 4.325541958678514,
+        "mrr_at_10": 1.0,
+        "ndcg_at_10": 0.8295704511617705,
+        "recall_at_5": 0.6666666666666666
+      },
+      "status": null
+    },
+    {
       "case_id": "F06",
       "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 728.7024169927463,
+      "cost": 0.0,
+      "latency_ms": 7.366666977759451,
+      "output": null,
       "scores": {
-        "est_cost_usd": 0.002,
+        "est_cost_usd": 0.0,
         "hit_at_5": 1.0,
-        "latency_ms": 728.7024169927463,
+        "latency_ms": 7.366666977759451,
+        "mrr_at_10": 1.0,
+        "ndcg_at_10": 1.0,
+        "recall_at_5": 1.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F07",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 9.422832983545959,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 9.422832983545959,
+        "mrr_at_10": 0.5,
+        "ndcg_at_10": 0.6309297535714575,
+        "recall_at_5": 1.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "K02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 7.210624986328185,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 7.210624986328185,
+        "mrr_at_10": 1.0,
+        "ndcg_at_10": 0.7200969782481464,
+        "recall_at_5": 0.3333333333333333
+      },
+      "status": null
+    },
+    {
+      "case_id": "K03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 5.248041998129338,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 5.248041998129338,
+        "mrr_at_10": 0.14285714285714285,
+        "ndcg_at_10": 0.20438239758848611,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "K05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 9.799792023841292,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 9.799792023841292,
         "mrr_at_10": 1.0,
         "ndcg_at_10": 1.0,
         "recall_at_5": 1.0
@@ -175,12 +276,13 @@
     {
       "case_id": "M01",
       "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 724.4995419750921,
+      "cost": 0.0,
+      "latency_ms": 7.093666004948318,
+      "output": null,
       "scores": {
-        "est_cost_usd": 0.002,
+        "est_cost_usd": 0.0,
         "hit_at_5": 1.0,
-        "latency_ms": 724.4995419750921,
+        "latency_ms": 7.093666004948318,
         "mrr_at_10": 1.0,
         "ndcg_at_10": 0.9060254355346823,
         "recall_at_5": 1.0
@@ -188,44 +290,15 @@
       "status": null
     },
     {
-      "case_id": "D02",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 729.8268330050632,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 729.8268330050632,
-        "mrr_at_10": 0.5,
-        "ndcg_at_10": 0.8597186998521972,
-        "recall_at_5": 1.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "M05",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 936.6627499694005,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 936.6627499694005,
-        "mrr_at_10": 1.0,
-        "ndcg_at_10": 0.46927872602275644,
-        "recall_at_5": 0.3333333333333333
-      },
-      "status": null
-    },
-    {
       "case_id": "M03",
       "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 740.2327500167303,
+      "cost": 0.0,
+      "latency_ms": 17.390332999639213,
+      "output": null,
       "scores": {
-        "est_cost_usd": 0.002,
+        "est_cost_usd": 0.0,
         "hit_at_5": 1.0,
-        "latency_ms": 740.2327500167303,
+        "latency_ms": 17.390332999639213,
         "mrr_at_10": 0.5,
         "ndcg_at_10": 0.5646436081071458,
         "recall_at_5": 0.5
@@ -233,96 +306,38 @@
       "status": null
     },
     {
-      "case_id": "F03",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 690.5256659956649,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 690.5256659956649,
-        "mrr_at_10": 0.5,
-        "ndcg_at_10": 0.6309297535714575,
-        "recall_at_5": 1.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "K05",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 786.09129099641,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 786.09129099641,
-        "mrr_at_10": 1.0,
-        "ndcg_at_10": 1.0,
-        "recall_at_5": 1.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "C04",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 764.6438329829834,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 764.6438329829834,
-        "mrr_at_10": 0.5,
-        "ndcg_at_10": 0.6655702971450115,
-        "recall_at_5": 0.6666666666666666
-      },
-      "status": null
-    },
-    {
-      "case_id": "K02",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 825.3714999882504,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 0.0,
-        "latency_ms": 825.3714999882504,
-        "mrr_at_10": 0.16666666666666666,
-        "ndcg_at_10": 0.4227898344066503,
-        "recall_at_5": 0.0
-      },
-      "status": null
-    },
-    {
-      "case_id": "F07",
-      "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 763.1629169918597,
-      "scores": {
-        "est_cost_usd": 0.002,
-        "hit_at_5": 1.0,
-        "latency_ms": 763.1629169918597,
-        "mrr_at_10": 0.5,
-        "ndcg_at_10": 0.6309297535714575,
-        "recall_at_5": 1.0
-      },
-      "status": null
-    },
-    {
       "case_id": "M04",
       "case_type": "retrieval",
-      "cost": 0.002,
-      "latency_ms": 687.7758749760687,
+      "cost": 0.0,
+      "latency_ms": 10.709249996580184,
+      "output": null,
       "scores": {
-        "est_cost_usd": 0.002,
+        "est_cost_usd": 0.0,
         "hit_at_5": 0.0,
-        "latency_ms": 687.7758749760687,
+        "latency_ms": 10.709249996580184,
         "mrr_at_10": 0.14285714285714285,
         "ndcg_at_10": 0.39780880120575696,
         "recall_at_5": 0.0
       },
       "status": null
+    },
+    {
+      "case_id": "M05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 6.886000046506524,
+      "output": null,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 6.886000046506524,
+        "mrr_at_10": 1.0,
+        "ndcg_at_10": 0.46927872602275644,
+        "recall_at_5": 0.3333333333333333
+      },
+      "status": null
     }
   ],
-  "url": "https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/e72aa674-ce9e-4c1d-92d7-451a5aabf853",
-  "wall_seconds": 12.0
+  "url": null,
+  "wall_seconds": 2.8
 }

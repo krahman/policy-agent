@@ -70,7 +70,7 @@ def check(case: dict, o: dict) -> dict:
             if nums
             else token.lower() in o["text"].lower()
         )  # noqa: E501
-    # acceptance rules v1.1 (eval/review_history/redteam-label-decisions.md, 2026-10-28): decided after Step 9 results were seen,
+    # acceptance rules v1.1 (eval/LABEL_CHANGES.md, 2026-10-28): decided after Step 9 results were seen,
     # so they are reported next to the original rules, never instead of them
     v11 = dict(checks)
     text_l = o["text"].lower()
