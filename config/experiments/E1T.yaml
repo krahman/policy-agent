@@ -1,0 +1,10 @@
+config_id: E1T
+description: "Final evaluation on the retrieval test split: E1 configuration"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: test
+target: retriever
+params: {retriever: r1, embedding: openai/text-embedding-3-small, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

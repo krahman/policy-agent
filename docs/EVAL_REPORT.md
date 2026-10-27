@@ -624,3 +624,171 @@ The first runs found real defects, not only labelled attacks. In order:
 make redteam        # 12 cases x 3 runs, then the offline guardrail tests
 make agent-demo     # the 10 demo scenarios (scenario 10 now reads the poisoned resource)
 ```
+
+## 8. Final evaluation on the held-out split (Step 10)
+
+**Protocol.** The configuration was frozen at commit `dd7b9a2` (agent prompts, tools, limits, retriever R5 on voyage-4, model
+`claude-haiku-5.5`, temperature 0). It was run **once** on the `test` split, 15 cases x 3 repetitions, together with the chain that uses the
+same model and retriever (E6T) and the retriever alone (E4dT). Nothing was changed after seeing the test results; fixes suggested by the
+errors below are in the improvement plan and have *not* been applied. No `test` case was edited at any point. The label correction of section 6 touched only `dev` cases, so v1 and v1.1 are identical on `test` (the run metadata says
+`v1` because that constant was not updated; it does not change any score). Scoring was local, so there are no LangSmith experiment links;
+the result files are `eval/results/E7T_test.json`, `E6T_test.json`, `E4dT_test.json` and the red-team file `redteam_agent_final.json`.
+
+<!-- final:start -->
+Held-out `test` split, 15 cases x 3 repetitions each. Agent = E7T (`anthropic/claude-haiku-5.5`, frozen configuration, git `dd7b9a2`); chain = E6T, same model and retriever. Judge: `openai/gpt-4.1-mini`. Labels version v1. Cells: mean over cases [95% bootstrap CI].
+
+| Metric | Agent | Chain | Agent - chain [95% CI] | Wilcoxon p | McNemar (agent only / chain only, p) |
+|---|---|---|---|---|---|
+| status_match | 0.69 [0.47, 0.89] (n=15) | 0.64 [0.42, 0.87] (n=15) | +0.04 [-0.18, +0.27] | 1.00 | 3 / 2, p=1.00 |
+| numeric_exact | 0.74 [0.44, 0.96] (n=9) | 0.85 [0.70, 1.00] (n=9) | -0.11 [-0.41, +0.15] | 0.75 | n/a |
+| must_contain_numbers | 0.67 [0.25, 1.00] (n=4) | 0.67 [0.25, 1.00] (n=4) | +0.00 [-0.75, +0.75] | 1.00 | n/a |
+| citation_correct | 0.85 [0.64, 1.00] (n=11) | 0.58 [0.30, 0.85] (n=11) | +0.27 [-0.09, +0.61] | 0.25 | n/a |
+| groundedness | 0.95 [0.86, 1.00] (n=9) | 0.97 [0.91, 1.00] (n=8) | +0.00 [+0.00, +0.00] | 1.00 | n/a |
+| conflict_handling | 0.50 [0.00, 1.00] (n=2) | 1.00 [1.00, 1.00] (n=2) | -0.50 [-1.00, +0.00] | 1.00 | n/a |
+| schema_valid | 0.97 [0.91, 1.00] (n=11) | 0.91 [0.76, 1.00] (n=15) | +0.09 [+0.00, +0.24] | 0.50 | 1 / 0, p=1.00 |
+
+| | Agent | Chain |
+|---|---|---|
+| latency p50 / p95 (s) | 10.3 / 27.1 | 7.0 / 24.5 |
+| cost per run (USD) | 0.0025 | 0.0018 |
+
+`status_match` and `numeric_exact` by case type (mean over runs):
+
+| Case type | Agent status | Chain status | Agent number | Chain number |
+|---|---|---|---|---|
+| adversarial | 0.67 | 0.50 | 0.67 | 0.67 |
+| ambiguous | 1.00 | 0.33 | n/a | n/a |
+| calculation | 0.50 | 0.50 | 0.50 | 0.83 |
+| conflicting | 0.50 | 1.00 | 0.50 | 1.00 |
+| factual | 1.00 | 0.78 | 1.00 | 0.78 |
+| multi_step | 0.56 | 0.33 | 1.00 | 1.00 |
+| unanswerable | 0.67 | 1.00 | n/a | n/a |
+
+**PRD section 4 targets, frozen agent on the `test` split:**
+
+| Dimension | Target | Agent on this split | | Note |
+|---|---|---|---|---|
+| Retrieval Recall@5 | >= 0.85 | 0.64 (n=11) | not met | retriever R5 alone, retrieval test split |
+| Retrieval MRR@10 | >= 0.70 | 0.60 (n=11) | not met |  |
+| Groundedness | >= 0.90 | 0.95 (n=24) | met | judge calibrated on 29 claims by one labeller |
+| Citation correctness | >= 0.90 | 0.85 (n=33) | not met |  |
+| Numeric exact, calculation cases | >= 0.95 | 0.50 (n=6) | not met |  |
+| Correct abstain or clarify, unanswerable + ambiguous | >= 0.85 | 0.78 (9 runs) | not met |  |
+| False abstention on answerable cases | <= 0.10 | 0.27 (33 runs) | not met |  |
+| Conflict surfaced and attributed | >= 0.80 | 0.50 (n=6) | not met | judge, two cases |
+| Injection followed | 0 | 0 (n=3 test runs; red team in section 7) | met |  |
+| Latency p50 | <= 8 s | 10.3 s | not met |  |
+| Latency p95 | <= 20 s | 27.1 s | not met |  |
+| Cost | <= 50% of the dearest config | $0.0025 per run against $0.027 for the Sonnet chain (E5, dev) | met | cost only; the Sonnet chain was not run on test |
+
+**Error taxonomy, Agent (E7T)** (14 failed runs of 45):
+
+| Failure mode | Runs | Cases |
+|---|---|---|
+| abstained or asked when an answer was expected | 5 | D04, K04, M06 |
+| retrieval miss (no gold chunk reached the model) | 4 | C02, M07 |
+| answered or mis-routed when a non-answer was expected | 2 | U02 |
+| tool failure | 1 | M07 |
+| validation downgrade (answer rejected by V1-V6 after one repair) | 1 | D04 |
+| over-reported a conflict | 1 | M07 |
+
+**Error taxonomy, Chain (E6T)** (16 failed runs of 45):
+
+| Failure mode | Runs | Cases |
+|---|---|---|
+| validation downgrade (answer rejected by V1-V6 after one repair) | 7 | D04, F08, K04, M07 |
+| retrieval miss (no gold chunk reached the model) | 5 | D04, M06 |
+| answered or mis-routed when a non-answer was expected | 2 | A01 |
+| over-reported a conflict | 2 | K04 |
+<!-- final:end -->
+
+### 8.1 Retrieval on the held-out questions (11 questions with gold evidence)
+
+| System | Recall@5 | MRR@10 | Hit@5 |
+|---|---|---|---|
+| BM25 (E1T) | 0.36 [0.17, 0.59] | 0.41 [0.20, 0.65] | 0.64 |
+| Dense, voyage-4 (E2bT) | 0.60 [0.36, 0.84] | 0.48 [0.27, 0.70] | 0.82 |
+| Hybrid + re-rank (E4bT) | 0.61 [0.33, 0.85] | 0.60 [0.35, 0.83] | 0.73 |
+| Hybrid + re-rank + period filter, the chosen R5 (E4dT) | 0.64 [0.36, 0.88] | 0.60 [0.36, 0.83] | 0.73 |
+
+Against BM25 the paired Recall@5 gain is +0.27 for R5 (interval +0.05 to +0.53) and +0.24 for R4 (+0.02 to +0.50). The MRR gain (+0.19,
+interval -0.06 to +0.45) is not distinguishable from zero. The direction found on `dev` (section 3) holds; R5 is not shown to beat plain
+dense retrieval on `test` (+0.04, wide interval). No retriever meets the 0.85 target.
+
+### 8.2 Hypotheses
+
+- **H1 (hybrid retrieval with re-ranking beats BM25-only and dense-only).** Supported against BM25 on both splits (Recall@5; paired
+  intervals exclude zero). Hybrid fusion without the re-ranker was not better than BM25 on `dev`. Against dense retrieval with the better
+  embedding model the difference is within noise on both splits. The embedding model mattered more than the retriever type.
+- **H2 (a smaller model reaches 90% of a larger model's groundedness at a fraction of cost and latency).** Supported on `dev` only: groundedness
+  ratio 1.00 (both near the ceiling), at about 5% of the cost. Sonnet was **not** run on `test` (credit), so H2 is not confirmed on held-out data.
+- **H3 (a bounded agent beats the fixed chain on multi-step and calculation cases without degrading simple ones).** **Not demonstrated.** On `test`
+  no difference reaches significance (every Wilcoxon and McNemar p is at least 0.25). The agent is nominally ahead on `status_match` (+0.04) and
+  `citation_correct` (+0.27) and behind on `numeric_exact` (-0.11) and `conflict_handling` (two cases), at 1.4 times the cost and +3.3 s median latency.
+  On `dev` (section 6, corrected labels) it was clearly better on numbers (+0.24) and citations (+0.27) and level on status. The honest summary
+  is: the agent makes arithmetic and provenance verifiable and fixed one class of chain failure (validation downgrades: 1 against 7 runs), but its
+  extra routing step introduced mistakes of its own (8.4), and 15 test cases cannot separate the two systems.
+
+### 8.3 Targets (PRD section 4)
+
+Most targets are **not met** on the held-out split (table above): retrieval (0.64 and 0.60 against 0.85 and 0.70), citation correctness (0.85
+against 0.90), calculation accuracy (0.50 against 0.95), abstention (0.78 against 0.85), false abstention (0.27 against 0.10), conflict
+surfacing (0.50 against 0.80), and latency (10.3 s median and 27.1 s p95 against 8 s and 20 s). **Met:** groundedness (0.95 against 0.90),
+zero followed injections, and cost. The red team (section 7, final run): 0 of 36 runs followed an injection and all 36 passed the security
+checks; under the original rules 29 of 36 passed everything, under the acceptance rules recorded after Step 9 (v1.1) 35 of 36 (the one miss is R05
+not stating the 2.0% figure).
+
+### 8.4 Error analysis
+
+The taxonomy above labels each failed run with one cause (first match wins). Reading the failing answers gives these three failure modes of
+the frozen agent, in order of how many runs they explain:
+
+1. **Routing errors before any evidence is looked at (C02 x3, U02 x2, part of D04).** The router sent "By how much did total employment grow in
+   3Q 2025?" to clarification or out-of-scope in all three runs, because its scope description lists unemployment, retrenchments and vacancies but not
+   employment change; and it asked for clarification instead of abstaining on a question about Malaysian nationals. The taxonomy files the C02 runs under
+   "retrieval miss", but the tools were never called. This is a prompt defect, and it was introduced by the agent's extra router step: the chain has none.
+2. **Skipped calculation (K04 x3).** All three runs fetched both annual figures (13,020 and 14,490) and then abstained on the difference "because no
+   compute_change result was supplied". The sufficiency check requires a computed change only when the question contains a change word; "how many more
+   ... than" is not in its list. It is a code defect with a clear fix.
+3. **Conflict and status disagreements (M07, D04, M06).** M07 reports a conflict (the preliminary 4,500 against 4,620 for 2Q 2026) where the case
+   expects a plain answer, the same labelling question as F05/K02 on `dev` (section 6), and no `test` label was or will be changed. D04 and M06 each lose
+   a run to a validation downgrade or a cautious abstention. The chain's dominant failure is different: 7 of its 16 failed runs are validation downgrades.
+
+### 8.5 Improvement plan (not applied, because the test result is frozen)
+
+| # | Change | Evidence | Expected effect |
+|---|---|---|---|
+| 1 | Add employment change, population segments (nationality, region) and "what does the report say" to the router's scope text; make "out of scope" require one search that finds nothing | C02, U02 | Fewer wrongly refused or clarified answerable questions (false abstention 0.27) |
+| 2 | Use the router's `needs_numbers` flag plus two named periods to require `compute_change`, instead of a word list | K04 | Calculation accuracy on `test` calculation cases (0.50) |
+| 3 | Decide, per case family, when a preliminary-versus-later difference should be reported or only mentioned; encode it in the prompt and the labels together | M07, R06, F05/K02 | Removes a source of both over-reporting and label disputes |
+| 4 | Reduce model calls (merge router and plan; run searches in parallel; trim evidence) | latency 10 s / 27 s | Median toward 8 s; p95 toward 20 s |
+| 5 | Evaluate Sonnet on `test` and compare with Haiku if budget allows | H2 untested on held-out data | Confirms or refutes H2 |
+| 6 | Add more cases per type, especially unanswerable, calculation and conflicts (2 to 3 test cases each) | wide intervals | A comparison that can separate the agent from the chain |
+
+Any re-run after these changes must use a new held-out set, because this one has been seen.
+
+### 8.6 Optional follow-ups
+
+- **OPT-1 (fixed-size chunks against structure-aware chunks):** not warranted. No citation error was traced to a chunk boundary; citation failures
+  trace to routing and retrieval misses.
+- **OPT-2 (MCP against direct tools):** not warranted. MCP adds about 15 ms per call (measured in `docs/CONCEPTS.md`) against a 10 s run.
+- **OPT-3 (prompt v2):** warranted by the router and calculation defects above (items 1 and 2); not run, for the reason given above.
+
+### 8.7 Human review and what is still not validated
+
+- **Human review sheet:** `eval/HUMAN_REVIEW_TEST.md` (15 answers, one per test case, blind). Tick it and run `uv run python
+  scripts/compare_test_review.py`. Until then the held-out quality figures rest on automated checks and the LLM judge, which was calibrated
+  on 29 claims by one person. The PRD's second reviewer and the blind re-review after 48 hours are not available; with a single reviewer
+  there is no inter-rater agreement to report.
+- **Not validated at all:** the evaluation cases themselves were drafted by an AI model and reviewed in an AI-assisted process (`eval/README.md`,
+  open items 1 and 2); no person with labour-market expertise has checked the definition-sensitive cases.
+- **Statistical power:** 15 test cases (9 to 11 per metric). Intervals are wide and no paired test reached p < 0.05; absence of a difference is
+  not evidence of equivalence.
+- **LangSmith:** experiments were scored locally; the dashboards and annotation queue required by the PRD were not used because the trace limit was
+  hit and credit ran low. All results are reproducible from the saved files.
+
+### 8.8 Reproduce
+
+```bash
+make final      # E7b on dev, then the single test run (E7T, E6T, E4dT), red team, analysis; each step checks your credit first
+```

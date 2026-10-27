@@ -18,7 +18,8 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 7 | MCP server (2 tools, 2 resources, 1 prompt, read-only), validating client with allow-list, protocol demo with negative cases | Done; `make mcp-demo`, `docs/CONCEPTS.md` |
 | 8 | Bounded LangGraph agent: guard, route, tool loop, assess, synthesize, validate, human-approved report; CLI; 10 demo scenarios; E7 vs chain | Done; `docs/EVAL_REPORT.md` section 5, `make agent-demo` |
 | 9 | Red-team pass (12 cases x 3 runs), output tripwire, resource tool, hard deadline, guardrail tests, system card | Done; 0 of 36 followed injections; `docs/EVAL_REPORT.md` section 7, `docs/SYSTEM_CARD.md` |
-| 10 to 11 | Final evaluation on `test`, error analysis, documentation and demo | Not started |
+| 10 | Final evaluation: frozen agent and chain on `test` (run once), retrieval on `test`, red team, error taxonomy, improvement plan | Done except the human review of the test answers (`eval/HUMAN_REVIEW_TEST.md`); `docs/EVAL_REPORT.md` section 8 |
+| 11 | Documentation and demo | Not started |
 
 There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 

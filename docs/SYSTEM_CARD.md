@@ -30,21 +30,27 @@ Intended users: analysts and researchers who will read the cited sources before 
   content and one planted attack string; none of it is real MOM material.
 - No personal data is collected or stored. Keys are read from `.env` (git-ignored).
 
-## 4. How well it works (dev split, 21 cases x 3 runs)
+## 4. How well it works
 
-| Measure | Result | Where |
+Held-out `test` split (15 cases x 3 runs, frozen agent, run once; EVAL_REPORT section 8). Most PRD targets were **not met**:
+
+| Measure | Result (95% CI) | PRD target |
 |---|---|---|
-| Agent: published number matches the expected one (`numeric_exact`) | 0.91 (chain with the same model: 0.67) | EVAL_REPORT section 5 |
-| Agent: cited chunk is a gold source (`citation_correct`) | 0.98 (chain: 0.69; BM25 baseline: 0.07) | section 5 |
-| Expected status reached (`status_match`), corrected labels | 0.75 (chain 0.73); no reliable difference | section 6 |
-| Quoted groundedness, LLM-judged | 0.99, **uncalibrated** | sections 4, 5 |
-| Red team: followed injections | **0 of 36 runs** (12 cases x 3) | section 7 |
-| Latency, median / 95th percentile | 12.8 s / 30.0 s (target 20 s at p95: **not met**) | section 5 |
-| Cost per question | about $0.002 | section 5 |
+| Expected status reached (`status_match`) | 0.69 [0.47, 0.89] (chain, same model: 0.64) | none set |
+| Groundedness (LLM judge, calibrated on 29 claims by one person) | 0.95 [0.86, 1.00] | >= 0.90: met |
+| Citation correctness | 0.85 [0.64, 1.00] | >= 0.90: not met |
+| Numeric exact on calculation cases | 0.50 (6 runs) | >= 0.95: not met |
+| Correct abstain or clarify on unanswerable and ambiguous | 0.78 (9 runs) | >= 0.85: not met |
+| False abstention on answerable cases | 0.27 (33 runs) | <= 0.10: not met |
+| Retrieval Recall@5 / MRR@10 (retriever alone, 11 questions) | 0.64 / 0.60 | 0.85 / 0.70: not met |
+| Red team: followed injections | **0 of 36 runs** | 0: met |
+| Latency p50 / p95 | 10.3 s / 27.1 s | 8 s / 20 s: not met |
+| Cost per question | about $0.0025 | reported |
 
-The `test` split has not been used. Every number above comes from the same 21 development cases that guided the design, so it is
-optimistic; treat the figures as directional. The agent configuration was changed after these runs (Step 9 fixes) and must be re-run
-in Step 10 before it is reported as final.
+The agent was **not shown to be better than the plain chain**: no paired difference is statistically significant on 15 cases. The
+three main failure modes (the router refusing answerable questions, a skipped calculation, and disputed conflict handling) and a plan
+to fix them are in EVAL_REPORT 8.4 and 8.5; they are not applied because the held-out result is frozen. Development-set numbers are
+higher (for example numbers correct 0.97) but they are optimistic because that split guided the design.
 
 ## 5. Risks and mitigations
 
@@ -69,13 +75,14 @@ retrieved passages and tool results leave the machine. Nothing here has been rev
 - The only consequential action (writing a file) pauses for explicit confirmation and is restricted to `reports/`.
 - Low-confidence and degraded-path answers carry lowered confidence and a limitation; they are not labelled "requires review" by code
   beyond that.
-- **No human has yet reviewed the evaluation cases or the judge.** The cases were drafted by an AI model; the review was AI-assisted
-  (`eval/README.md`, open items 1 and 6). Until a person with labour-market knowledge reviews them and labels the calibration sheet,
-  quality numbers should not be presented as human-validated.
+- **The evaluation cases have not had a domain-expert human review.** The cases were drafted by an AI model; the review was AI-assisted
+  (`eval/README.md`, open items 1 and 2). The project owner labelled the judge calibration sample (29 claims, one labeller). A review sheet
+  for the held-out answers (`eval/HUMAN_REVIEW_TEST.md`) is waiting for the owner; until it is ticked, held-out quality rests on automated
+  checks and the judge.
 
 ## 7. Known limitations
 
-- Small evaluation set (36 cases, 21 on dev); wide intervals; no results on `test`.
+- Small evaluation set (36 cases, 15 on test); wide intervals; no paired test reached p < 0.05; Sonnet was not run on `test`.
 - Labels for several conflict cases were revised after results were seen (section 6); those changes are disclosed and versioned.
 - Latency and cost: about 3 model calls per question; p95 above target.
 - Arithmetic is exact only where a tool does it; rounded forms of computed values are accepted.

@@ -1,0 +1,10 @@
+config_id: E4bT
+description: "Final evaluation on the retrieval test split: E4b configuration"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: test
+target: retriever
+params: {retriever: r4, embedding: voyageai/voyage-4, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

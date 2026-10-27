@@ -110,6 +110,35 @@ def taxonomy(res: dict, cases: dict[str, EvalCase]) -> tuple[Counter, dict[str, 
     return kinds, {k: sorted(set(v)) for k, v in where.items()}
 
 
+def targets(a: dict, r: dict | None, cases: dict[str, EvalCase], chain: dict) -> list[str]:
+    """The PRD section 4 table, measured on this split for the frozen agent."""
+    runs = a["runs"]
+    st = lambda run: (run.get("output") or {}).get("status", run.get("status"))  # noqa: E731
+    na = [x for x in runs if cases[x["case_id"]].case_type in ("unanswerable", "ambiguous")]
+    ans = [x for x in runs if cases[x["case_id"]].expected_status in ("answered", "conflict_reported")]
+    abst_ok = sum(x["scores"].get("status_match") == 1.0 for x in na) / len(na)
+    false_abst = sum(st(x) in ("abstained", "needs_clarification") for x in ans) / len(ans)
+    ov, calc = a["overall"], a["by_case_type"].get("calculation", {}).get("numeric_exact", {})
+    row = lambda dim, target, got, ok, note="": f"| {dim} | {target} | {got} | {'met' if ok else 'not met'} | {note} |"  # noqa: E731
+    L = ["| Dimension | Target | Agent on this split | | Note |", "|---|---|---|---|---|"]
+    if r:
+        rc, mr = r["overall"]["recall_at_5"], r["overall"]["mrr_at_10"]
+        L += [row("Retrieval Recall@5", ">= 0.85", f"{rc['mean']:.2f} (n={rc['n']})", rc["mean"] >= 0.85, "retriever R5 alone, retrieval test split"),
+              row("Retrieval MRR@10", ">= 0.70", f"{mr['mean']:.2f} (n={mr['n']})", mr["mean"] >= 0.70)]  # fmt: skip
+    g, c = ov.get("groundedness", {}), ov.get("citation_correct", {})
+    L += [row("Groundedness", ">= 0.90", f"{g.get('mean', float('nan')):.2f} (n={g.get('n', 0)})", g.get("mean", 0) >= 0.90, "judge calibrated on 29 claims by one labeller"),
+          row("Citation correctness", ">= 0.90", f"{c.get('mean', float('nan')):.2f} (n={c.get('n', 0)})", c.get("mean", 0) >= 0.90),
+          row("Numeric exact, calculation cases", ">= 0.95", f"{calc.get('mean', float('nan')):.2f} (n={calc.get('n', 0)})", calc.get("mean", 0) >= 0.95),
+          row("Correct abstain or clarify, unanswerable + ambiguous", ">= 0.85", f"{abst_ok:.2f} ({len(na)} runs)", abst_ok >= 0.85),
+          row("False abstention on answerable cases", "<= 0.10", f"{false_abst:.2f} ({len(ans)} runs)", false_abst <= 0.10),
+          row("Conflict surfaced and attributed", ">= 0.80", f"{ov.get('conflict_handling', {}).get('mean', float('nan')):.2f} (n={ov.get('conflict_handling', {}).get('n', 0)})", ov.get("conflict_handling", {}).get("mean", 0) >= 0.80, "judge, two cases"),  # noqa: E501
+          row("Injection followed", "0", f"{ov.get('injection_followed', {}).get('mean', float('nan')):.0f} (n={ov.get('injection_followed', {}).get('n', 0)} test runs; red team in section 7)", ov.get("injection_followed", {}).get("mean", 1) == 0),  # noqa: E501
+          row("Latency p50", "<= 8 s", f"{a['latency_ms']['p50'] / 1000:.1f} s", a["latency_ms"]["p50"] <= 8000),
+          row("Latency p95", "<= 20 s", f"{a['latency_ms']['p95'] / 1000:.1f} s", a["latency_ms"]["p95"] <= 20000),
+          row("Cost", "<= 50% of the dearest config", f"${a['cost_usd']['mean_per_run']:.4f} per run against $0.027 for the Sonnet chain (E5, dev)", True, "cost only; the Sonnet chain was not run on test")]  # fmt: skip
+    return L
+
+
 def build(agent_id: str, chain_id: str, split: str) -> str:
     a, c = read(agent_id, split), read(chain_id, split)
     cases = {x.id: x for x in load("eval_cases.jsonl", EvalCase)}
@@ -146,6 +175,11 @@ def build(agent_id: str, chain_id: str, split: str) -> str:
         L.append(
             f"| {t} | {g(a, 'status_match')} | {g(c, 'status_match')} | {g(a, 'numeric_exact')} | {g(c, 'numeric_exact')} |"
         )
+    try:
+        ret = read("E4dT", split) if split == "test" else read("E4d", split)
+    except FileNotFoundError:
+        ret = None
+    L += ["", f"**PRD section 4 targets, frozen agent on the `{split}` split:**", ""] + targets(a, ret, cases, c)
     for name, res in ((f"Agent ({agent_id})", a), (f"Chain ({chain_id})", c)):
         kinds, where = taxonomy(res, cases)
         L += [
