@@ -34,7 +34,10 @@ def git_info() -> dict:
     def run(*a):
         return subprocess.run(["git", *a], capture_output=True, text=True, cwd=ROOT).stdout.strip()
 
-    return {"git_sha": run("rev-parse", "--short", "HEAD"), "git_dirty": bool(run("status", "--porcelain"))}
+    return {
+        "git_sha": run("rev-parse", "--short", "HEAD"),
+        "git_dirty": bool(run("status", "--porcelain", "--", ".", ":(exclude)eval/results")),
+    }
 
 
 def build_target(cfg: dict):
