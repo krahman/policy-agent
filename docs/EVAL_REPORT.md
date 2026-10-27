@@ -94,12 +94,12 @@ rank systems.
 
 <!-- retrieval:end -->
 
-- **H1 is supported against BM25.** Hybrid retrieval with re-ranking beats BM25 on Recall@5 on both splits (+0.27 on dev, +0.24 on test, intervals exclude zero), and the
+- **H1 is supported against BM25.** Hybrid retrieval with re-ranking beats BM25 on Recall@5 on both splits (+0.31 on dev, +0.24 on test, intervals exclude zero), and the
   period filter adds a further, smaller, not significant gain (R5). Dense retrieval with the better embedding model
   is within noise of the hybrid on both splits: the embedding model and the re-ranker mattered more than the retriever type. In earlier runs (result files removed in the
   simplification; they are in git history) fusion without the re-ranker did not beat BM25, and the weaker embedding model `text-embedding-3-small` scored Recall@5 0.09 on dev,
   because many statistic cards differ by only one word (quarter, residency, basis).
-- **No retriever meets the 0.85 target** (best 0.67 on dev and 0.64 on test). Retrieval is the largest remaining quantitative gap.
+- **No retriever meets the 0.85 target** (best 0.71 on dev and 0.64 on test). Retrieval is the largest remaining quantitative gap.
 
 ## 5. Generation: model comparison (H2)
 

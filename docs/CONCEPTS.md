@@ -20,13 +20,13 @@ How the GenAI concepts in the challenge brief apply to this project, with the tr
 ## Embeddings and retrieval
 
 - **Similarity.** Dense vectors are normalised, so cosine similarity is a dot product. Two embedding models were compared: `text-embedding-3-small` scored Recall@5 0.09 on
-  dev and `voyage-4` 0.42, because many statistic cards differ by one word (residency, quarter, seasonal basis) and the weaker model confuses them.
+  dev and `voyage-4` 0.46, because many statistic cards differ by one word (residency, quarter, seasonal basis) and the weaker model confuses them.
 - **Chunking.** Structure-aware chunks (C2, at most 400 tokens): report text is split on its own headings, and each published figure becomes its own one-sentence "stat card" so
   a number and its measure and period live in one chunk. The fixed-size alternative (C1) was not run because no citation error traced to a chunk boundary (OPT-1 not warranted).
-- **Metadata filters.** A permission filter on `access_level` applied before ranking, and a period filter taken from the question. The period filter raised Recall@5 from 0.57 to
-  0.67 on dev, within noise (paired intervals include zero) but in the right direction.
+- **Metadata filters.** A permission filter on `access_level` applied before ranking, and a period filter taken from the question. The period filter raised Recall@5 from 0.60 to
+  0.71 on dev and from 0.61 to 0.64 on test (not tested for significance; the direction is consistent).
 - **Hybrid retrieval and re-ranking.** BM25 finds exact words and numbers; dense retrieval finds paraphrase. Fused by reciprocal rank, they were **worse** than BM25 on dev with the weaker
-  embeddings and no better with the stronger ones; the re-ranker is what gave the gain (+0.23 to +0.27 Recall@5 over BM25, intervals excluding zero).
+  embeddings and no better with the stronger ones; the re-ranker is what gave the gain (+0.31 on dev and +0.24 on test Recall@5 over BM25, intervals excluding zero).
 - **Retrieval errors versus generation errors.** The error taxonomy separates a gold chunk never reaching the model (retrieval miss) from a model that had the evidence and still got it wrong
   (synthesis); that is how the first agent design's router refusals were found not to be retrieval problems (EVAL_REPORT section 6).
 

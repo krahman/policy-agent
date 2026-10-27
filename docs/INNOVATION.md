@@ -33,5 +33,5 @@ Measured on the held-out split: 2 to 3 model calls and about 10 s median (24 s p
 
 ## 6. The first two priorities, with how I would measure them
 
-1. **Retrieval quality (Recall@5 0.64 to 0.85, MRR 0.60 to 0.70).** It is the largest gap against any target and the cause behind many downstream misses. Re-ranking and metadata filtering were built and helped (+0.23 to +0.37 over BM25 on dev, +0.24 to +0.27 on test) but not enough. Measure Recall@5 and MRR@10 on a fresh retrieval set with paired intervals, then numeric accuracy on the questions that depend on it.
+1. **Retrieval quality (Recall@5 0.64 to 0.85, MRR 0.60 to 0.70).** It is the largest gap against any target and the cause behind many downstream misses. Re-ranking and metadata filtering were built and helped (+0.31 to +0.42 over BM25 on dev, +0.24 to +0.27 on test) but not enough. Measure Recall@5 and MRR@10 on a fresh retrieval set with paired intervals, then numeric accuracy on the questions that depend on it.
 2. **A feedback and weekly human-review loop, measuring groundedness on the reviewed sample.** The automated judge was calibrated on only 29 claims, so the most valuable evidence is more human labels on real questions. Success: the judge-versus-human agreement stays at or above kappa 0.6 on the weekly sample, and the share of answers flagged by reviewers falls over four weeks.

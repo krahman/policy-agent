@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook ingestion-notebook agent-demo redteam final analyse reproduce pricing
+.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook agent-demo redteam final analyse reproduce pricing
 
 # Setup and checks ----------------------------------------------------------------------------------------------------
 sync:
@@ -26,6 +26,9 @@ ingest:       # build data/processed/{stats.parquet, stats.duckdb, chunks.jsonl,
 
 ingestion-notebook: # re-execute notebooks/01_ingestion.ipynb (needs make fetch and make ingest first)
 	uv run python scripts/make_ingestion_notebook.py
+
+retrieval-notebook: # re-execute notebooks/03_retrieval.ipynb (uses the embedding and re-rank caches; needs OPENROUTER_API_KEY for the live cells)
+	uv run python scripts/make_retrieval_notebook.py
 
 eda:          # re-execute notebooks/02_eda.ipynb
 	uv run python scripts/make_eda_notebook.py

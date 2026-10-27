@@ -54,6 +54,7 @@ The first question builds the dense index (embeddings for about 2,400 chunks, a 
 |---|---|---|
 | `uv run python -m policy_agent.cli "<question>" --verbose` | Ask one question (`--no-upload` keeps it out of LangSmith) | $0.0025 |
 | `make ingestion-notebook`, `make eda` | Re-execute the data-preparation and exploratory-analysis notebooks (after `make fetch` and `make ingest`) | free |
+| `make retrieval-notebook` | Re-execute the retrieval notebook (uses the embedding and re-rank caches; needs the key for the live cells) | free if cached |
 | `make mcp-demo`, `make mcp-notebook` | The raw MCP lifecycle with 8 negative cases (no key needed); the MCP discovery notebook | free |
 | `make agent-demo` | The 10 demo scenarios from the task, with pass/fail checks | about $0.05 |
 | `make redteam` | 12 red-team cases x 3 runs, plus the offline guardrail tests | about $0.15 |
@@ -127,7 +128,7 @@ src/policy_agent/baselines/   # B0 (BM25 verbatim, no LLM) and the retrieval-onl
 src/policy_agent/budget.py    # checks your OpenRouter credit before a paid run
 src/policy_agent/cli.py       # command-line interface
 scripts/                      # experiment runner, analysis, demo scenarios, red team, calibration sheet
-notebooks/                    # 01_ingestion.ipynb (data preparation), 02_eda.ipynb (exploration), 05_mcp_demo.ipynb (MCP discovery); all executed
+notebooks/                    # 01_ingestion (data preparation), 02_eda (exploration), 03_retrieval (retrieval approaches), 05_mcp_demo (MCP discovery); all executed
 docs/                         # see the index below
 tests/                        # 250 tests; none needs a key; most need no network
 ```
