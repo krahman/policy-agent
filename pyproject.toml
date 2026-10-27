@@ -58,6 +58,7 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.ruff.lint.per-file-ignores]
 "scripts/make_eda_notebook.py" = ["E501"]  # long lines inside generated notebook cells
 "scripts/make_mcp_notebook.py" = ["E501"]  # long lines inside generated notebook cells
+"scripts/make_ingestion_notebook.py" = ["E501"]  # long lines inside generated notebook cells
 "src/policy_agent/eval/build.py" = ["E501"]  # question and answer text is data
 "src/policy_agent/eval/review.py" = ["E501"]  # prose in the generated sheet header
 "scripts/analyse_retrieval.py" = ["E501"]  # markdown text
