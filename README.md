@@ -13,7 +13,8 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 2 | Ingestion, cleaning, stat cards, DuckDB store, EDA | Done |
 | 3 | Evaluation set: 36 cases, retrieval labels, red-team set, leakage check, LangSmith datasets | Done (open review items in `eval/README.md`) |
 | 4 | Baselines: BM25 (B0/E0), single-pass RAG (B1), table lookup (B2), deterministic evaluators, experiment runner | Done; results in `docs/EVAL_REPORT.md` |
-| 5 to 11 | Retrieval and model experiments, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
+| 5 | Retrieval experiments E1-E4d: BM25, dense (2 embeddings), hybrid RRF, + re-rank, + period filter, with bootstrap CIs | Done; `docs/EVAL_REPORT.md` section 3 (LangSmith traces missing: monthly limit) |
+| 6 to 11 | Generation and validation, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
 
 There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 
@@ -74,7 +75,7 @@ scripts/sync_datasets.py      # upload evaluation datasets to LangSmith
 scripts/run_experiment.py     # run a config over a dataset split (LangSmith or --local)
 src/policy_agent/ingest/      # periods, structured loaders, schema, HTML parsing, chunking, stat cards, build
 src/policy_agent/eval/        # evaluation cases, corpus lookups, validation and leakage checks, evaluators
-src/policy_agent/retrieval/   # BM25 and dense retrievers (role filter applied before ranking)
+src/policy_agent/retrieval/   # BM25, dense, hybrid (RRF), re-rank and period filter (role filter applied before ranking)
 src/policy_agent/baselines/   # B0, B1, B2
 src/policy_agent/generation/  # Answer schema
 prompts/                      # versioned prompts
@@ -95,6 +96,7 @@ tests/                        # pytest suite
 | `make hello` | one traced LLM call |
 | `make fetch`, `make ingest`, `make eda` | data pipeline, see above |
 | `make evalset`, `make check-eval`, `make sync-datasets` | build, validate and upload the evaluation set (see [`eval/README.md`](eval/README.md)) |
+| `make retrieval` | run E1-E4d on the dev split and refresh the bootstrap-CI tables in `docs/EVAL_REPORT.md` |
 | `make baselines`, `make pricing` | run E0/B0/B2/B1 on the dev split (LangSmith + `eval/results/`); refresh model prices from OpenRouter |
 
 Tests that need the raw data are skipped if `data/raw/` has not been fetched.

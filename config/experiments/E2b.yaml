@@ -1,0 +1,10 @@
+config_id: E2b
+description: "R2 dense, voyageai/voyage-4, cosine (second embedding model)"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: dev
+target: retriever
+params: {retriever: r2, embedding: voyageai/voyage-4, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

@@ -1,0 +1,10 @@
+config_id: E4b
+description: "R4 hybrid (voyage-4) + cohere/rerank-v3.5 over the top 20"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: dev
+target: retriever
+params: {retriever: r4, embedding: voyageai/voyage-4, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

@@ -111,3 +111,125 @@ make ingest evalset sync-datasets   # processed data and the LangSmith datasets
 make baselines                       # E0, B0, B2, B1 on dev -> LangSmith + eval/results/*.json
 python scripts/make_baseline_report.py   # refresh the generated tables above
 ```
+
+## 3. Retrieval experiments (Step 5, `dev` split, hypothesis H1)
+
+H1: hybrid retrieval with re-ranking beats BM25-only and dense-only on Recall@5 and MRR. All systems search the same 2,436 public chunks
+(C2 chunker), the role filter is applied before ranking, and no LLM is involved. Re-rank is `cohere/rerank-v3.5` through OpenRouter over the
+top 20 of the fused list. Reciprocal rank fusion uses k = 60 and 50 candidates from each retriever; neither was tuned. E4c/E4d (R5) add a
+period filter extracted from the question by rules (`2Q 2025`, `September 2025`, a bare year); chunks with no reference period are never
+filtered out. R5 is exploratory: the PRD's other two filter fields (`doc_type`, `access_level`) are not used because the questions give no
+reliable cue for document type, and access is already enforced for every system.
+
+<!-- retrieval:start -->
+Dev split, 15 questions with gold evidence. 95% bootstrap CI (10,000 resamples of questions, seed 20261027). Cell = mean [low, high].
+
+| System | Recall@5 | Hit@5 | MRR@10 | nDCG@10 | latency p50 (ms) | cost / query |
+|---|---|---|---|---|---|---|
+| E1 R1 BM25 | 0.30 [0.13, 0.48] | 0.53 [0.27, 0.80] | 0.23 [0.11, 0.38] | 0.27 [0.15, 0.41] | 6 | $0.0000 |
+| E2 R2 dense (openai) | 0.09 [0.00, 0.24] | 0.13 [0.00, 0.33] | 0.10 [0.01, 0.24] | 0.10 [0.02, 0.19] | 3 | $0.0000 |
+| E2b R2 dense (voyage-4) | 0.42 [0.22, 0.63] | 0.60 [0.33, 0.87] | 0.36 [0.22, 0.52] | 0.40 [0.29, 0.53] | 966 | $0.0000 |
+| E3 R3 hybrid (openai) | 0.09 [0.00, 0.24] | 0.13 [0.00, 0.33] | 0.14 [0.03, 0.29] | 0.15 [0.06, 0.25] | 8 | $0.0000 |
+| E3b R3 hybrid (voyage-4) | 0.38 [0.18, 0.59] | 0.53 [0.27, 0.80] | 0.38 [0.21, 0.56] | 0.42 [0.26, 0.59] | 14 | $0.0000 |
+| E4 R4 hybrid+rerank (openai) | 0.53 [0.32, 0.74] | 0.67 [0.40, 0.87] | 0.44 [0.26, 0.64] | 0.46 [0.27, 0.65] | 763 | $0.0019 |
+| E4b R4 hybrid+rerank (voyage-4) | 0.57 [0.36, 0.77] | 0.73 [0.47, 0.93] | 0.52 [0.35, 0.69] | 0.58 [0.43, 0.72] | 810 | $0.0018 |
+| E4c R5 R4+period filter (openai) | 0.67 [0.47, 0.86] | 0.80 [0.60, 1.00] | 0.55 [0.37, 0.73] | 0.58 [0.40, 0.76] | 784 | $0.0019 |
+| E4d R5 R4+period filter (voyage-4) | 0.67 [0.47, 0.86] | 0.80 [0.60, 1.00] | 0.55 [0.38, 0.73] | 0.60 [0.43, 0.76] | 728 | $0.0019 |
+
+Paired difference against E1 (BM25), same resamples. A difference is only worth reading if its interval excludes 0.
+
+| System | Δ Recall@5 | Δ MRR@10 | questions better / worse / tied (Recall@5) |
+|---|---|---|---|
+| E2 R2 dense (openai) | -0.21 [-0.44, +0.03] | -0.14 [-0.32, +0.06] | 1 / 7 / 7 |
+| E2b R2 dense (voyage-4) | +0.12 [-0.08, +0.34] | +0.13 [-0.07, +0.33] | 4 / 2 / 9 |
+| E3 R3 hybrid (openai) | -0.21 [-0.38, -0.08] | -0.09 [-0.23, +0.07] | 0 / 6 / 9 |
+| E3b R3 hybrid (voyage-4) | +0.08 [-0.10, +0.29] | +0.14 [+0.00, +0.31] | 2 / 2 / 11 |
+| E4 R4 hybrid+rerank (openai) | +0.23 [+0.04, +0.46] | +0.21 [+0.01, +0.43] | 5 / 1 / 9 |
+| E4b R4 hybrid+rerank (voyage-4) | +0.27 [+0.06, +0.50] | +0.29 [+0.09, +0.48] | 6 / 1 / 8 |
+| E4c R5 R4+period filter (openai) | +0.37 [+0.13, +0.62] | +0.31 [+0.08, +0.54] | 8 / 1 / 6 |
+| E4d R5 R4+period filter (voyage-4) | +0.37 [+0.13, +0.62] | +0.32 [+0.09, +0.55] | 8 / 1 / 6 |
+
+Does the filter (R5) add anything over R4 with the same embedding? Paired difference:
+
+| Comparison | Δ Recall@5 | Δ MRR@10 |
+|---|---|---|
+| E4c vs E4 | +0.14 [-0.06, +0.36] | +0.10 [-0.04, +0.28] |
+| E4d vs E4b | +0.11 [-0.02, +0.26] | +0.04 [-0.06, +0.19] |
+| E4b vs E2b | +0.14 [-0.01, +0.32] | +0.16 [+0.00, +0.31] |
+
+Recall@5 per question (gold = grade-2 chunks in the top 5):
+
+| Q | E1 | E2 | E2b | E3 | E3b | E4 | E4b | E4c | E4d |
+|---|---|---|---|---|---|---|---|---|---|
+| C03 | 0.50 | 0.00 | 0.00 | 0.00 | 0.00 | 0.50 | 0.50 | 0.50 | 0.50 |
+| C04 | 0.33 | 0.33 | 0.33 | 0.33 | 0.33 | 0.67 | 0.67 | 1.00 | 1.00 |
+| D02 | 0.00 | 0.00 | 1.00 | 0.00 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| F02 | 0.00 | 1.00 | 0.00 | 0.00 | 0.00 | 1.00 | 0.00 | 1.00 | 1.00 |
+| F03 | 1.00 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| F05 | 0.50 | 0.00 | 0.50 | 0.00 | 0.50 | 1.00 | 0.50 | 0.50 | 0.50 |
+| F06 | 0.00 | 0.00 | 1.00 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| F07 | 0.00 | 0.00 | 0.00 | 0.00 | 1.00 | 0.00 | 1.00 | 1.00 | 1.00 |
+| K02 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| K03 | 0.00 | 0.00 | 0.50 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| K05 | 1.00 | 0.00 | 1.00 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| M01 | 0.33 | 0.00 | 0.67 | 0.00 | 0.00 | 0.00 | 1.00 | 0.67 | 0.67 |
+| M03 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.50 | 0.75 | 0.75 |
+| M04 | 0.50 | 0.00 | 0.00 | 0.00 | 0.50 | 0.50 | 0.00 | 0.00 | 0.00 |
+| M05 | 0.33 | 0.00 | 0.33 | 0.00 | 0.33 | 0.33 | 0.33 | 0.67 | 0.67 |
+<!-- retrieval:end -->
+
+### 3.1 What the experiments show
+
+1. **H1 holds for hybrid + re-rank, not for hybrid alone.** R4 beats BM25 on Recall@5 and MRR@10 with both embeddings, and the 95% paired
+   intervals exclude 0 (E4: +0.23 and +0.21; E4b: +0.27 and +0.29). Plain fusion (R3) does not: with the OpenAI embeddings it is
+   *worse* than BM25 on Recall@5 (-0.21, interval excludes 0), and with voyage-4 it is indistinguishable from BM25. So the claim "hybrid
+   beats BM25" is not supported here; the re-ranker is what helps.
+2. **The embedding model matters more than the retriever type for dense search.** `text-embedding-3-small` puts an answer-bearing chunk in
+   the top 5 for 13% of questions; `voyage-4` does so for 60%, better than BM25's 53%, though the difference from BM25 is within noise on
+   15 questions (Δ Recall@5 +0.12, interval -0.08 to +0.34). The OpenAI result is the sibling-card problem seen in Step 4: near-identical
+   stat cards for other quarters or residency groups crowd out the right one.
+3. **A re-ranker rescues a weak first stage.** E4 (OpenAI candidates) reaches Recall@5 0.53 from a first stage that scored 0.09 on its own,
+   because the right card is usually somewhere in the fused top 20 and the re-ranker can tell the siblings apart. E4b is ahead of E4 by
+   only 0.04 Recall@5, which is within noise.
+4. **The period filter helps, but we cannot show it yet.** R5 raises Recall@5 to 0.67 with either embedding (paired +0.37 against BM25, interval
+   excludes 0) and moves 8 questions up, 1 down. Its gain over R4 with the same embedding (+0.14 and +0.11) has intervals that include 0.
+   The one question where R5 is worse than BM25 is M04, and not because of the filter dropping its evidence: the filter changes the
+   candidate set, and the re-ranker then orders it differently (Recall@5 on M04 is 0.5 for E4 but 0.0 for E4b and E4c, so it
+   depends on the re-ranker's ordering of near-equal candidates). A design weakness remains untested: a question that names one period but needs a neighbouring one would lose its
+   evidence to the filter, and the 15 dev questions contain no clear example.
+5. **No system reaches the target.** The PRD target is Recall@5 ≥ 0.85 and MRR@10 ≥ 0.70; the best here is 0.67 and 0.55. K02, K03 and M04
+   are not retrieved by any system. K02 and K03 are the year-on-year and multi-year change questions, which need cards for two different
+   periods; M04 asks about data sources described in prose. These are the cases to look at before Step 6.
+6. **Cost and latency.** The re-ranker adds about 0.75 s per query and $0.001 per query (priced per search by OpenRouter); both are small
+   against the 8 s / 20 s budget. The 0.97 s median for E2b is one uncached query embedding call per question, not an index cost.
+
+### 3.2 Chosen retriever
+
+**R5 on voyage-4 (E4d)** is the working choice for Steps 6 and 8, on the strength of the highest Recall@5 and hit@5 with the best nDCG@10,
+and a re-ranker that makes the choice of embedding model matter little (E4 and E4b are close). R4 on voyage-4 (E4b) is the fallback if the
+filter proves brittle. Two cautions apply to this choice:
+
+- With 15 questions the intervals are wide (about ±0.2 on Recall@5), so "R5 over R4" is a judgement, not a measured win. The test split is
+  untouched and will be used once, on the frozen configuration.
+- The filter and the fusion settings were set before looking at results and were not tuned, but the choice among E1–E4d was made on `dev`,
+  so the `dev` score of the winner is optimistic.
+
+### 3.3 Caveats
+
+- **LangSmith traces are missing for Step 5.** The account hit its monthly trace limit during the Step 4 re-run and the Step 5 runs
+  (HTTP 429 "Monthly unique traces usage limit exceeded"). The experiments ran and were scored locally; the numbers above come from
+  `eval/results/E*_dev.json`, which is complete. LangSmith holds E0, B0 and B2 in full and B1 with 55 of 63 runs; E1–E4d show 0 runs
+  there. The PRD asks for a LangSmith comparison view; that needs the limit to reset (next month) or a plan upgrade, after which
+  `make retrieval` re-creates them. Nothing here depends on those traces.
+- **The embeddings API and the re-ranker are hosted services** and may change behaviour; results are cached on disk by text hash
+  (`data/processed/embeddings/`), which makes re-runs reproducible but means a model update would not be noticed.
+- **Same 15 questions for every system.** Gold evidence was drafted by the same model family as the system under test and reviewed by AI
+  (see `eval/README.md`, Open items), so a systematic labelling bias would favour or hurt all systems alike.
+- **Notebook.** The PRD also asks for the analysis in a notebook; for now it is `scripts/analyse_retrieval.py` (bootstrap CIs, paired
+  differences, per-question table), which regenerates the tables above.
+
+### 3.4 Reproduce
+
+```bash
+make retrieval        # E1..E4d on dev, then refreshes the tables above (needs OPENROUTER and LANGSMITH keys)
+```

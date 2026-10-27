@@ -1,0 +1,10 @@
+config_id: E1
+description: "R1 BM25 (rank_bm25) over C2 chunks"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: dev
+target: retriever
+params: {retriever: r1, embedding: openai/text-embedding-3-small, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

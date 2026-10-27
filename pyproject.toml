@@ -58,6 +58,7 @@ select = ["E", "F", "I", "UP", "B"]
 "src/policy_agent/eval/build.py" = ["E501"]  # question and answer text is data
 "src/policy_agent/eval/review.py" = ["E501"]  # prose in the generated sheet header
 "scripts/make_baseline_report.py" = ["E501"]  # markdown text
+"scripts/analyse_retrieval.py" = ["E501"]  # markdown text
 "notebooks/*.ipynb" = ["E501", "E702", "I001"]
 
 [tool.mypy]

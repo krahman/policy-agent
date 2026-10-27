@@ -226,6 +226,7 @@ def cost_usd(usage: dict | None) -> float:
     if usage.get("model") in p["models"]:
         m = p["models"][usage["model"]]
         total += usage.get("input_tokens", 0) * m["prompt"] + usage.get("output_tokens", 0) * m["completion"]
+    total += usage.get("extra_cost_usd", 0.0)  # e.g. hosted re-rank, priced per search
     if usage.get("embedding_model") in p["embeddings"]:
         total += usage.get("embedding_tokens", 0) * p["embeddings"][usage["embedding_model"]]["per_token"]
     return total

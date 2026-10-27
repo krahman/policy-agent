@@ -1,0 +1,327 @@
+{
+  "by_case_type": {
+    "retrieval": {
+      "est_cost_usd": {
+        "mean": 0.0,
+        "n": 15
+      },
+      "hit_at_5": {
+        "mean": 0.1333,
+        "n": 15
+      },
+      "latency_ms": {
+        "mean": 246.4835,
+        "n": 15
+      },
+      "mrr_at_10": {
+        "mean": 0.1389,
+        "n": 15
+      },
+      "ndcg_at_10": {
+        "mean": 0.1491,
+        "n": 15
+      },
+      "recall_at_5": {
+        "mean": 0.0889,
+        "n": 15
+      }
+    }
+  },
+  "config": {
+    "config_id": "E3",
+    "dataset": "policy-retrieval-v1",
+    "description": "R3 hybrid: BM25 + dense (openai) fused with RRF",
+    "evaluators": "retrieval",
+    "hypothesis": "H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)",
+    "max_concurrency": 2,
+    "params": {
+      "embedding": "openai/text-embedding-3-small",
+      "k": 10,
+      "retriever": "r3"
+    },
+    "repetitions": 1,
+    "split": "dev",
+    "target": "retriever"
+  },
+  "cost_usd": {
+    "mean_per_run": 0.0,
+    "total": 0.0
+  },
+  "experiment": "E3-03c011c0",
+  "latency_ms": {
+    "p50": 8.2,
+    "p95": 1798.6
+  },
+  "metadata": {
+    "chunker": "C2",
+    "config_id": "E3",
+    "corpus_chunks_sha256_12": "82fdf97cbf39",
+    "dataset": "policy-retrieval-v1",
+    "dataset_version": "v1",
+    "embedding": "openai/text-embedding-3-small",
+    "git_dirty": true,
+    "git_sha": "800cb87",
+    "k": 10,
+    "pricing_retrieved_at": "2026-10-27",
+    "python": "3.12.15",
+    "retriever": "r3",
+    "seed": "n/a (temperature 0)",
+    "split": "dev"
+  },
+  "n_runs": 15,
+  "overall": {
+    "est_cost_usd": {
+      "mean": 0.0,
+      "n": 15
+    },
+    "hit_at_5": {
+      "mean": 0.1333,
+      "n": 15
+    },
+    "latency_ms": {
+      "mean": 246.4835,
+      "n": 15
+    },
+    "mrr_at_10": {
+      "mean": 0.1389,
+      "n": 15
+    },
+    "ndcg_at_10": {
+      "mean": 0.1491,
+      "n": 15
+    },
+    "recall_at_5": {
+      "mean": 0.0889,
+      "n": 15
+    }
+  },
+  "runs": [
+    {
+      "case_id": "F02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 1759.2549999826588,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 1759.2549999826588,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 7.33491696882993,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 7.33491696882993,
+        "mrr_at_10": 0.1111111111111111,
+        "ndcg_at_10": 0.18457569677956817,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "C03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 9.905625018291175,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 9.905625018291175,
+        "mrr_at_10": 0.1111111111111111,
+        "ndcg_at_10": 0.18457569677956817,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "K03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 1798.6485410365276,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 1798.6485410365276,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F06",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 34.401665965560824,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 34.401665965560824,
+        "mrr_at_10": 0.125,
+        "ndcg_at_10": 0.31546487678572877,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "D02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 8.210750005673617,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 8.210750005673617,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "M01",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 20.828749984502792,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 20.828749984502792,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "M05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 12.321041023824364,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 12.321041023824364,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "M03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 6.670999980997294,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 6.670999980997294,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "M04",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 5.8919580187648535,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 5.8919580187648535,
+        "mrr_at_10": 0.125,
+        "ndcg_at_10": 0.19342640361727081,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "K05",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 6.046374968718737,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 6.046374968718737,
+        "mrr_at_10": 0.1111111111111111,
+        "ndcg_at_10": 0.3010299956639812,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "K02",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 5.625583988148719,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 5.625583988148719,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F03",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 8.664834022056311,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 8.664834022056311,
+        "mrr_at_10": 0.5,
+        "ndcg_at_10": 0.6309297535714575,
+        "recall_at_5": 1.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "F07",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 6.104416970629245,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 0.0,
+        "latency_ms": 6.104416970629245,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "recall_at_5": 0.0
+      },
+      "status": null
+    },
+    {
+      "case_id": "C04",
+      "case_type": "retrieval",
+      "cost": 0.0,
+      "latency_ms": 7.342541997786611,
+      "scores": {
+        "est_cost_usd": 0.0,
+        "hit_at_5": 1.0,
+        "latency_ms": 7.342541997786611,
+        "mrr_at_10": 1.0,
+        "ndcg_at_10": 0.42620876477116804,
+        "recall_at_5": 0.3333333333333333
+      },
+      "status": null
+    }
+  ],
+  "url": "https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/86ba50c3-ab41-4501-a63c-5ca10edab058",
+  "wall_seconds": 4.3
+}

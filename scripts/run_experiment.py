@@ -10,6 +10,7 @@ Only `dev` may be used while tuning; `test` needs --allow-test and should be run
 import argparse
 import hashlib
 import json
+import os
 import platform
 import statistics
 import subprocess
@@ -46,6 +47,14 @@ def build_target(cfg: dict):
         from policy_agent.baselines import b0
 
         return b0.run, {"retriever": "bm25", "chunker": "C2", "k": p.get("k", 10)}
+    if t == "retriever":
+        from policy_agent.baselines import retrieval_only
+
+        emb = p.get("embedding", "openai/text-embedding-3-small")
+        meta = {"retriever": p["retriever"], "chunker": "C2", "embedding": emb, "k": p.get("k", 10)}
+        if p["retriever"] in ("r4", "r5"):
+            meta["rerank_model"] = "cohere/rerank-v3.5"
+        return retrieval_only.make_target(p["retriever"], emb, p.get("k", 10)), meta
     if t == "b2":
         from policy_agent.baselines import b2
 
@@ -115,8 +124,14 @@ def main() -> int:
     ap.add_argument("--local", action="store_true")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--allow-test", action="store_true")
+    ap.add_argument(
+        "--no-upload", action="store_true",
+        help="score locally with tracing off and write eval/results/ only (no LangSmith traces, so no quota use)",
+    )  # fmt: skip
     args = ap.parse_args()
     load_dotenv(ROOT / ".env")
+    if args.no_upload or args.local:
+        os.environ["LANGSMITH_TRACING"] = "false"  # must be set before any LangChain object is called
 
     cfg = yaml.safe_load((ROOT / "config" / "experiments" / f"{args.config_id}.yaml").read_text())
     if cfg["split"] == "test" and not args.allow_test:
@@ -145,6 +160,23 @@ def main() -> int:
                 },
             )  # noqa: E501
         print(json.dumps(aggregate(rows)["overall"], indent=1)[:1500])
+        return 0
+
+    if args.no_upload:
+        from concurrent.futures import ThreadPoolExecutor
+
+        t0 = time.time()
+        examples = local_examples(cfg["dataset"], cfg["split"], args.limit) * cfg.get("repetitions", 1)
+        with ThreadPoolExecutor(max_workers=cfg.get("max_concurrency", 2)) as pool:
+            rows = list(pool.map(lambda ex: score_row(ex, target(ex["inputs"]), evaluators), examples))
+        agg = aggregate(rows)
+        out = {"experiment": f"{cfg['config_id']}-local", "url": None, "metadata": metadata, "config": cfg,
+               "wall_seconds": round(time.time() - t0, 1), **agg, "runs": rows}  # fmt: skip
+        path = ROOT / "eval" / "results" / f"{cfg['config_id']}_{cfg['split']}.json"
+        path.parent.mkdir(exist_ok=True)
+        path.write_text(json.dumps(out, indent=2, sort_keys=True, default=str) + "\n")
+        print(f"local run (no LangSmith upload)\nwrote {path.relative_to(ROOT)}")
+        print(json.dumps(agg["overall"], indent=1)[:2500])
         return 0
 
     from langsmith import Client, evaluate

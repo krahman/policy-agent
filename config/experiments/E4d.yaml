@@ -1,0 +1,10 @@
+config_id: E4d
+description: "R5 = R4 (voyage-4) + period filter extracted from the question (exploratory)"
+hypothesis: H1 (hybrid + re-rank beats BM25-only and dense-only on Recall@5 and MRR)
+dataset: policy-retrieval-v1
+split: dev
+target: retriever
+params: {retriever: r5, embedding: voyageai/voyage-4, k: 10}
+evaluators: retrieval
+repetitions: 1
+max_concurrency: 2

@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval pricing
 
 sync:
 	uv sync --frozen
@@ -43,12 +43,18 @@ sync-datasets:
 review-sheet:
 	uv run python -m policy_agent.eval.review --update
 
+# UPLOAD=--no-upload scores locally and writes eval/results/ only (no LangSmith traces, no quota use).
+# Run `make baselines UPLOAD=` (empty) only for runs you want in the LangSmith comparison view.
+UPLOAD ?= --no-upload
+
 # Step 4: baselines on the dev split (results go to LangSmith and eval/results/). Needs OPENROUTER and LANGSMITH keys.
 baselines:
-	uv run python scripts/run_experiment.py E0
-	uv run python scripts/run_experiment.py B0
-	uv run python scripts/run_experiment.py B2
-	uv run python scripts/run_experiment.py B1
+	for e in E0 B0 B2 B1; do uv run python scripts/run_experiment.py $$e $(UPLOAD); done
+
+# Step 5: retrieval experiments E1-E4d on the dev split, then bootstrap-CI analysis into docs/EVAL_REPORT.md
+retrieval:
+	for e in E1 E2 E2b E3 E3b E4 E4b E4c E4d; do uv run python scripts/run_experiment.py $$e $(UPLOAD); done
+	uv run python scripts/analyse_retrieval.py --write
 
 # Refresh config/pricing.yaml from OpenRouter (records the date)
 pricing:
