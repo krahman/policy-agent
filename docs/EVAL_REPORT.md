@@ -11,7 +11,7 @@ case mix, matching rules and review status. Only the `dev` split has been used s
 <!-- baselines:start -->
 ## 2. Baselines (Step 4, `dev` split)
 
-Run on v1 of the datasets, corpus fingerprint `82fdf97cbf39`, pricing retrieved 2026-10-27. Code state when run: commit `7edc331` **plus uncommitted changes** (re-run after committing to tie results to a commit).
+Run on v1 of the datasets, corpus fingerprint `82fdf97cbf39`, pricing retrieved 2026-10-27. Code state when run: commit `0906006`.
 
 ### 2.1 Configurations
 
@@ -28,18 +28,18 @@ Mean (number of scored runs). A metric counts only the runs where it applies, so
 
 | Metric | B0 | B1 | B2 |
 |---|---|---|---|
-| status_match | 0.62 (21) | 0.52 (63) | 0.43 (21) |
-| numeric_exact | 0.27 (11) | 0.42 (33) | 0.55 (11) |
-| must_contain_numbers | 0.40 (7) | 0.64 (21) | 0.29 (7) |
-| citation_exists | 1.00 (15) | 1.00 (45) | 0.53 (15) |
+| status_match | 0.62 (21) | 0.51 (63) | 0.48 (21) |
+| numeric_exact | 0.27 (11) | 0.45 (33) | 0.55 (11) |
+| must_contain_numbers | 0.40 (7) | 0.62 (21) | 0.29 (7) |
+| citation_exists | 1.00 (15) | 0.94 (45) | 0.53 (15) |
 | citation_correct | 0.07 (15) | 0.13 (45) | 0.40 (15) |
 | injection_followed (lower is better) | 1.00 (1) | 0.00 (3) | 0.00 (1) |
-| schema_valid | n/a | 0.98 (63) | n/a |
+| schema_valid | n/a | 0.97 (63) | n/a |
 | hit@5 (answer-bearing chunk in top 5) | 0.53 (15) | 0.13 (45) | 0.40 (15) |
 | recall@5 | 0.30 (15) | 0.09 (45) | 0.33 (15) |
 | MRR@10 | 0.23 (15) | 0.10 (45) | 0.40 (15) |
 | nDCG@10 | 0.27 (15) | 0.10 (45) | 0.33 (15) |
-| latency p50 / p95 (ms) | 8.8 / 244.8 | 4224 / 7642 | 0.0 / 153.1 |
+| latency p50 / p95 (ms) | 22.3 / 224.4 | 3523 / 5381 | 0.0 / 166.9 |
 | est. cost per run (USD) | 0.0 | 0.000659 | 0.0 |
 
 E0 (retrieval dataset, 15 questions with gold evidence): hit@5 0.53, recall@5 0.30, MRR@10 0.23, nDCG@10 0.27. PRD targets for the final system: recall@5 at least 0.85, MRR@10 at least 0.70.
@@ -50,13 +50,13 @@ E0 (retrieval dataset, 15 questions with gold evidence): hit@5 0.53, recall@5 0.
 |---|---|---|---|
 | factual | 1.00 | 0.80 | 1.00 |
 | multi_step | 1.00 | 0.00 | 0.00 |
-| calculation | 1.00 | 0.33 | 0.00 |
+| calculation | 1.00 | 0.22 | 0.00 |
 | unanswerable | 0.00 | 1.00 | 0.33 |
 | ambiguous | 0.00 | 0.00 | 1.00 |
 | conflicting | 0.00 | 0.50 | 0.00 |
-| adversarial | 0.50 | 1.00 | 0.50 |
+| adversarial | 0.50 | 1.00 | 1.00 |
 
-Experiments in LangSmith: [E0](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/f66a97f9-3b09-4a84-b6bf-960d79abe6ce) (`E0-3281b784`), [B0](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/9186304e-311a-4b2d-b56f-406df7770c1f) (`B0-7ceb4af5`), [B1](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/75f3de61-104c-4127-9d69-3b22ea69953e) (`B1-550faf77`), [B2](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/e9862831-c21e-4fb9-8cf0-890c44649045) (`B2-58080501`).
+Experiments in LangSmith: [E0](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/9684ae3a-ba63-417b-ae21-25235a99325d) (`E0-ed45f083`), [B0](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/4445ef49-19a8-4530-ae08-a3ea77ebb352) (`B0-134114ca`), [B1](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/0618842d-8747-4699-a31e-bd73efef90c2) (`B1-9f806feb`), [B2](https://smith.langchain.com/o/0369ebba-0dc5-433f-aa52-05179bd68d33/projects/p/b81bef21-397c-42ec-922f-9c8e681ada18) (`B2-24705c84`).
 
 <!-- baselines:end -->
 
@@ -71,30 +71,30 @@ Experiments in LangSmith: [E0](https://smith.langchain.com/o/0369ebba-0dc5-433f-
    11th and 45th; dense ranks it first for C04 and 5th for F02 where BM25 ranks it 5th and misses entirely. That complementarity is the case
    for hybrid retrieval with re-ranking and metadata filters in Step 5 (H1). It is a pattern in 15 questions, not yet a measured result.
 3. **B1's wrong answers are mostly retrieval failures.** Where B1 scores 0 on `hit@5` it usually abstains or answers from the wrong
-   evidence. Run-to-run variation is small: `status_match` was identical across the 3 repetitions for all 21 cases (only A03's status
-   varied, between "abstained" and "answered", and both miss the expected clarification). This run cannot
+   evidence. Run-to-run variation is small but not zero: across the 3 repetitions, `status_match` differed for one case (K03) and the
+   status itself for K03 and M01, each in one of three runs, where the model returned output that did not fit the schema. This run cannot
    separate retrieval error from generation error; an oracle-evidence variant (gold chunks as context) would, and is worth running before
    drawing conclusions about the model in Step 6.
 4. **B1 behaves safely but is not helpful.** It abstains on all three unanswerable cases and on the permission case (D03), never emits the
-   injection canary (0 of 3), and keeps the structured schema 62 of 63 times (the one failure was A03). It never asks a clarifying
-   question (A02 and A03 abstain instead), gets none of the four multi-step cases right on status, and answers K03 with a wrong number
+   injection canary (0 of 3), and keeps the structured schema 61 of 63 times (the two failures were one run each of M01 and K03). It never asks a clarifying
+   question (A02 and A03 do not get `status_match`), gets none of the four multi-step cases right on status, and answers K03 with a wrong number
    (the run does not show whether retrieval or arithmetic caused it).
 5. **B2 shows what determinism buys and where it stops.** For single-value lookups (F02, F03, F05, F06) it is correct with a verified
-   citation to the right stat card; it scores zero on calculations, multi-step and conflict cases, and cannot read prose.
+   citation to the right stat card; it also passes `numeric_exact` on C03 and D02, which are not lookups it actually reasons about; it scores zero on calculations, multi-step and conflict cases, and cannot read prose.
 6. **B0 is the floor.** Because it answers every question, its `status_match` of 0.62 is just the share of dev cases that expect an answer
    (13 of 21); that metric alone cannot rank systems. Its `numeric_exact` of 0.27 is the chance that the top passage happens to hold the
    number.
-7. **Cost and latency are well inside the targets for B1:** about $0.00066 per run, p50 4.2 s and p95 7.6 s against targets of 8 s and 20 s.
+7. **Cost and latency are well inside the targets for B1:** about $0.00066 per run, p50 3.5 s and p95 5.4 s against targets of 8 s and 20 s.
    Embedding the corpus once cost a fraction of a cent and is cached.
 
 ### 2.4 Caveats on these numbers
 
 - **Small sample.** 21 dev cases, 15 with gold evidence; no confidence intervals yet (PRD §12.2). Treat differences as directional.
-- **Uncommitted code.** The runs record `git_dirty`; re-run `make baselines` after committing so each result is tied to a commit.
+- **Single re-run.** The runs are tied to commit `0906006`. An earlier run on uncommitted code differed slightly for B1 (status_match 0.52 vs 0.51, schema failures on A03 vs M01 and K03), which shows how much one repeat moves the numbers.
 - **`numeric_exact` can pass for the wrong reason.** It checks that the gold number appears among the numbers in the answer. B1 passed it on
   F03 with `hit@5` of 0, so the number came from somewhere other than the gold card. It also cannot tell whether a number is used
   correctly. The groundedness judge (Step 6) and `citation_correct` are the checks for that.
-- **`citation_exists` of 1.00 only means the quotes were copied from the evidence given.** It says nothing about whether the evidence
+- **A high `citation_exists` (B0 1.00, B1 0.94; B1's misses are the two schema-failed runs) only means the quotes were copied from the evidence given.** It says nothing about whether the evidence
   supports the claim; `citation_correct` (a grade-2 chunk was cited) is the stricter measure and is low for B1 (0.13) because of
   retrieval.
 - **`injection_followed` for B0 is a false alarm in spirit.** B0 pastes the memo chunk that contains the canary string, so the canary
