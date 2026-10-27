@@ -438,7 +438,7 @@ Stop reasons: sufficient x48, out of scope x8, clarification needed x6, validati
      the 2Q 2026 value (69,900). These are different reference points, so calling them a conflict is arguably over-cautious; this one is a
      fair mark against the agent's synthesis, not the label.
    Numbers are right in nearly all of these runs (`numeric_exact` 0.91), so the `status_match` gap mixes a labelling question with some
-   over-reporting. **The H3 verdict on status is not reliable until the labels are reviewed** (open items 5 and 7 in `eval/README.md`).
+   over-reporting. **The H3 verdict on status was not reliable until the labels were reviewed**; see section 6 for the corrected re-score (open items 5 and 7 in `eval/README.md`).
    The chain reports the same conflicts on F05, F07 and M01.
 3. **The agent does not degrade simple cases on the measured metrics.** On the 14 other cases `groundedness`, `citation_correct`,
    `numeric_exact` and relevance are the same or higher; `status_match` is -0.05 (interval -0.17 to +0.05). The 0.83 on adversarial is
@@ -488,3 +488,67 @@ make agent-demo        # the 10 scenarios, prints answers and traces
 make agent             # E7 on dev (UPLOAD= to send to LangSmith) and the H3 tables above
 uv run python -m policy_agent.cli "What was the change in job vacancies between 2Q 2022 and 2Q 2026?" --verbose
 ```
+
+## 6. Corrected labels for F05 and K02 (post-results dev decision)
+
+After seeing E5 to E7, two dev labels were corrected (decisions in `eval/review_history/F05-label-decision.md` and
+`advance-later-label-decisions.md`, recorded by the project owner): F05 and K02 now expect `conflict_reported`, because an unqualified
+question that has a known preliminary figure (4,500) and a later one (4,620) must show both. F07, M01, M03 and D02 keep `answered`
+(they are scoped to named sources, and a third, preliminary source does not contradict an agreement between the two asked about). K03
+keeps `answered` pending documentation of the vacancy table's basis. The original labels are kept in `eval/data/versions/v1/`; the corrected
+set is version `v1.1`. This is a **post-results change to dev labels**: it can only move the dev numbers, it is disclosed here rather than
+folded in, and no `test` case was touched.
+
+Re-scoring uses the saved outputs only (E5 to E7); the retrieval experiments (E1 to E4d) and the baselines (B0 to B2) were scored under
+v1 and are reported under v1 in sections 2 and 3. Their F05 and K02 retrieval labels also changed (the Advance Release chunk is now
+relevant), so those sections are not directly comparable with anything scored under v1.1.
+
+<!-- relabel:start -->
+Corrected labels (v1.1): F05 and K02 now expect `conflict_reported` (preliminary 4,500 against later 4,620); no other case changed. The E5, E6 and E7 outputs saved on `dev` were scored again against the corrected reference. **These are the same 63 runs per experiment, not new samples**, and the original files are untouched. Only label-dependent metrics changed; the model's answers did not.
+
+| Metric (mean over runs) | E5 orig | E5 corrected | E6 orig | E6 corrected | E7 orig | E7 corrected |
+|---|---|---|---|---|---|---|
+| status_match | 0.76 | 0.81 | 0.70 | 0.73 | 0.65 | 0.75 |
+| numeric_exact | 0.73 | 0.73 | 0.67 | 0.67 | 0.91 | 0.91 |
+| must_contain_numbers | 0.86 | 0.85 | 0.64 | 0.61 | 0.79 | 0.83 |
+| citation_correct | 0.80 | 0.84 | 0.69 | 0.71 | 0.98 | 0.98 |
+| recall_at_5 | 0.67 | 0.71 | 0.67 | 0.71 | 0.76 | 0.75 |
+| conflict_handling | 0.50 | 0.50 | 0.50 | 0.42 | 0.67 | 0.83 |
+
+The two changed cases, `status_match` over the 3 runs each:
+
+| Case | E5 orig / corrected | E6 orig / corrected | E7 orig / corrected |
+|---|---|---|---|
+| F05 | 0.00 / 1.00 | 0.00 / 0.67 | 0.00 / 1.00 |
+| K02 | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 1.00 |
+
+Agent (E7) against chain (E6) under the corrected labels, case-level bootstrap as in section 5:
+
+| Metric | E6 | E7 | E7 - E6 [95% CI] |
+|---|---|---|---|
+| status_match | 0.73 [0.54, 0.89] (n=21) | 0.75 [0.57, 0.90] (n=21) | +0.02 [-0.16, +0.19] |
+| numeric_exact | 0.67 [0.39, 0.91] (n=11) | 0.91 [0.73, 1.00] (n=11) | +0.24 [+0.03, +0.48] |
+| citation_correct | 0.71 [0.51, 0.89] (n=15) | 0.98 [0.93, 1.00] (n=15) | +0.27 [+0.11, +0.44] |
+| conflict_handling | 0.42 [0.00, 0.83] (n=4) | 0.83 [0.50, 1.00] (n=4) | +0.42 [+0.08, +0.83] |
+| status_match, multi-step and calculation (7 cases) | 0.43 | 0.52 | +0.10 [-0.33, +0.52] |
+| status_match, all other (14 cases) | 0.88 | 0.86 | -0.02 [-0.17, +0.10] |
+<!-- relabel:end -->
+
+### 6.1 What changed and why
+
+The movement in the table is caused by the label change, not by any model: the saved answers are identical.
+
+- **F05:** all three E5 and E7 runs and two of three E6 runs report the preliminary 4,500 and the later 4,620, so they now match the
+  expected status. One E6 run still gave a plain answer.
+- **K02:** only the agent (E7) meets the corrected label, in all three runs (it fetches both quarters, computes +30.5% with
+  `compute_change`, and notes the superseded 4,500). E5 and E6 abstained on K02 in every run because retrieval did not bring back both
+  periods (Step 5), so the label change does not help the chain there. This is a model-behaviour difference, not a labelling one.
+- **Effect on H3:** under v1 the agent trailed the chain on `status_match` (-0.05 overall, -0.05 on multi-step and calculation). Under v1.1 the
+  difference is +0.02 [-0.16, +0.19] overall and +0.10 [-0.33, +0.52] on multi-step and calculation: no reliable difference either way on
+  status, as before, but the apparent deficit disappears. The `numeric_exact` (+0.24) and `citation_correct` (+0.27) advantages are
+  unchanged, and `conflict_handling` now favours the agent (0.83 against 0.42, interval +0.08 to +0.83, but on only four cases and from an
+  uncalibrated judge).
+- **Effect on H2 (E5 against E6):** the gap in `status_match` is 0.81 against 0.73 (v1: 0.76 against 0.70); the conclusion in section 4 does not change.
+- **Still open:** K03 keeps `answered` pending documentation of the vacancy table's basis; the labels for F07, M01, M03 and D02 were
+  confirmed rather than changed. Because F05 and K02 changed after results were seen, their review ticks were cleared in `eval/REVIEW.md` and
+  need re-ticking (open item 2).

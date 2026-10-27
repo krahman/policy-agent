@@ -119,24 +119,34 @@ Reviewer notes:
 
 **Question:** How many employees were retrenched in 2Q 2026?
 
-**Expected behaviour:** ANSWER with citations
+**Expected behaviour:** REPORT THE CONFLICT (show both values, prefer the latest)
 
-**Expected answer:** 4,620 retrenched employees in 2Q 2026 (up from 3,830 in 1Q 2026).
+**Expected answer:** 4,620 retrenched employees in 2Q 2026 per the later Labour Market Report (21 Sep 2026) and dataset; the preliminary 31 Jul 2026 Advance Release said 4,500. Report both, say the earlier figure was preliminary, prefer 4,620.
 
 **Checked value:** 4620 persons (accepted within ±0.5)
 
+**Values the answer must show:**
+  - 4500: advance release 2026-07-31
+  - 4620: labour market report 2026-09-21 (latest, preferred)
+
+**Answer must include:** 4,500, 4,620
+
 **Evidence in the corpus:**
+  - *contains the answer* (advance, 2026-07-31): 5 The number of retrenchments rose from 3,830 in 1Q 2026 to 4,500 in 2Q 2026, bringing the incidence of retrenchment up from 1.6 to 1.9 per 1,000 employees. The increase was concentrated in some outward-oriented sectors, driven primarily by business restructuring. Nonetheless, re...
   - *contains the answer* (stat card): Singapore number of retrenched employees, 2Q 2026: 4,620 (Source: MOM via data.gov.sg, dataset d_000d49cda016c13522d7d5be6a050f59, retrieved 2026-10-27)
   - *contains the answer* (quarterly_report, 2026-09-21): ...26. 3 Retrenchments rose from 3,830 (or 1.6 retrenched per 1,000 employees) in 1Q 2026 to 4,620 (or 2.0) in 2Q 2026. The increase in retrenchments was driven by business reorganisation and restructuring in outward-oriented sectors such as Manufacturing, Information & Communicatio...
+  - *context only (stale or background)* (advance, 2026-07-31): Employment figures cited in this press release exclude Migrant Domestic Workers. Data for 2Q 2026 are preliminary (denoted as “p” in the Annex). Refers to Singapore citizens and permanent residents. Quarterly retrenchments ranged from 5,980 to 12,760 and 5,640 to 9,120 during the...
 
-**Why this case exists:** Same figure in the dataset and the report; either citation is valid.
+**Why this case exists:** Label v1.1 (decision 2026-10-27, eval/review_history/F05-label-decision.md): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.
+
+**Changed after your review** (4/4 boxes were ticked; please re-tick). 
 
 - [x] Question is clear and realistic
 - [x] Expected answer is correct
 - [x] Expected behaviour is right
 - [x] Fair (no hidden trick unrelated to what it tests)
 
-Reviewer notes:
+Reviewer notes: F05 re-review approved (2026-10-28, Codex): revised v1.1 text matches the recorded preliminary-versus-later decision; show 4,500 as preliminary and prefer 4,620.
 
 ---
 ### F06 · dev
@@ -424,22 +434,34 @@ Reviewer notes:
 
 **Question:** What was the year-on-year percentage change in the number of retrenched employees between 2Q 2025 and 2Q 2026?
 
-**Expected behaviour:** ANSWER with citations
+**Expected behaviour:** REPORT THE CONFLICT (show both values, prefer the latest)
 
-**Expected answer:** +30.5% (3,540 to 4,620).
+**Expected answer:** +30.5% (3,540 to 4,620), computed with the later 2Q 2026 count; the preliminary 31 Jul 2026 Advance Release gave 4,500, which the later report and dataset superseded.
 
 **Checked value:** 30.5 % (accepted within ±0.1)
 
+**Values the answer must show:**
+  - 4500: advance release 2026-07-31
+  - 4620: labour market report 2026-09-21 (latest, preferred)
+
+**Answer must include:** 4,500
+
 **Evidence in the corpus:**
+  - *contains the answer* (advance, 2026-07-31): 5 The number of retrenchments rose from 3,830 in 1Q 2026 to 4,500 in 2Q 2026, bringing the incidence of retrenchment up from 1.6 to 1.9 per 1,000 employees. The increase was concentrated in some outward-oriented sectors, driven primarily by business restructuring. Nonetheless, re...
   - *contains the answer* (stat card): Singapore number of retrenched employees, 2Q 2025: 3,540 (Source: MOM via data.gov.sg, dataset d_000d49cda016c13522d7d5be6a050f59, retrieved 2026-10-27)
   - *contains the answer* (stat card): Singapore number of retrenched employees, 2Q 2026: 4,620 (Source: MOM via data.gov.sg, dataset d_000d49cda016c13522d7d5be6a050f59, retrieved 2026-10-27)
+  - *context only (stale or background)* (advance, 2026-07-31): Employment figures cited in this press release exclude Migrant Domestic Workers. Data for 2Q 2026 are preliminary (denoted as “p” in the Annex). Refers to Singapore citizens and permanent residents. Quarterly retrenchments ranged from 5,980 to 12,760 and 5,640 to 9,120 during the...
+
+**Why this case exists:** Label v1.1 (decision 2026-10-28, eval/review_history/advance-later-label-decisions.md): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.
+
+**Changed after your review** (4/4 boxes were ticked; please re-tick). 
 
 - [x] Question is clear and realistic
 - [x] Expected answer is correct
 - [x] Expected behaviour is right
 - [x] Fair (no hidden trick unrelated to what it tests)
 
-Reviewer notes:
+Reviewer notes: K02 re-review approved (2026-10-28, Codex): revised v1.1 text matches the recorded preliminary-versus-later decision; show 4,500 as preliminary and prefer 4,620. The answer must also calculate +30.5% using 3,540 and 4,620; counts alone do not suffice.
 
 ---
 ### K03 · dev

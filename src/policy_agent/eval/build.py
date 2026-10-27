@@ -74,14 +74,21 @@ def eval_cases() -> list[EvalCase]:
     ))  # fmt: skip
     r = C.value("retrenched_q", "2026-Q2")
     rep = C.passage("report-second-quarter-2026", "Retrenchments rose from 3,830")
+    adv26 = C.passage("advance-release-2q-2026", "to 4,500 in 2Q 2026")
+    pre26 = C.passage("advance-release-2q-2026", "Data for 2Q 2026 are preliminary")
+    pvf26 = [  # the corrected labels (v1.1) for 2Q 2026 retrenchments: preliminary 4,500 against later 4,620
+        ConflictValue(value=4500, source_id=adv26["source_id"], label="advance release 2026-07-31"),
+        ConflictValue(value=4620, source_id=rep["source_id"], label="labour market report 2026-09-21", latest=True),
+    ]
     cases.append(case(
-        id="F05", case_type="factual", expected_status="answered",
+        id="F05", case_type="factual", expected_status="conflict_reported", conflict_kind="preliminary_vs_final",
         question="How many employees were retrenched in 2Q 2026?",
-        gold_answer=f"{r:,.0f} retrenched employees in 2Q 2026 (up from 3,830 in 1Q 2026).", gold_value=r,
-        unit="persons", tolerance=0.5,
-        gold_chunk_ids={C.card("retrenched_q", "2026-Q2"): 2, rep["chunk_id"]: 2},
-        gold_quotes=[quote(rep, "4,620 (or 2.0) in 2Q 2026")], requires_tools=["query_statistic"],
-        notes="Same figure in the dataset and the report; either citation is valid.",
+        gold_answer=f"{r:,.0f} retrenched employees in 2Q 2026 per the later Labour Market Report (21 Sep 2026) and dataset; the preliminary 31 Jul 2026 Advance Release said 4,500. Report both, say the earlier figure was preliminary, prefer {r:,.0f}.",
+        gold_value=r, unit="persons", tolerance=0.5, conflict_values=pvf26, must_contain=["4,500", "4,620"],
+        gold_chunk_ids={C.card("retrenched_q", "2026-Q2"): 2, rep["chunk_id"]: 2, adv26["chunk_id"]: 2, pre26["chunk_id"]: 1},
+        gold_quotes=[quote(rep, "4,620 (or 2.0) in 2Q 2026"), quote(adv26, "to 4,500 in 2Q 2026")],
+        requires_tools=["query_statistic", "search_corpus"],
+        notes="Label v1.1 (decision 2026-10-27, eval/review_history/F05-label-decision.md): an unqualified question with a known preliminary and a later figure must disclose both. v1 expected a plain answer.",
     ))  # fmt: skip
     r = C.value("vacancy_unemployed_ratio_q", "2025-Q4")
     cases.append(case(
@@ -214,11 +221,13 @@ def eval_cases() -> list[EvalCase]:
     ))  # fmt: skip
     a, b = C.value("retrenched_q", "2025-Q2"), C.value("retrenched_q", "2026-Q2")
     cases.append(case(
-        id="K02", case_type="calculation", expected_status="answered",
+        id="K02", case_type="calculation", expected_status="conflict_reported", conflict_kind="preliminary_vs_final",
         question="What was the year-on-year percentage change in the number of retrenched employees between 2Q 2025 and 2Q 2026?",
-        gold_answer=f"{pct(a, b):+.1f}% ({a:,.0f} to {b:,.0f}).", gold_value=round(pct(a, b), 1), unit="%", tolerance=0.1,
-        gold_chunk_ids={C.card("retrenched_q", "2025-Q2"): 2, C.card("retrenched_q", "2026-Q2"): 2},
-        requires_tools=["query_statistic", "compute_change"],
+        gold_answer=f"{pct(a, b):+.1f}% ({a:,.0f} to {b:,.0f}), computed with the later 2Q 2026 count; the preliminary 31 Jul 2026 Advance Release gave 4,500, which the later report and dataset superseded.",
+        gold_value=round(pct(a, b), 1), unit="%", tolerance=0.1, conflict_values=pvf26, must_contain=["4,500"],
+        gold_chunk_ids={C.card("retrenched_q", "2025-Q2"): 2, C.card("retrenched_q", "2026-Q2"): 2, adv26["chunk_id"]: 2, pre26["chunk_id"]: 1},
+        gold_quotes=[quote(adv26, "to 4,500 in 2Q 2026")], requires_tools=["query_statistic", "compute_change", "search_corpus"],
+        notes="Label v1.1 (decision 2026-10-28, eval/review_history/advance-later-label-decisions.md): compute the change with the later 4,620 and identify 4,500 as the superseded preliminary count. A response that only lists counts is incomplete.",
     ))  # fmt: skip
     a, b = C.value("job_vacancy_q", "2022-Q2"), C.value("job_vacancy_q", "2026-Q2")
     cases.append(case(

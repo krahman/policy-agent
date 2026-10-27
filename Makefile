@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent pricing
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet baselines retrieval generation calibration-sheet calibrate mcp-demo mcp-notebook agent-demo agent rescore pricing
 
 sync:
 	uv sync --frozen
@@ -78,6 +78,10 @@ agent-demo:
 agent:
 	uv run python scripts/run_experiment.py E7 $(UPLOAD)
 	uv run python scripts/analyse_agent.py --write
+
+# Re-score saved E5-E7 outputs under the corrected labels (v1.1); originals are not touched
+rescore:
+	uv run python scripts/rescore_labels.py --write
 
 # Refresh config/pricing.yaml from OpenRouter (records the date)
 pricing:

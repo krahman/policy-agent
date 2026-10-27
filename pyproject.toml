@@ -70,6 +70,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/demo_scenarios.py" = ["E501"]  # scenario table
 "scripts/analyse_generation.py" = ["E501"]  # markdown text
 "scripts/analyse_agent.py" = ["E501"]  # markdown text
+"scripts/rescore_labels.py" = ["E501"]  # markdown text
 "tests/test_graph.py" = ["E501"]  # scripted-model fixtures
 "scripts/make_calibration_sheet.py" = ["E501"]  # sheet text
 "scripts/calibrate_judge.py" = ["E501"]  # result dict
