@@ -90,7 +90,7 @@ def _load_one(item: dict) -> pd.DataFrame:
                 "residency": raw["residential_status"],
                 "period": [to_year(y) for y in raw["year"]],
                 "value": _num(raw["unemployment_rate"]),
-                "seasonal_adjustment": "nsa",  # annual average of quarterly NSA figures
+                "seasonal_adjustment": "unspecified",  # the dataset does not say how annual averages are adjusted
                 "unit": "%",
             }
         )
@@ -116,7 +116,7 @@ def _load_one(item: dict) -> pd.DataFrame:
                 "residency": raw["residential_status"],
                 "period": [to_year(y) for y in raw["year"]],
                 "value": _num(raw["ltu_rate" if is_rate else "long_term_unemployed"]),
-                "seasonal_adjustment": "nsa",
+                "seasonal_adjustment": "unspecified",
                 "unit": "%" if is_rate else "persons",
             }
         )

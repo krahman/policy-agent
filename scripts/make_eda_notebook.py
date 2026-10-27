@@ -19,7 +19,8 @@ Scope window **Q3 2021 – Q2 2026**. Inputs: `data/processed/stats.parquet` and
 | 1 | Overall vs resident vs citizen unemployment | Residency clarification route; `residency` metadata |
 | 2 | Advance-release vs revised retrenchments | Conflict detector; `release_type` metadata |
 | 3 | Vacancies vs unemployed; the published ratio | Never recompute the ratio; use the published series |
-| 4 | Missingness and corpus profile | Null handling, abstention on suppressed cells, hybrid retrieval |"""),
+| 4 | Missingness and corpus profile | Null handling, abstention on suppressed cells, hybrid retrieval |
+| 5 | Question-to-passage vocabulary | Lexical retrieval alone is weak for stat cards; hybrid retrieval and metadata filters |"""),
     code("""import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -57,7 +58,7 @@ nsa = W[(W.indicator == "unemployment_rate") & (W.residency == "resident") & (W.
 d = (nsa.nsa - nsa.sa).abs()
 a25 = stats[(stats.source_id == "unemp_rate_resident_a") & (stats.period == "2025")].value.iloc[0]
 print(f"resident SA vs NSA: mean |gap| {d.mean():.2f} pp, max {d.max():.1f} pp ({d.idxmax()})")
-print(f"2025 resident: annual average (NSA) {a25}% vs quarterly SA {u.loc['2025-Q1':'2025-Q4','resident'].tolist()}")"""),
+print(f"2025 resident: annual average (basis not stated) {a25}% vs quarterly SA {u.loc['2025-Q1':'2025-Q4','resident'].tolist()}")"""),
     md("""**Finding 1: the headline depends on which measure is quoted.** Across the window the resident rate sits **0.7 to 1.0 pp above** the
 overall rate and the citizen rate a further **0.1 to 0.3 pp** above resident (2Q 2026: 1.9% / 2.9% / 3.0%). Within one measure, seasonal
 adjustment moves a quarterly resident figure by up to **0.8 pp** (mean 0.33 pp), and the annual average is a different object from any single quarter.
@@ -105,16 +106,16 @@ print(f"published ratio: peak {pub.idxmax()} {pub.max():.2f}, low {pub.idxmin()}
 print(f"naive ratio:     peak {naive.idxmax()} {naive.max():.2f}, low {naive.idxmin()} {naive.min():.2f}; > 1 in {int((naive > 1).sum())}/{len(naive)} quarters")
 print(f"mean |published − naive| = {(pub - naive).abs().mean():.2f}; correlation {np.corrcoef(pub, naive)[0, 1]:.3f}")
 print(f"denominator implied by the published ratio = {(implied / ue).min():.0%} to {(implied / ue).max():.0%} of the unemployed-persons series")"""),
-    md("""**Finding 3: the published vacancy-to-unemployed ratio cannot be reproduced from the other two series.** Vacancies fell from a
+    md("""**Finding 3: dividing the vacancy series by the unemployed series does not reproduce the published vacancy-to-unemployed ratio.** Vacancies fell from a
 127,000 peak (2Q 2022) to 69,900 (2Q 2026) and the published ratio from 2.55 to 1.48, so vacancies still outnumber jobseekers in every quarter.
 But dividing job vacancies by the unemployed-persons series gives **0.87 in 2Q 2026**, i.e. *fewer* vacancies than unemployed (it is above 1 in only
 11 of 20 quarters, versus 20 of 20 for the published ratio), and differs from the official ratio by **0.71 on average**. The two move together (r = 0.97), so the trend agrees but the level and the headline conclusion do not.
 The denominator implied by the published ratio is only **54–69%** of unemployed persons; the dataset does not define it, and MOM's text refers to
-"jobseekers", a different population from the labour-force-survey unemployed.
+"jobseekers", which may be a different population from the labour-force-survey unemployed (the data does not say).
 
-*Design consequence:* `compute_change` may compute changes **of** a published series, but the agent must **never derive the ratio itself**: it
-quotes the published `vacancy_to_unemployed_ratio`, flags the denominator as undocumented in `limitations`, and the `calculation` eval cases must
-avoid this derivation. This is a concrete F9 (measure mismatch) trap."""),
+*Design consequence:* `compute_change` may compute changes **of** a published series, but the agent should **quote the published ratio rather than substituting its own division**: it
+reports the published `vacancy_to_unemployed_ratio`, notes that its denominator is undocumented in `limitations`, and the `calculation` eval cases avoid
+this derivation. This is a concrete F9 (measure mismatch) risk."""),
     md("## 4 · Data quality and corpus profile"),
     code("""ind = W[W.source_id == "retrenched_by_industry_q"].pivot(index="industry", columns="period", values="value")
 order = ind.isna().sum(axis=1).sort_values(ascending=False).index
@@ -147,13 +148,58 @@ Stat cards are **86% of the index** (2,096 of 2,438 chunks) and use phrasing ("2
 ("3Q 2025", "Total employment grew by 25,100"). A BM25-only retriever will be flooded by near-identical cards for numeric queries while dense retrieval
 blurs adjacent quarters, which is the motivation for hybrid retrieval with metadata filters (H1) and for keeping cards in a separate, filterable `doc_type`.
 
-*Deferred to Step 3:* vocabulary overlap between **evaluation questions** and passages (the questions do not exist yet)."""),
+Vocabulary overlap between the evaluation questions and their gold passages is analysed in Finding 5."""),
+    md("## 5 · Do questions share words with their gold passages?"),
+    code("""import re
+from policy_agent.eval import checks
+from policy_agent.eval.models import EvalCase
+
+STOP = set("the a an of in to and or for was were is are what how by did does do from with that this as at on it its be between according mom's moms their than more".split())
+def toks(t):
+    return {w for w in re.findall(r"[a-z0-9]+", t.lower()) if w not in STOP}
+by_id = {c.chunk_id: c for c in chunks.itertuples()}
+rows = []
+for case in checks.load("eval_cases.jsonl", EvalCase):
+    q = toks(case.question)
+    for cid in case.gold_chunk_ids:
+        ch = by_id[cid]
+        rows.append({"case": case.id, "card": ch.doc_type == "stat_card", "overlap": len(q & toks(ch.text)) / len(q)})
+ov = pd.DataFrame(rows)
+print(ov.groupby("card").overlap.agg(["count", "median", "mean"]).rename(index={True: "stat cards", False: "prose"}).round(2))
+low = ov[ov.overlap < 0.4]
+print(f"gold chunks with <40% of the question's content words: {len(low)} of {len(ov)}, in cases {sorted(low.case.unique())}")
+
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.hist([ov[ov.card].overlap, ov[~ov.card].overlap], bins=8, label=["stat cards", "prose"], color=["#4c72b0", "#55a868"])
+ax.set_xlabel("share of question words found in the gold chunk"); ax.legend(); plt.show()
+
+cards = chunks[chunks.doc_type == "stat_card"]
+def card_text(src, period, who):
+    pat = re.escape(f"Singapore {who} unemployment rate (seasonally adjusted), {period}")
+    return cards[(cards.source_id == src) & cards.text.str.contains(pat)].text.iloc[0]
+a, b, c = (card_text(f"unemp_rate_{w}_q", "2Q 2025", w) for w in ("overall", "resident", "citizen"))
+def j(x, y):
+    X, Y = set(x.lower().split()), set(y.lower().split())
+    return len(X & Y) / len(X | Y)
+print("overall card :", a[:70]); print("resident card:", b[:70]); print("citizen card :", c[:70])
+print(f"word Jaccard overall~resident {j(a, b):.2f}, resident~citizen {j(b, c):.2f}")"""),
+    md("""**Finding 5: questions overlap only partly with their gold evidence, and sibling stat cards are nearly indistinguishable.** Of the 57 gold
+chunks, 33 are stat cards and 24 are report prose. A question shares a median of **50% of its content words with its gold stat card** versus
+**63% with gold prose**, and 9 gold chunks (in cases K04, M01, M04, M06, M07) share under 40%, usually because the question paraphrases ("retrenched",
+"annual figures", "data sources") where the card uses a template. Worse, the stat cards for the three residency measures in the same quarter
+differ by **one word** (overall / resident / citizen) and their value, with a word Jaccard of **0.70** between each pair even though the cards include
+a long source suffix, so keyword matching cannot tell them apart without the residency term and dense retrieval will blur them.
+
+*Design consequence:* this is the empirical case for hybrid retrieval (H1) and, more specifically, for **metadata filters** on `doc_type`, `period` and
+`residency` extracted by the router (R5), plus structured lookup through `query_statistic` for numeric questions rather than relying on card retrieval.
+Caveat: 36 hand-written questions by one author, so the overlap figures describe this set rather than real user phrasing."""),
     md("""## Summary of design consequences
 
 1. **Residency and adjustment are first-class metadata**; ambiguous questions clarify instead of guessing (Finding 1).
 2. **Release type and date are first-class**; conflicts show both values (Finding 2).
-3. **Published series are quoted, not re-derived**, in particular the vacancy ratio (Finding 3).
-4. **Suppressed cells mean abstain**; filter by `doc_type` so stat cards do not drown prose (Finding 4)."""),
+3. **Published series should be quoted rather than re-derived**, in particular the vacancy ratio (Finding 3).
+4. **Suppressed cells mean abstain**; filter by `doc_type` so stat cards do not drown prose (Finding 4).
+5. **Keyword overlap is not enough**; combine hybrid retrieval with metadata filters and structured lookup (Finding 5)."""),
 ]
 
 nb = nbf.v4.new_notebook(

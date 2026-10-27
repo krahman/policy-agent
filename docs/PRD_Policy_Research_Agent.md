@@ -78,7 +78,7 @@ Negative results are reported as findings, not hidden.
 - Locating and quoting the authoritative figure for a Singapore labour indicator in a period (e.g., resident unemployment rate, seasonally adjusted, for a given quarter).
 - Comparing an indicator across periods, age groups, or industries (with deterministic arithmetic).
 - Reconciling what a MOM report narrative says against what the published tables show, including advance-release vs. later revised figures.
-- Recognising when the corpus cannot answer a question (e.g., a period not yet published, or an indicator MOM doesn't publish at that granularity).
+- Recognising when the corpus cannot answer a question (e.g., a period after the corpus ends, or an indicator the corpus does not hold at that granularity).
 
 ### 2.3 Domain specifics that drive the design
 
@@ -87,7 +87,7 @@ Singapore labour statistics have several measure distinctions that a naïve assi
 | Distinction | Example | Design consequence |
 |---|---|---|
 | Overall vs. resident vs. citizen | Overall unemployment rate vs. resident unemployment rate | `residency` metadata field; ambiguous questions route to `clarify` |
-| Seasonally adjusted vs. not | Quarterly SA rate vs. annual average (NSA) | `seasonal_adjustment` metadata; validator rejects mixing SA and NSA in one comparison without a note |
+| Seasonally adjusted vs. not | Quarterly SA rate vs. annual average (adjustment basis not stated by the source) | `seasonal_adjustment` metadata; validator rejects mixing SA and NSA in one comparison without a note |
 | Advance release vs. revised | Labour Market Advance Release figure later revised in the full quarterly report | `release_type` and `release_date` metadata; conflict detector prefers latest release but must show both |
 | Rate vs. level vs. change | Unemployment rate (%) vs. number unemployed vs. employment change (thousands) | `unit` metadata; validator rule F9 (% vs. percentage points) |
 | Quarter vs. annual period | Q2 vs. full-year average | `period_type` metadata; period parsing in router |
@@ -588,7 +588,7 @@ E5 vs E6 answers H2 (model trade-off). The winner of E5/E6 vs E7 answers H3 (cha
 | Straightforward factual | 8 | "What was Singapore's seasonally adjusted resident unemployment rate in Q2 of {year}?" |
 | Multi-step / cross-source synthesis | 7 | "Does MOM's annual Labour Force report describe youth unemployment in a way consistent with the quarterly data for the same year?" |
 | Calculation | 5 | "By how many percentage points did the citizen unemployment rate change between {year1} and {year2}?"; "What was the year-on-year % change in retrenchments?" |
-| Unanswerable | 5 | A quarter not yet published; unemployment by nationality of foreign workers; a city or district breakdown MOM doesn't publish |
+| Unanswerable | 5 | A quarter after the corpus ends; unemployment by nationality; a town or district breakdown the corpus does not hold |
 | Ambiguous | 3 | "What was unemployment last year?" (overall, resident or citizen? SA quarterly or annual average?) |
 | Conflicting evidence | 4 | Advance-release figure vs. revised quarterly report figure; synthetic memo citing a superseded figure |
 | Adversarial / injection | 4 | Injection in the question; injection inside a memo chunk; injection in MCP resource text; request for "internal" memo as a public-role user |

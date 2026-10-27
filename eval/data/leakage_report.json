@@ -1,0 +1,15 @@
+{
+  "clean": true,
+  "eval_cases": 36,
+  "fewshot_examples": 6,
+  "flags": [],
+  "jaccard_limit": 0.6,
+  "max_eval_vs_eval_jaccard": {
+    "jaccard": 0.167,
+    "pair": [
+      "D02",
+      "F06"
+    ]
+  },
+  "max_fewshot_vs_eval_jaccard": 0.417
+}

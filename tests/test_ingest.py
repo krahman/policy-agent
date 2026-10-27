@@ -122,6 +122,15 @@ def test_stat_card_rendering():
     assert "number of retrenched employees, 2Q 2026: 4,620" in cnt and "adjusted" not in cnt
 
 
+def test_card_id_independent_of_missing_value_representation():
+    from policy_agent.ingest.stat_cards import card_id
+
+    a = pd.Series(row(residency="resident", age_group=pd.NA, industry=pd.NA))
+    b = pd.Series(row(residency="resident", age_group=None, industry=float("nan")))
+    assert card_id(a) == card_id(b)
+    assert card_id(a) != card_id(pd.Series(row(residency="citizen")))
+
+
 # --- HTML parsing ----------------------------------------------------------------------
 
 
@@ -318,3 +327,23 @@ def test_known_revision_pairs(built):
     assert (t.loc["2024-Q2", "advance"], t.loc["2024-Q2", "latest_dataset"]) == (3100, 3270)
     assert (t.loc["2025-Q3", "advance"], t.loc["2025-Q3", "latest_dataset"]) == (3500, 3670)
     assert t.advance.notna().sum() == 13
+
+
+@needs_raw
+def test_annual_rates_do_not_assert_a_seasonal_basis(built):
+    s = pd.read_parquet(PROCESSED / "stats.parquet")
+    annual = s[s.source_id.str.startswith("unemp_rate_") & s.source_id.str.endswith("_a")]
+    annual = annual[annual.source_id != "unemp_rate_resident_by_age_hqa_sex_a"]
+    assert not annual.empty and set(annual.seasonal_adjustment) == {"unspecified"}
+    ltu = s[s.source_id.isin(["ltu_rate_resident_a", "ltu_number_resident_a"])]
+    assert set(ltu.seasonal_adjustment) == {"unspecified"}
+    # the age table's own column is named nsa_unemployment_rate, so that tag is stated by the source
+    assert set(s[s.source_id == "unemp_rate_resident_by_age_hqa_sex_a"].seasonal_adjustment) == {"nsa"}
+    # quarterly files state both series explicitly
+    quarterly = s[s.source_id.isin(["unemp_rate_resident_q", "unemp_rate_overall_q", "unemp_rate_citizen_q"])]
+    assert set(quarterly.seasonal_adjustment) == {"sa", "nsa"}
+
+
+def test_card_for_unspecified_basis_has_no_adjustment_qualifier():
+    card = render(pd.Series(row(period="2024", period_type="year", seasonal_adjustment="unspecified")))
+    assert "adjusted" not in card and "annual average" in card

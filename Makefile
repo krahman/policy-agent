@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello ingest eda fetch
+.PHONY: sync test lint fmt hello ingest eda fetch evalset check-eval sync-datasets review-sheet
 
 sync:
 	uv sync --frozen
@@ -27,3 +27,18 @@ eda:
 # Re-download raw data and verify against the manifest
 fetch:
 	uv run python scripts/fetch_raw.py
+
+# Step 3: build the evaluation datasets from the processed corpus, then validate them
+evalset:
+	uv run python -m policy_agent.eval.build
+
+check-eval:
+	uv run python -m policy_agent.eval.checks
+
+# Push datasets to LangSmith (needs LANGSMITH_API_KEY)
+sync-datasets:
+	uv run python scripts/sync_datasets.py
+
+# Human review sheet for the evaluation cases (refuses to overwrite ticked boxes; --force to override)
+review-sheet:
+	uv run python -m policy_agent.eval.review --update

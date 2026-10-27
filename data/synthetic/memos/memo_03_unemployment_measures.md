@@ -27,7 +27,7 @@ For 2Q 2026 the seasonally adjusted quarterly unemployment rates were:
 Three reminders before citing any figure in a brief:
 
 1. State whether the rate is **overall, resident or citizen**. They differ by up to a percentage point.
-2. State whether it is **seasonally adjusted** or not. Do not compare an SA quarterly rate with a non-seasonally-adjusted annual average.
+2. State whether it is **seasonally adjusted** or not. Do not compare an SA quarterly rate with an annual average without checking how each is adjusted.
 3. Differences between rates are **percentage points**, not percent.
 
 *Source: SingStat / MOM seasonally adjusted quarterly unemployment rates (data.gov.sg).*

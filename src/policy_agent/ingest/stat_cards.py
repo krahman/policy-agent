@@ -51,9 +51,11 @@ def render(row: pd.Series) -> str:
 
 
 def card_id(row: pd.Series) -> str:
-    key = "|".join(str(row[c]) for c in ("source_id", "residency", "age_group", "industry", "sex",
-                                           "qualification", "seasonal_adjustment", "period"))  # fmt: skip
-    return hashlib.sha1(f"{key}".encode()).hexdigest()[:16]
+    """Stable id from the row's identity. Missing dimensions are '' so the id does not depend on whether
+    the frame came from memory (pd.NA) or from parquet (None)."""
+    cols = ("source_id", "residency", "age_group", "industry", "sex", "qualification", "seasonal_adjustment", "period")
+    key = "|".join("" if pd.isna(row[c]) else str(row[c]) for c in cols)
+    return hashlib.sha1(key.encode()).hexdigest()[:16]
 
 
 def stat_cards(stats: pd.DataFrame) -> list[dict]:

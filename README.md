@@ -11,9 +11,10 @@ The full plan, hypotheses and experiment design are in [`docs/PRD_Policy_Researc
 | 0 | Scaffold, tooling, traced hello-world | Done |
 | 1 | Corpus selection, provenance, synthetic memos, datasheet | Done |
 | 2 | Ingestion, cleaning, stat cards, DuckDB store, EDA | Done |
-| 3 to 11 | Evaluation set, baselines, retrieval and model experiments, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
+| 3 | Evaluation set: 36 cases, retrieval labels, red-team set, leakage check, LangSmith datasets | Done (pending human review) |
+| 4 to 11 | Baselines, retrieval and model experiments, MCP server, LangGraph agent, red-teaming, final evaluation, demo | Not started |
 
-There is **no question-answering interface yet**. What exists today is the data pipeline, its tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
+There is **no question-answering interface yet**. What exists today is the data pipeline, the evaluation set, their tests and the exploratory analysis. Sample queries, evaluation results and the architecture diagram will be added as those steps land.
 
 ## Setup
 
@@ -68,7 +69,10 @@ docs/                         # PRD, challenge brief, DATASHEET.md
 notebooks/02_eda.ipynb        # exploratory analysis (executed)
 scripts/fetch_raw.py          # download and verify raw data
 scripts/make_eda_notebook.py  # regenerate the notebook
+scripts/sync_datasets.py      # upload evaluation datasets to LangSmith
 src/policy_agent/ingest/      # periods, structured loaders, schema, HTML parsing, chunking, stat cards, build
+src/policy_agent/eval/        # evaluation cases, corpus lookups, validation and leakage checks
+eval/                         # evaluation datasets (JSONL) and their README
 src/policy_agent/llm.py       # OpenRouter chat-model factory
 tests/                        # pytest suite
 ```
@@ -83,6 +87,7 @@ tests/                        # pytest suite
 | `make fmt` | ruff format and autofix |
 | `make hello` | one traced LLM call |
 | `make fetch`, `make ingest`, `make eda` | data pipeline, see above |
+| `make evalset`, `make check-eval`, `make sync-datasets` | build, validate and upload the evaluation set (see [`eval/README.md`](eval/README.md)) |
 
 Tests that need the raw data are skipped if `data/raw/` has not been fetched.
 
@@ -92,12 +97,14 @@ From the exploratory analysis (`notebooks/02_eda.ipynb`):
 
 1. **Which unemployment rate?** Resident is 0.7 to 1.0 percentage points above overall, so an unqualified "unemployment" figure is ambiguous. Questions must name the measure or trigger a clarification.
 2. **Advance figures get revised.** In 13 quarters where the advance release states a retrenchment count, the final figure was higher in 10 (largest revision +290). Conflicts must show both values with dates.
-3. **The published vacancy-to-unemployed ratio cannot be recomputed** from the vacancy and unemployed series (2Q 2026: 1.48 published, 0.87 computed). The agent must quote the published figure and never derive it.
+3. **Dividing vacancies by unemployed persons does not reproduce the published vacancy-to-unemployed ratio** (2Q 2026: 1.48 published, 0.87 computed; the published denominator is undocumented). The agent should quote the published figure rather than substitute its own division.
 4. **Suppressed cells exist.** 12.9% of in-window retrenchment-by-industry cells are suppressed in the source; such questions must abstain rather than impute.
+5. **Keyword overlap is weak.** Questions share a median 50% of their content words with their gold stat card, and cards for the three residency measures differ by one word, so retrieval needs metadata filters and structured lookup as well as text matching.
 
 ## Limitations
 
 - No retrieval, generation, agent or MCP components yet; nothing here answers questions.
+- The 36 evaluation cases were drafted with AI assistance and are not yet human-reviewed; see [`eval/README.md`](eval/README.md).
 - Revision analysis covers 13 of 20 quarters, extracted by regex and checked by hand; treat it as directional.
 - MOM pages carry no HTML data tables, so annex tables are not available; numbers come from the data.gov.sg series or prose.
 - Licences: data.gov.sg datasets are assumed to fall under the Singapore Open Data Licence (the catalogue has no per-dataset licence field); MOM page reuse terms are unverified.

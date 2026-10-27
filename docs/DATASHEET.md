@@ -78,7 +78,7 @@ Implemented in `src/policy_agent/ingest/` and run with `make ingest` (`python -m
 | Stage | What is done |
 |---|---|
 | Periods | One canonical form: quarters `YYYY-Qn`, years `YYYY`; converted from `YYYY-MM` (quarter-end month), `YYYY-Qn` and SingStat `20262Q`. A year is `in_window` only if fully inside Q3 2021 to Q2 2026 (2022 to 2025) |
-| Seasonal adjustment | `sa` / `nsa` from column names; annual figures are `nsa` (averages of quarterly NSA data); the vacancy ratio is `sa` (stated by the dataset); retrenchment and vacancy levels are `unspecified` because the datasets do not say |
+| Seasonal adjustment | `sa` / `nsa` from column names; the vacancy ratio is `sa` (stated by the dataset); the age table is `nsa` (its column name says so); annual unemployment rates, long-term unemployment, and retrenchment and vacancy levels are `unspecified` because the datasets do not say. A local test cannot settle the annual basis: annual rates sit within 0.05 of the average of the quarterly SA values in 38 of 42 cases and of the NSA values in 36 |
 | Missing `-` | Converted to null, never zero. Nulls get no stat card, so such questions must abstain |
 | Units | `%`, `persons`, `ratio`; counts are persons, not thousands |
 | SingStat SA series | Not loaded as data (it duplicates the MOM SA columns); used only as a cross-check |
@@ -107,13 +107,14 @@ Quality checks and their results on the final build:
 | 2 | Missing values encoded as `-` | `retrenched_by_industry_q`: 605 of 4,700 rows (108 of 840 inside the window); `job_vacancy_by_industry_q`: 23 rows (none inside the window) | Null with a documented reason; the answerer must abstain rather than impute |
 | 3 | Industry labels mix hierarchy levels and classification vintages | 68 labels per file (42 inside the window), e.g. "accommodation" alongside "accommodation and food services", and "hotels and restaurants" in older years. All values are rounded (vacancies to the nearest 100, retrenchments to the nearest 10, verified) | `industry_level` marks 3 verified aggregates and their components; all other labels are `unverified`. Never sum across industries; allow rounding-sized differences |
 | 4 | Three period encodings | `YYYY-MM`, `YYYY-Qn`, and `20262Q` | Normalise in Step 2; validate with period-continuity checks |
-| 5 | Quarterly dataset vs report differ for one headline | MOM 3Q 2025 Report: resident unemployment 2.8% in September 2025; quarterly dataset `2025-09` SA: 2.9%. Overall (2.0) and citizen (3.1) agree | Possible monthly vs quarterly basis (unconfirmed). Keep both, record basis, use in conflict cases |
+| 5 | Quarterly dataset vs report differ for one headline | MOM 3Q 2025 Report: resident unemployment 2.8% in September 2025; quarterly dataset `2025-09` SA: 2.9%. Overall (2.0) and citizen (3.1) agree | Likely vintage noise, cause unconfirmed: across 48 comparisons the quarter-end rates quoted in reports match the quarterly SA value exactly in 28 and within 0.1 pp in 47 (one differs by 0.2). Keep both and use in conflict cases |
 | 6 | Advance figures are later revised | 2Q 2024 retrenchments 3,100 → 3,270; 3Q 2025 retrenchments 3,500 → 3,670; 3Q 2025 employment growth +24,800 → +25,100; 3Q 2025 citizen unemployment 3.0% → 3.1% | Tag `release_type` and `release_date`; prefer the latest, show both |
 | 7 | `employment_change` has no structured dataset | Absent from the data.gov.sg MOM catalogue | Extract from report text; tag `source_type=report_text`; cannot be queried through DuckDB |
 | 8 | Advance Releases omit some breakdowns | Pages state resident and non-resident quarterly employment change is not published in the advance release | Questions needing those figures route to the Report |
 | 9 | Catalogue metadata contains named officials' contact emails | `contactEmails` in every `.meta.json` | Do not index, trace or upload `.meta.json`; strip `contactEmails` before any LLM or LangSmith call |
 | 10 | Pages may change after retrieval | MOM pages are live | Content is pinned to the 2026-10-27 retrieval; recorded `fetched_at` per file |
-| 11 | **The published vacancy-to-unemployed ratio cannot be recomputed** | 2Q 2026: published 1.48, but vacancies / unemployed persons = 0.87; mean absolute difference 0.71 over the window; implied denominator is 54 to 69% of unemployed persons; the dataset gives no definition and MOM text refers to "jobseekers" | Quote the published series only; never derive the ratio; note the undocumented denominator in `limitations`. See EDA finding 3 |
+| 11 | **Dividing vacancies by unemployed persons does not reproduce the published vacancy-to-unemployed ratio** | 2Q 2026: published 1.48, but vacancies / unemployed persons = 0.87; mean absolute difference 0.71 over the window; implied denominator is 54 to 69% of unemployed persons; the dataset gives no definition and MOM text refers to "jobseekers" | Quote the published series rather than a derived ratio; note the undocumented denominator in `limitations`. See EDA finding 3 |
+| 13 | Annual seasonal-adjustment basis is not stated | Dataset descriptions say annual figures are averages of quarterly figures but never say SA or NSA; an earlier build wrongly tagged them `nsa`. An external review reports MOM now computes annual averages from SA inputs where available (not verified here) | Tag `unspecified`; never describe an annual figure as seasonally or non-seasonally adjusted unless a source says so |
 | 12 | Annex tables are not in the page HTML | The pages contain no HTML data tables (only the explainer has two); where the annex lives was not investigated | Numbers come from DuckDB or prose; annex tables are out of reach |
 
 ## 7. Exclusions
@@ -136,7 +137,7 @@ Quality checks and their results on the final build:
 
 | Intended | Not intended |
 |---|---|
-| Evaluating retrieval, citation and abstention behaviour; demonstrating deterministic calculation over official aggregates | Policy recommendations; any figure beyond 2026-06; granularity MOM does not publish (district, nationality of foreign workers) |
+| Evaluating retrieval, citation and abstention behaviour; demonstrating deterministic calculation over official aggregates | Policy recommendations; any figure beyond 2026-06; granularity not in the corpus (district, nationality) |
 
 ## 10. Maintenance
 
