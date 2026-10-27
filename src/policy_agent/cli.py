@@ -3,6 +3,7 @@
 uv run python -m policy_agent.cli "What was the overall unemployment rate in 4Q 2023?" --verbose
 uv run python -m policy_agent.cli "..." --role analyst_internal --save-report
 uv run python -m policy_agent.cli "..." --fault mcp_timeout        # fault injection (see FAULTS)
+    uv run python -m policy_agent.cli "..." --no-upload                # do not send this question to LangSmith
 """
 
 import argparse
@@ -62,8 +63,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--fault", action="append", default=[], choices=sorted(FAULTS), help="inject a failure (repeatable)"
     )
+    ap.add_argument(
+        "--no-upload", action="store_true", help="do not send this question to LangSmith (no trace, no quota use)"
+    )
     args = ap.parse_args(argv)
     load_dotenv(ROOT / ".env")
+    if args.no_upload:
+        os.environ["LANGSMITH_TRACING"] = "false"  # after load_dotenv, which would otherwise bring back the .env value
     if "OPENROUTER_API_KEY" not in os.environ:
         print("OPENROUTER_API_KEY is not set (see .env.example)", file=sys.stderr)
         return 2

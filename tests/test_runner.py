@@ -37,3 +37,31 @@ def test_test_split_needs_explicit_permission(monkeypatch, tmp_path):
         assert "--allow-test" in str(e.value)
     finally:
         guard.unlink()
+
+
+def test_cli_no_upload_switches_langsmith_off_even_when_the_env_file_turns_it_on(monkeypatch, capsys):
+    import os
+
+    from policy_agent import cli
+
+    class FakeRuntime:
+        def __init__(self, **kw):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            pass
+
+        def ask(self, q, role, want_report=False):
+            return {"status": "answered", "answer": {"summary": "ok", "claims": [], "confidence": "high"}, "latency_ms": 1.0,
+                    "agent": {"llm_calls": 0, "tools": [], "log": [], "stop_reason": "x", "interrupted": False},
+                    "validation": {"first_pass": []}}  # fmt: skip
+
+    monkeypatch.setattr(cli, "AgentRuntime", FakeRuntime)
+    monkeypatch.setattr(cli, "load_dotenv", lambda *a, **k: os.environ.update(LANGSMITH_TRACING="true"))
+    monkeypatch.setenv("OPENROUTER_API_KEY", "x")
+    assert cli.main(["a question"]) == 0 and os.environ["LANGSMITH_TRACING"] == "true"  # default: unchanged
+    assert cli.main(["a question", "--no-upload"]) == 0 and os.environ["LANGSMITH_TRACING"] == "false"
+    assert "ANSWERED" in capsys.readouterr().out

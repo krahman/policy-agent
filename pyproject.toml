@@ -76,6 +76,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/compare_test_review.py" = ["E501"]  # result dict
 "scripts/run_redteam.py" = ["E501"]  # case labels and check table
 "tests/test_graph.py" = ["E501"]  # scripted-model fixtures
+"tests/test_runner.py" = ["E501"]  # fake CLI output fixture
 "tests/test_guardrails.py" = ["E501"]  # threat table text
 "scripts/make_calibration_sheet.py" = ["E501"]  # sheet text
 "scripts/calibrate_judge.py" = ["E501"]  # result dict

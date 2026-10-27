@@ -85,7 +85,7 @@ $Q "What was the percentage change in job vacancies between 2Q 2022 and 2Q 2026?
 | `--fault mcp_timeout` | The statistics server is slow; the agent retries, then answers from text evidence and says so in its limitations |
 | `--save-report` | Renders a Markdown brief and **asks before writing** it to `reports/` |
 
-`--fault` accepts `dense_down`, `mcp_down`, `mcp_timeout`, `mcp_malformed` and `mcp_poison`.
+`--fault` accepts `dense_down`, `mcp_down`, `mcp_timeout`, `mcp_malformed` and `mcp_poison`. Add `--no-upload` to any query to keep it out of LangSmith (no trace is sent and no trace quota is used); otherwise questions are traced whenever `LANGSMITH_TRACING=true` is set in `.env`.
 
 ## How it works
 
@@ -139,6 +139,7 @@ tests/                        # 250+ tests; none needs a key or the network exce
 | [`docs/CONCEPTS.md`](docs/CONCEPTS.md) | The GenAI concepts used (LLM fundamentals, retrieval, prompting, evaluation, agents, MCP, production) and where each appears |
 | [`docs/INNOVATION.md`](docs/INNOVATION.md) | How to improve, monitor, secure and scale this, grounded in the results |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The scripted 20-minute demo and Q&A preparation |
+| [`docs/OPEN_ITEMS.md`](docs/OPEN_ITEMS.md) | Everything still open: what needs a person, known fixes not applied, infrastructure, security gaps |
 
 ## Limitations
 
