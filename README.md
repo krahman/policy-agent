@@ -176,7 +176,7 @@ tests/                        # 250 tests; none needs a key; most need no networ
 
 - **Retrieval and latency targets are missed**, and the sample is small: 15 test cases, so intervals are wide and the agent's advantage over the chain is not statistically confirmed.
 - **The held-out split was used three times**, so the final numbers are optimistic. A new held-out set is needed before any claim of final performance.
-- **The evaluation cases were drafted with AI assistance**; no domain expert has reviewed them. The project owner labelled the judge-calibration sample (29 claims, one labeller). The held-out answers were not reviewed by a person.
+- **The evaluation cases were drafted with AI assistance**; no domain expert has reviewed them. The project owner labelled the judge-calibration sample (29 claims, one labeller). Ten of the 15 held-out answers were reviewed by the project owner alone (no labour-market background; [`eval/HUMAN_REVIEW_TEST.md`](eval/HUMAN_REVIEW_TEST.md)); the other five were not reviewed by a person.
 - Some labels were revised after results were seen (two dev cases and three red-team acceptance rules). This is disclosed in [`eval/LABEL_CHANGES.md`](eval/LABEL_CHANGES.md); no `test` case changed.
 - Sonnet was compared with Haiku on the dev split only. Experiments were scored locally, without LangSmith dashboards.
 - Scope is Singapore national statistics from 2021-Q3 to 2026-Q2, a snapshot retrieved 2026-10-27. No forecasts, regions, individuals or other countries.

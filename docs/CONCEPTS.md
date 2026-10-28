@@ -49,7 +49,7 @@ How the GenAI concepts in the challenge brief apply to this project, with the tr
 - **Leakage and held-out discipline.** Cases were checked for overlap with few-shot examples and the corpus; the `test` split is run once per frozen configuration and needs an explicit flag; no test case was edited after results.
   Dev labels revised after results are disclosed (`eval/LABEL_CHANGES.md`) and the saved outputs were re-scored, not re-run.
 - **Statistics.** Case-level bootstrap intervals, paired differences on the same resampled cases, exact McNemar and Wilcoxon tests; with 15 test cases nothing reached p < 0.05, so "no difference found" is not "no difference".
-- **Human review.** Calibration sample labelled by the owner; a review sheet for the held-out answers is prepared (single reviewer).
+- **Human review.** Calibration sample labelled by the owner; a 10-answer review sheet for the held-out answers was completed by the owner (single reviewer, not independent of the project; results in `docs/EVAL_REPORT.md`).
 
 ## MCP: concepts, trust boundaries and what was built
 

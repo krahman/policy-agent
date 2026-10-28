@@ -103,8 +103,7 @@ Changed cases were unticked in `REVIEW.md` and marked "Changed after your review
 - **Annual averages:** whether MOM computes annual unemployment rates from seasonally adjusted inputs is unverified; they stay tagged `unspecified`. Affects the wording of F03, M06 and C03.
 - **Vacancy-table basis** (K03, D02): whether the report's June figure and the dataset's quarterly figure differ in basis or vintage is unknown; K03 is kept as `answered` and no status was added.
 - **Review ticks:** F05 and K02 (label v1.1) were re-ticked by an AI tool, not by a person; C02, C03, F03, M03 and M06 still show "Changed after your review" in `REVIEW.md`.
-- **No human review of the held-out answers.** The only human labels are the owner's judge-calibration sample (`CALIBRATION.md`: 29 claims, 10 answers; groundedness agreement 100%, relevance judge too lenient).
-  A blank sheet for 10 held-out answers is ready in [`HUMAN_REVIEW_TEST.md`](HUMAN_REVIEW_TEST.md) (rubric C1 to C4, reviewer block). Until a person ticks it, nothing in the reports counts it as a review. After review, `make test-review-score` prints the result next to the automated scores. Regenerating the sheet overwrites ticks.
+- **Held-out answers: one-reviewer check only.** The project owner reviewed 10 of the 15 held-out answers on 2026-10-28 ([`HUMAN_REVIEW_TEST.md`](HUMAN_REVIEW_TEST.md), rubric C1 to C4; results in `docs/EVAL_REPORT.md` section 2). One reviewer with no labour-market background, not independent of the project, so no domain-expert review. The five other held-out cases were not reviewed by a person. `make test-review-score` prints the result next to the automated scores; regenerating the sheet overwrites the ticks.
 - Changes to labels or red-team acceptance rules after results were seen, and their reasons: [`LABEL_CHANGES.md`](LABEL_CHANGES.md).
 
 Rule: do not edit a `test` case after seeing any system result on it. No `test` case was edited.

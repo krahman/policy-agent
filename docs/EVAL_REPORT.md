@@ -51,7 +51,9 @@ ranking, see below), `injection_followed` (canary strings), and latency and esti
 sample of 10 answers and 29 claims (rubric and process: `eval/CALIBRATION.md`; four deliberately altered claims were mixed in unmarked): the judge and the
 owner agreed on all 29 groundedness verdicts (Cohen's kappa 1.0, both rejected all four altered claims). On the 1 to 5 relevance scale they agreed exactly on
 only 5 of 10 answers (within one point on 6 of 10), so **the relevance judge is too lenient and is reported but not used to rank systems**. One labeller and 29
-claims is indicative evidence, not proof. There was **no human review of the held-out answers**.
+claims is indicative evidence, not proof.
+
+**Human review of held-out answers.** On 2026-10-28 the project owner (no labour-market background) reviewed 10 of the 15 held-out cases, one run each, on `eval/HUMAN_REVIEW_TEST.md` (rubric C1 right behaviour, C2 facts correct, C3 citations support the claims, C4 honest about limits; Yes, Partly or No; about 30 to 45 minutes; the automated scores were hidden). One reviewer, ten answers: too few for any interval, and not independent of the project (the reviewer block records earlier exposure to test-case definitions and other held-out answers, but not to this run's automated results). Result: C1 Yes 9, Partly 1, No 0; C2 Yes 2, Partly 6, No 2; C3 Yes 5, Partly 5, No 0; C4 Yes 5, Partly 3, No 2. Most Partly ratings mean a claim could not be checked from the excerpts on the sheet, not that it was wrong. Behaviour was judged right on 9 of 10, in line with the automated status match. Two answers were marked No on facts: C02 (the reference says both figures exclude migrant domestic workers, the answer says the quarterly report does not state its coverage) and U02 (the answer says Malaysian nationals are outside the resident measures, which conflates nationality with residency). D04 was marked Partly on behaviour, matching its automated status miss. There is still no domain-expert review.
 
 ## 3. Experiments
 
@@ -366,12 +368,14 @@ Failed held-out runs of the agent (E8T): **8 of 45**; of the chain: 16 of 45 (7 
 **Optional follow-ups.** Fixed-size chunking (OPT-1): not warranted, no citation error traced to a chunk boundary. MCP against direct tools (OPT-2): not warranted, MCP adds about 15 ms per call against a 10 s run
 (`docs/CONCEPTS.md`). A second prompt version (OPT-3): done once (E7 to E8) and justified by the router errors.
 
+**Findings from the human review (section 2).** (a) C02: the answer states that the quarterly report does not say what it covers, while the reference says both the preliminary and the later figure exclude migrant domestic workers; the fix is to cite the coverage statement when a conflict is reported. (b) U02: abstaining was right, but the wording blames "residency" for the missing nationality breakdown; the abstention text should say only that no breakdown by nationality exists. (c) D04: the answer rejects the false premise but abstains where the reference wants the correction, as the automated check also found.
+
 ## 10. Limitations of this evidence
 
 - **Small samples.** 15 held-out cases (as few as 2 to 11 per metric); wide intervals; no paired exact test reached p < 0.05.
 - **The held-out split was used three times** and the final design was chosen from its errors; the headline numbers are optimistic. A new held-out set is needed before any claim of final performance.
 - **Dev-tuned prompts and post-hoc label corrections** (sections 6 and 8, `eval/LABEL_CHANGES.md`), disclosed and kept to `dev`.
-- **AI-drafted evaluation cases**, no domain-expert review; the judge was calibrated by one labeller on 29 claims; the relevance judge is too lenient to use; no human review of held-out answers.
+- **AI-drafted evaluation cases**, no domain-expert review; the judge was calibrated by one labeller on 29 claims; the relevance judge is too lenient to use; the held-out answers had a single-reviewer check of 10 answers by the project owner (section 2), not a domain-expert review.
 - **Sonnet was not evaluated on the held-out split**; no LangSmith dashboards or annotation queue (a trace-limit and credit constraint); hosted models and re-rankers can change behaviour without notice, and
   results are cached by content hash, so a provider update would not be noticed.
 - Not tested: paraphrased or non-English attacks, instructions inside the real MOM pages, role spoofing (the role is supplied by the caller), and use at volume.

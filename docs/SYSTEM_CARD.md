@@ -89,8 +89,8 @@ retrieved passages and tool results leave the machine. Nothing here has been rev
 - Low-confidence and degraded-path answers carry lowered confidence and a limitation; they are not labelled "requires review" by code
   beyond that.
 - **The evaluation cases have not had a domain-expert human review.** The cases were drafted by an AI model; the review was AI-assisted
-  (`eval/README.md`). The project owner labelled the judge calibration sample (29 claims, one labeller). The held-out answers were **not** reviewed by a
-  person; their quality rests on automated checks and the judge.
+  (`eval/README.md`). The project owner labelled the judge calibration sample (29 claims, one labeller). Ten of the 15 held-out answers were reviewed by the project owner (one reviewer, no
+  labour-market background, 2026-10-28; `eval/HUMAN_REVIEW_TEST.md`, results in `docs/EVAL_REPORT.md` section 2). That is too few for an interval and not independent of the project; the other five held-out cases rest on automated checks and the judge.
 
 ## 7. Known limitations
 
