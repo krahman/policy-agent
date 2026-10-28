@@ -65,6 +65,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/make_agent_notebook.py" = ["E501"]  # long lines inside generated notebook cells
 "scripts/make_security_notebook.py" = ["E501"]  # long lines inside generated notebook cells
 "scripts/make_cost_notebook.py" = ["E501"]  # long lines inside generated notebook cells
+"scripts/make_test_review_sheet.py" = ["E501"]  # long rubric and sheet text
 "src/policy_agent/eval/build.py" = ["E501"]  # question and answer text is data
 "src/policy_agent/eval/review.py" = ["E501"]  # prose in the generated sheet header
 "scripts/analyse_retrieval.py" = ["E501"]  # markdown text

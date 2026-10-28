@@ -1,0 +1,42 @@
+{
+ "H01": {
+  "case_id": "U02",
+  "case_type": "unanswerable"
+ },
+ "H02": {
+  "case_id": "A01",
+  "case_type": "ambiguous"
+ },
+ "H03": {
+  "case_id": "K01",
+  "case_type": "calculation"
+ },
+ "H04": {
+  "case_id": "M02",
+  "case_type": "multi_step"
+ },
+ "H05": {
+  "case_id": "C02",
+  "case_type": "conflicting"
+ },
+ "H06": {
+  "case_id": "F08",
+  "case_type": "factual"
+ },
+ "H07": {
+  "case_id": "C01",
+  "case_type": "conflicting"
+ },
+ "H08": {
+  "case_id": "U04",
+  "case_type": "unanswerable"
+ },
+ "H09": {
+  "case_id": "D04",
+  "case_type": "adversarial"
+ },
+ "H10": {
+  "case_id": "D01",
+  "case_type": "adversarial"
+ }
+}

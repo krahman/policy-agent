@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook notebooks agent-demo redteam final analyse reproduce pricing
+.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet test-review-sheet test-review-score calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook notebooks agent-demo redteam final analyse reproduce pricing
 
 # Setup and checks ----------------------------------------------------------------------------------------------------
 sync:
@@ -84,6 +84,12 @@ redteam:      # policy-redteam-v1 against the agent (3 repetitions) plus the off
 	uv run pytest -q tests/test_guardrails.py
 
 # Human review of the judge: a blind sheet, then compare the judge with your ticks
+test-review-sheet: # regenerate the blank human-review sheet for 10 held-out answers (overwrites eval/HUMAN_REVIEW_TEST.md)
+	uv run python scripts/make_test_review_sheet.py
+
+test-review-score: # summarise the sheet once a person has ticked it
+	uv run python scripts/make_test_review_sheet.py --score
+
 calibration-sheet:
 	uv run python scripts/make_calibration_sheet.py E5
 calibrate:
