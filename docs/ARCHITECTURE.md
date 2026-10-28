@@ -87,7 +87,7 @@ were the largest cause of failed held-out answers and the synthesis step already
 
 | Role | Model | Why | Cost |
 |---|---|---|---|
-| Tool choice and synthesis | `anthropic/claude-haiku-5.5` | Groundedness within 2% of Sonnet's on dev at about 1/23 the cost; Sonnet was better on citation correctness (+0.11) and required numbers (+0.21) | about $0.0025 per question |
+| Tool choice and synthesis | `anthropic/claude-haiku-5.5` | Groundedness within 2% of Sonnet's on dev at about 1/23 the cost; Sonnet was better on citation correctness (+0.13) and required numbers (+0.24) | about $0.0025 per question |
 | Judge | `openai/gpt-4.1-mini` | A different family from the generator, to reduce self-preference | about $0.0007 per judged run |
 | Embeddings | `voyageai/voyage-4` | Recall@5 0.46 on dev as dense retrieval alone; the weaker `text-embedding-3-small` scored 0.09 in an earlier run | one-off, cached |
 | Re-rank | `cohere/rerank-v3.5` | Hybrid plus re-rank beat BM25 on Recall@5 by 0.31 on dev and 0.24 on test (0.42 and 0.27 with the period filter) | $0.001 per search |

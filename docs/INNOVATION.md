@@ -21,7 +21,7 @@ MOM publishes on a predictable cycle: an Advance Release, then a quarterly repor
 
 ## 3. Trust features
 
-Typed claims (source fact, statistical finding, model inference), verbatim quotes checked against the cited chunk, tool-call ids for computed numbers, confidence labels, and an explicit conflict list naming both values with dates are in the system today. To add: one-click feedback on each claim feeding a human annotation queue; reviewer sign-off before an answer is used in a published brief; and showing the judge's per-claim verdicts to the reviewer. The human review that exists is thin (one labeller on 29 claims for the judge; no review of held-out answers), so the first investment would be a second reviewer and agreement statistics.
+Typed claims (source fact, statistical finding, model inference), verbatim quotes checked against the cited chunk, tool-call ids for computed numbers, confidence labels, and an explicit conflict list naming both values with dates are in the system today. To add: one-click feedback on each claim feeding a human annotation queue; reviewer sign-off before an answer is used in a published brief; and showing the judge's per-claim verdicts to the reviewer. The human review that exists is thin (one labeller on 29 claims for the judge; one reviewer, the project owner, on 10 of the 15 held-out answers, with no labour-market background), so the first investment would be a second reviewer, ideally a domain expert, and agreement statistics.
 
 ## 4. Security and governance
 

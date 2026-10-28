@@ -5,17 +5,18 @@ How the GenAI concepts in the challenge brief apply to this project, with the tr
 ## LLM fundamentals
 
 - **Tokens and context.** Models read tokens, not words; prices and limits are per token. Evidence is capped by a character budget (about 3,500 tokens) so that a long
-  question cannot crowd out the instructions, and answers are capped at 4,500 output tokens. The cap mattered: at 3,000 tokens, long conflict answers were cut off and
-  about a sixth of agent runs needed a repair (EVAL_REPORT section 8).
+  question cannot crowd out the instructions, and the agent's answers are capped at 4,500 output tokens (the single-pass chain defaults to 1,500). The cap matters: an answer
+  cut off at the limit is treated as a schema failure and triggers the one repair, and during development a lower cap truncated long conflict answers and was raised.
+  In the saved agent runs 2 of 63 dev runs and 4 of 45 held-out runs needed the repair.
 - **Sampling controls.** Temperature 0 everywhere (tool choice, synthesis, judge), so a question gives the same answer much more often, but not always:
   providers are not deterministic at temperature 0, which is why every experiment uses 3 repetitions.
 - **Structured generation.** The answer is a JSON-schema object (`generation/schema.py`) via `with_structured_output(method="json_schema")`. We first used tool-calling
   for structure and found that Claude Sonnet 5.5 rejects the forced tool choice it needs (HTTP 400): the same code worked for one model and failed for the other, which is
   a reminder to test structured output per model.
 - **Model selection.** Haiku 5.5 and Sonnet 5.5 were compared on the same pipeline (E5 against E6). Groundedness was within 2% (both near the ceiling) and Haiku cost about 4% as much,
-  but Sonnet was significantly better on citation correctness (+0.11) and required numbers (+0.21). Haiku is the default for cost; the evidence is dev-only and the groundedness metric was saturated.
+  but Sonnet was significantly better on citation correctness (+0.13) and required numbers (+0.24). Haiku is the default for cost; the evidence is dev-only and the groundedness metric was saturated.
 - **Failure modes seen:** wrong numbers (blocked by V3 and by tools doing the arithmetic), citations that point at the wrong passage (V2), over-cautious abstention
-  (false abstention 0.27 on test), answers cut off by a token limit, and a model that refuses forced tool calls.
+  (false abstention 0.09 on test), answers cut off by a token limit, and a model that refuses forced tool calls.
 
 ## Embeddings and retrieval
 
