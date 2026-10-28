@@ -2,7 +2,7 @@
 
 An evidence-grounded research assistant for the **Singapore labour market**. It answers analytical questions about unemployment, retrenchments, job vacancies and related series from official MOM statistics and reports. Every answer carries a status (answered, abstained, needs clarification, conflict reported, refused), claims labelled as *source fact*, *statistical finding* or *model inference*, passage-level citations or tool-call references, and stated limitations. Arithmetic is done by deterministic tools. When the evidence is missing, ambiguous or in conflict, it says so instead of guessing.
 
-A prototype built for the GenAI Engineer Tech Challenge ([`docs/Tech Challenge - GenAI Engineer v1.0.pdf`](docs/Tech%20Challenge%20-%20GenAI%20Engineer%20v1.0.pdf)). The original plan is archived in [`docs/archive/`](docs/archive/PRD_Policy_Research_Agent.md).
+A prototype built for the GenAI Engineer Tech Challenge. The original plan is archived in [`docs/archive/`](docs/archive/PRD_Policy_Research_Agent.md).
 
 ## Results at a glance
 
@@ -45,6 +45,13 @@ make reproduce
 ```
 
 On a fresh clone this installs the environment, downloads the public datasets, rebuilds the processed data, validates the evaluation set, runs lint and the test suite, runs the MCP protocol demo, and regenerates every table in the evaluation report from the committed result files. It needs network access once (to download the public data) and **no API key and no spend**.
+
+Optional, in a clean pinned container instead (needs Docker; about 5 minutes the first time, no key):
+
+```bash
+docker build -t policy-agent .
+docker run --rm policy-agent           # runs make reproduce inside the container
+```
 
 ### Notebooks
 
@@ -163,7 +170,6 @@ tests/                        # 250 tests; none needs a key; most need no networ
 | [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md) | Intended and out-of-scope use, limitations, risks, mitigations |
 | [`docs/CONCEPTS.md`](docs/CONCEPTS.md) | The GenAI concepts used (LLM fundamentals, retrieval, prompting, evaluation, agents, MCP, production) and where each appears |
 | [`docs/INNOVATION.md`](docs/INNOVATION.md) | How to improve, monitor, secure and scale this, grounded in the results |
-| [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The scripted 20-minute demo and Q&A preparation |
 | [`eval/LABEL_CHANGES.md`](eval/LABEL_CHANGES.md) | Labels and acceptance rules changed after results were seen, and why |
 
 ## Limitations
@@ -179,6 +185,7 @@ tests/                        # 250 tests; none needs a key; most need no networ
 
 ## Responsible use
 
+- Controls for least privilege, secrets, logging and data minimisation are listed in [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md#controls-checklist).
 - Public and synthetic data only. Synthetic memos are marked as such and are not official documents.
 - Do not use it with confidential or personal data. Questions and retrieved passages are sent to third-party model providers through OpenRouter; the data.gov.sg catalogue metadata lists officials' contact emails, which the pipeline never reads.
 - It informs analysts; it does not make or recommend policy. An answer is evidence-linked, not certified: check the cited MOM source before relying on a figure.

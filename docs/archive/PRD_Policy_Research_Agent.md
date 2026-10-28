@@ -778,7 +778,7 @@ Indicative effort assumes one engineer, roughly 9 working days. Each step has an
 - README (problem, setup, execution, sample queries, limitations, responsible-use notes).
 - Architecture diagram showing data flow, retrieval, model calls, tools, evaluation and guardrails (extend §6 diagram with the `guard_input` / `validate` / permission-filter guardrails and the LangSmith evaluation loop).
 - Datasheet (sources, provenance, transformations, exclusions, known quality issues), system card (intended use, out-of-scope use, limitations, risks, mitigations), `CONCEPTS.md` (§20), Section 2 innovation write-up.
-- Scripted 20-minute demo: walkthrough (6 min), evaluation deep dive (6 min), failure demo (4 min), design discussion (4 min).
+- Planned 20-minute demo: walkthrough (6 min), evaluation deep dive (6 min), failure demo (4 min), design discussion (4 min).
 - **Exit:** fresh clone → `make reproduce` works on a clean machine/container.
 
 ---
@@ -909,4 +909,4 @@ Effort priority follows the weights: evaluation and error analysis gets the most
 | Model / system card (intended use, out-of-scope use, limitations, risks, mitigations) | `docs/SYSTEM_CARD.md` |
 | GenAI concepts and MCP trade-offs | `docs/CONCEPTS.md` |
 | Section 2 innovation write-up (~1–2 pages) | `docs/INNOVATION.md` |
-| 20-minute live demo + Q&A: walkthrough, evaluation deep dive, failure demo, design discussion | Step 11 demo script |
+| 20-minute live demo + Q&A: walkthrough, evaluation deep dive, failure demo, design discussion | Step 11 demo preparation |

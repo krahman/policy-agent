@@ -67,6 +67,19 @@ executions differed by about 0.04 on status and 0.06 on citations, which is the 
 | Hung or failing service | Timeouts, retries, fallbacks, hard deadline | demo scenarios 7, 9 | p95 latency above target |
 | Personal data in traces | Questions and answers go to LangSmith if tracing is on; no personal data is expected | none | Do not use it with confidential material; PII is only caught by a pattern list |
 
+### Controls checklist
+
+| Control | What is in place | Where |
+|---|---|---|
+| Least privilege | The statistics server opens DuckDB read-only, takes typed parameters only (no SQL tool) and has no network access. The agent can call only allow-listed MCP servers. The only write is a brief under `reports/`, after explicit approval. | `mcp_server/server.py`, `config/mcp_servers.yaml`, report node |
+| Permission-aware retrieval | The role filter is applied before ranking, and rule V6 rejects any answer that cites a chunk the role may not read. | `retrieval/corpus.py`, `generation/validate.py` |
+| Secrets | `.env` is git-ignored and `.env.example` holds placeholders only. The MCP server is started with the SDK's minimal environment (`HOME`, `LOGNAME`, `PATH`, `SHELL`, `TERM`, `USER`), so the API key is not passed to it. Keys are never printed or written to results. | `.gitignore`, `mcp_client.py` |
+| Logging and audit | Each run keeps a node-by-node log (guard, tool calls with status and latency, validation outcome) in the saved results. The MCP server logs requests to stderr with arguments redacted; the client records the paths of any redacted content. LangSmith tracing is optional and `--no-upload` turns it off. | `graph/runtime.py`, `mcp_server/server.py`, `cli.py` |
+| Data minimisation | Public and synthetic data only. Only the top retrieved passages, within a fixed token budget, and the tool results needed are sent to a model. No user identifiers are stored. The catalogue's contact emails are never read. Aggregate statistics only; personal-record requests are refused by the input guard. | `generation/chain.py`, `graph/guard.py` |
+| Human oversight | The write action pauses with `interrupt()` for a yes. Answers carry a status, confidence and limitations, and claims are labelled source fact, statistical finding or model inference. | report node, `generation/schema.py` |
+
+Not covered here: authentication of the caller's role, encryption at rest, retention policies for traces, and any regulated or classified setting.
+
 Third-party processing: model calls go through OpenRouter to the model providers (generation, judging, embeddings and re-ranking). Questions,
 retrieved passages and tool results leave the machine. Nothing here has been reviewed for a regulated or classified setting.
 
