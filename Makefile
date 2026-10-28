@@ -1,4 +1,4 @@
-.PHONY: sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet test-review-sheet test-review-score calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook notebooks agent-demo redteam final analyse reproduce pricing
+.PHONY: docker-build docker-run docker sync test lint fmt hello fetch ingest eda evalset check-eval sync-datasets review-sheet retrieval generation agent calibration-sheet test-review-sheet test-review-score calibrate mcp-demo mcp-notebook ingestion-notebook retrieval-notebook generation-notebook agent-notebook evaluation-notebook security-notebook cost-notebook notebooks agent-demo redteam final analyse reproduce pricing
 
 # Setup and checks ----------------------------------------------------------------------------------------------------
 sync:
@@ -117,6 +117,14 @@ analyse:      # rebuild the tables in docs/EVAL_REPORT.md from the saved result 
 # Anything that calls a model is under "Live runs" in README.md.
 reproduce: sync fetch ingest check-eval lint test mcp-demo analyse
 	@echo "reproduce: ok"
+
+docker-build: # build the image (pinned environment; about 1.5 minutes the first time)
+	docker build -t policy-agent .
+
+docker-run: # run make reproduce inside the container: downloads the public data, rebuilds, tests, regenerates the report (no key, no spend)
+	docker run --rm policy-agent
+
+docker: docker-build docker-run
 
 pricing:      # refresh config/pricing.yaml from OpenRouter (records the date)
 	uv run python scripts/fetch_pricing.py anthropic/claude-haiku-5.5 anthropic/claude-sonnet-5.5 openai/gpt-4.1-mini --embeddings openai/text-embedding-3-small voyageai/voyage-4

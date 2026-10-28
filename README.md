@@ -51,6 +51,9 @@ Optional, in a clean pinned container instead (needs Docker; about 5 minutes the
 ```bash
 docker build -t policy-agent .
 docker run --rm policy-agent           # runs make reproduce inside the container
+
+# or, the same through make:
+make docker                            # make docker-build, then make docker-run
 ```
 
 ### Notebooks
